@@ -323,7 +323,7 @@ div.th{display:grid;place-items:center;font-size:11px;font-weight:700;color:var(
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, updateProfile, sendEmailVerification } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, query, orderBy, limit, onSnapshot, serverTimestamp, where, writeBatch } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, query, orderBy, limit, onSnapshot, serverTimestamp, where, writeBatch, deleteField } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAaSeGyLRFzT9lScxS9bY8wrccRCJAOzI4",
@@ -937,7 +937,7 @@ $("#actReply").addEventListener("click", () => {
 $("#actDelete").addEventListener("click", async () => {
   const m = picked; closeSheet();
   if (!m || !confirm("Delete this message for everyone?")) return;
-  try { await updateDoc(doc(db, "chats", MAIN, "messages", m.id), { deleted: true, text: "" }); }
+  try { await updateDoc(doc(db, "chats", MAIN, "messages", m.id), { deleted: true, text: "", media: deleteField() }); }
   catch (err) { toast("Couldn't delete the message. Try again."); }
 });
 $("#rbClose").addEventListener("click", clearReply);
