@@ -284,6 +284,7 @@ div.th{display:grid;place-items:center;font-size:11px;font-weight:700;color:var(
     <div class="view" id="v-people"><div class="search"><input id="peopleSearch" type="search" placeholder="Search students" aria-label="Search students" autocomplete="off"></div><div id="peopleList"></div></div>
     <div class="view" id="v-profile">
       <div class="row"><div class="avatar lg" id="pAvatar">?</div><div><b id="pName">Your profile</b><span id="pEmail"></span></div></div>
+      <div class="setting" style="flex-direction:column;align-items:flex-start;gap:4px"><span style="font-size:13px;color:var(--muted)">Account ID (used to set up admins)</span><span id="pUid" style="font-size:12.5px;word-break:break-all;user-select:all"></span><span id="pAdmin" style="font-size:13px"></span><button class="btn" id="pCopy" type="button" style="margin:8px 0 0;width:auto;padding:9px 18px;background:var(--surface);color:var(--text);border:1px solid var(--line)">Copy account ID</button></div>
       <div class="edit"><button class="btn" id="photoBtn" type="button" style="margin-top:0;background:var(--surface);color:var(--text);border:1px solid var(--line)">Change profile photo</button><input type="file" id="photoIn" accept="image/*" hidden><p class="msg" id="photoMsg" role="alert"></p></div>
       <div class="edit"><div class="field"><label for="pn">Display name</label><input id="pn" type="text" autocomplete="name" maxlength="60"></div><button class="btn" id="saveName" type="button">Save changes</button><p class="msg" id="profMsg" role="status"></p></div>
       <div class="setting"><span>Dark theme</span><button class="toggle" id="themeToggle" role="switch" aria-checked="false" aria-label="Dark theme"></button></div>
@@ -887,7 +888,11 @@ function startRealtime() {
     if ($("#annScreen").classList.contains("active")) { anMarkSeen(); anRender(); }
     anRenderRow();
   }, () => { $("#annLast").textContent = "Can't load. Publish the new Firestore rules."; }));
-  getDoc(doc(db, "admins", user.uid)).then((d) => { isAdmin = d.exists(); anRender(); }).catch(() => {});
+  $("#pUid").textContent = user.uid;
+  getDoc(doc(db, "admins", user.uid)).then((d) => {
+    isAdmin = d.exists(); anRender();
+    $("#pAdmin").textContent = isAdmin ? "Role: admin" : "Role: student (no admin entry found for this ID)";
+  }).catch((err) => { $("#pAdmin").textContent = "Admin check failed: " + ((err && err.code) || "error"); });
   unsubs.push(onSnapshot(query(collection(db, "statuses"), where("createdAt", ">", Timestamp.fromMillis(Date.now() - DAY)), orderBy("createdAt", "desc"), limit(200)), (snap) => {
     stPub = snap.docs.map((d) => Object.assign({ id: d.id, col: "statuses" }, d.data({ serverTimestamps: "estimate" })));
     stRender();
@@ -1510,6 +1515,15 @@ async function acPost() {
   } finally { busy($("#acPost"), false); }
 }
 
+$("#pCopy").addEventListener("click", async () => {
+  if (!user) return;
+  try { await navigator.clipboard.writeText(user.uid); toast("Account ID copied."); }
+  catch (e) {
+    const r = document.createRange(); r.selectNodeContents($("#pUid"));
+    const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+    try { document.execCommand("copy"); toast("Account ID copied."); } catch (e2) { toast("Couldn't copy. Press and hold the ID to copy it."); }
+  }
+});
 $("#openAnn").addEventListener("click", anOpen);
 $("#openAnn").addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); anOpen(); } });
 $("#annBack").addEventListener("click", anClose);
