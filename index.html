@@ -128,6 +128,64 @@ nav{display:flex;border-top:1px solid var(--line);background:var(--bg)}
 .sheet-btn:last-child{border-bottom:0}
 .sheet-btn.danger{color:var(--err)}
 #toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#2b2f31;color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;z-index:20;max-width:86%;text-align:center}
+.sthead{padding:12px 18px 6px;font-size:12.5px;color:var(--muted);font-weight:600}
+.avatar.sm{width:40px;height:40px;font-size:14px}
+.ring .avatar{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--line)}
+.ring.unseen .avatar{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--teal)}
+#story{background:#000;color:#fff}
+#stBars{display:flex;gap:4px;padding:8px 10px 0}
+#stBars i{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.35);overflow:hidden}
+#stBars i b{display:block;height:100%;width:0;background:#fff}
+.sthd{display:flex;align-items:center;gap:10px;padding:10px 10px 6px;position:relative;z-index:3}
+.sthd .icon-btn{color:#fff}
+.sthd b{display:block;font-size:15px}
+.sthd span{font-size:12px;opacity:.8}
+#stStage{flex:1;position:relative;min-height:0;overflow:hidden}
+#stBody{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+#stBody img,#stBody video{max-width:100%;max-height:100%;object-fit:contain}
+.stText{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;font-weight:600;line-height:1.35;overflow-wrap:anywhere;white-space:pre-wrap;color:#fff}
+.stCap{position:absolute;left:0;right:0;bottom:0;padding:34px 18px 14px;background:linear-gradient(transparent,rgba(0,0,0,.7));text-align:center;font-size:15px}
+#stTapL,#stTapR{position:absolute;top:0;bottom:0;width:38%;z-index:2}
+#stTapL{left:0}#stTapR{right:0}
+#stFoot{padding:8px 10px calc(10px + env(safe-area-inset-bottom,0px));position:relative;z-index:3}
+.reacts{display:flex;justify-content:space-around;margin-bottom:8px}
+.reacts button{background:rgba(255,255,255,.14);border:0;border-radius:50%;width:44px;height:44px;font-size:22px;cursor:pointer}
+.reacts button.on{background:rgba(255,255,255,.35);box-shadow:0 0 0 2px #fff}
+.strep{display:flex;gap:8px}
+.strep input{flex:1;padding:12px 16px;border-radius:22px;border:1.5px solid rgba(255,255,255,.5);background:rgba(0,0,0,.35);color:#fff;outline:none;font:inherit}
+.strep input::placeholder{color:rgba(255,255,255,.7)}
+.vbtn{width:100%;padding:12px;border:0;border-radius:12px;background:rgba(255,255,255,.14);color:#fff;font-weight:600;cursor:pointer;font:inherit}
+.vsheet{position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;z-index:6}
+.vcard{width:100%;max-height:70%;overflow-y:auto;background:var(--bg);color:var(--text);border-radius:18px 18px 0 0;padding:14px 0 calc(12px + env(safe-area-inset-bottom,0px))}
+.vcard h3{font-size:16px;padding:0 18px 8px}
+.remoji{font-size:22px}
+#scBody{flex:1;overflow-y:auto;padding-bottom:24px}
+.seg{display:flex;gap:6px;padding:12px 14px}
+.seg button{flex:1;padding:10px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--text);font:inherit;font-weight:600;cursor:pointer}
+.seg button[aria-selected="true"]{background:var(--orange);border-color:var(--orange);color:#fff}
+.stBox{margin:0 14px;height:260px;border-radius:18px;display:flex;align-items:center;justify-content:center;padding:18px}
+.stBox textarea{width:100%;height:100%;background:none;border:0;outline:none;resize:none;color:#fff;font:inherit;font-size:24px;font-weight:600;text-align:center;line-height:1.35}
+.stBox textarea::placeholder{color:rgba(255,255,255,.7)}
+.sw{display:flex;gap:10px;padding:12px 14px}
+.sw button{width:34px;height:34px;border-radius:50%;border:3px solid transparent;cursor:pointer}
+.sw button.on{border-color:var(--text)}
+.scprev{margin:0 14px;height:260px;border-radius:18px;background:var(--surface);display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--muted);font-size:14px}
+.scprev img,.scprev video{max-width:100%;max-height:100%}
+.stin{margin:12px 14px 0;width:calc(100% - 28px);padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);outline:none;font:inherit;color:var(--text)}
+.pickrow{display:flex;align-items:center;gap:12px;padding:10px 18px;border-bottom:1px solid var(--line);font-size:15px}
+.pickrow input{width:20px;height:20px;accent-color:var(--teal)}
+.pinbar{padding:9px 14px;background:color-mix(in srgb,var(--orange) 14%,var(--bg));border-bottom:1px solid var(--line);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#annWrap{flex:1;overflow-y:auto;background:var(--surface)}
+#annList{padding:12px 14px;display:flex;flex-direction:column;gap:12px}
+.anCard{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:14px}
+.anCard.pinned{border-color:var(--orange)}
+.anPin{font-size:12px;font-weight:700;color:var(--orange);margin-bottom:6px}
+.anTitle{display:block;font-size:16px;margin-bottom:6px}
+.anBody{font-size:14.5px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.anMeta{font-size:12px;color:var(--muted);margin-top:10px}
+.anAct{display:flex;gap:18px;margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
+.anAct button{background:none;border:0;font:inherit;font-weight:600;color:var(--teal);cursor:pointer;padding:4px 0}
+.anAct button.danger{color:var(--err)}
 @media (prefers-reduced-motion:reduce){#splash img{animation:none}*{transition:none!important}}
 /* Phase 4: people */
 .search{padding:10px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:1}
@@ -213,10 +271,16 @@ div.th{display:grid;place-items:center;font-size:11px;font-weight:700;color:var(
   <main>
     <div class="view active" id="v-chats">
       <div class="search"><input id="chatSearch" type="search" placeholder="Search chats" aria-label="Search chats" autocomplete="off"></div>
+      <div class="row tap" id="openAnn" role="button" tabindex="0"><div class="avatar" style="background:var(--orange)"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4a1 1 0 0 0 1 1h2l6 4V5L6 9H4a1 1 0 0 0-1 1z"/><path d="M16 8.5a5 5 0 0 1 0 7"/></svg></div><div class="grow"><b>Announcements</b><span id="annLast">Loading...</span></div><div class="badge hidden" id="annBadge">0</div></div>
       <div class="row tap" id="openMain" role="button" tabindex="0"><div class="avatar">CS</div><div class="grow"><b>CS 200 Level</b><span id="lastMsg">Loading...</span></div><div class="badge hidden" id="unread">0</div></div>
-      </div>
-    <div id="dmList"></div>
-    <div class="view" id="v-status"><div class="empty"><b>No statuses yet</b>Statuses from your classmates will appear here for 24 hours.</div></div>
+      <div id="dmList"></div>
+    </div>
+    <div class="view" id="v-status">
+      <div class="row tap" id="myStatus" role="button" tabindex="0"><div id="myStAv"></div><div class="grow"><b>My status</b><span id="myStSub">Tap to add a status update</span></div><button class="icon-btn" id="myStAdd" type="button" aria-label="Add a status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div>
+      <div class="sthead hidden" id="stHead">Recent updates</div>
+      <div id="stList"></div>
+      <div class="empty hidden" id="stEmpty"><b>No updates yet</b>Statuses from your classmates will appear here for 24 hours.</div>
+    </div>
     <div class="view" id="v-people"><div class="search"><input id="peopleSearch" type="search" placeholder="Search students" aria-label="Search students" autocomplete="off"></div><div id="peopleList"></div></div>
     <div class="view" id="v-profile">
       <div class="row"><div class="avatar lg" id="pAvatar">?</div><div><b id="pName">Your profile</b><span id="pEmail"></span></div></div>
@@ -240,6 +304,7 @@ div.th{display:grid;place-items:center;font-size:11px;font-weight:700;color:var(
     <div class="avatar">CS</div>
     <div class="ct"><b>CS 200 Level</b><span id="chatSub">Loading...</span></div>
   </header>
+  <div id="pinBar" class="pinbar hidden" role="button" tabindex="0"></div>
   <div id="msgs" role="log" aria-live="polite"></div>
   <div id="replyBar" class="hidden"><div><b id="rbName"></b><span id="rbText"></span></div><button class="icon-btn" id="rbClose" type="button" aria-label="Cancel reply"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <div id="attBar" class="attbar hidden"></div>
@@ -263,6 +328,38 @@ div.th{display:grid;place-items:center;font-size:11px;font-weight:700;color:var(
   <div id="dmMsgs" role="log" aria-live="polite"></div>
   <div id="dmAttBar" class="attbar hidden"></div>
   <form id="dmForm" autocomplete="off"><button class="icon-btn" id="dmAttBtn" type="button" aria-label="Attach a file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button><input type="file" id="dmAttIn" accept="image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt" hidden><textarea id="dmInput" rows="1" maxlength="2000" placeholder="Message" aria-label="Message"></textarea><button class="send" type="submit" aria-label="Send message"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a1 1 0 0 0-1.4 1.2L4 11l9 1-9 1-2 6.2a1 1 0 0 0 1.4 1.2z"/></svg></button></form>
+</section>
+<section id="annScreen" class="screen" aria-label="Announcements">
+  <header class="chathead"><button class="icon-btn" id="annBack" type="button" aria-label="Back to chats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><div class="ct" style="flex:1"><b>Announcements</b></div><button class="btn hidden" id="annNew" type="button" style="width:auto;margin:0;padding:9px 18px">New</button></header>
+  <div id="annWrap"><div id="annList"></div><div class="empty hidden" id="annEmpty"><b>No announcements yet</b>Official updates from the class admins will appear here.</div></div>
+</section>
+<section id="annComp" class="screen" aria-label="New announcement">
+  <header class="chathead"><button class="icon-btn" id="acBack" type="button" aria-label="Cancel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><div class="ct" style="flex:1"><b>New announcement</b></div><button class="btn" id="acPost" type="button" style="width:auto;margin:0;padding:9px 22px">Post</button></header>
+  <div style="flex:1;overflow-y:auto;padding:14px 0 24px">
+    <input class="stin" id="acTitle" maxlength="100" placeholder="Title" aria-label="Title" autocomplete="off">
+    <textarea class="stin" id="acText" maxlength="2000" rows="9" placeholder="Write the announcement" aria-label="Announcement text" style="resize:vertical"></textarea>
+    <label class="pickrow" style="margin-top:8px"><input type="checkbox" id="acPin"><span>Pin this announcement</span></label>
+    <p class="msg" id="acMsg" role="alert" style="padding:0 18px"></p>
+  </div>
+</section>
+<section id="story" class="screen" aria-label="Status viewer">
+  <div id="stBars"></div>
+  <div class="sthd"><div id="stAv"></div><div class="grow"><b id="stName"></b><span id="stTime"></span></div><button class="icon-btn hidden" id="stDel" type="button" aria-label="Delete this status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button><button class="icon-btn" id="stClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div id="stStage"><div id="stBody"></div><div id="stTapL"></div><div id="stTapR"></div></div>
+  <div id="stFoot"></div>
+  <div id="vsheet" class="vsheet hidden"><div class="vcard"><h3 id="vtitle"></h3><div id="vlist"></div><button class="btn" id="vclose" type="button" style="margin:10px 18px 0;width:calc(100% - 36px);background:var(--surface);color:var(--text);border:1px solid var(--line)">Close</button></div></div>
+</section>
+<section id="stComp" class="screen" aria-label="New status">
+  <header class="chathead"><button class="icon-btn" id="scBack" type="button" aria-label="Cancel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><div class="ct" style="flex:1"><b>New status</b></div><button class="btn" id="scPost" type="button" style="width:auto;margin:0;padding:9px 22px">Post</button></header>
+  <div id="scBody">
+    <div class="seg" id="scKind"><button type="button" data-k="text" aria-selected="true">Text</button><button type="button" data-k="image" aria-selected="false">Photo</button><button type="button" data-k="video" aria-selected="false">Video</button></div>
+    <div id="scText"><div class="stBox" id="scBox"><textarea id="scTa" maxlength="300" placeholder="Type a status" aria-label="Status text"></textarea></div><div class="sw" id="scSw"></div></div>
+    <div id="scMedia" class="hidden"><div class="scprev" id="scPrev"></div><div style="padding:12px 14px 0"><button class="btn" id="scPickBtn" type="button" style="margin:0;background:var(--surface);color:var(--text);border:1px solid var(--line)">Choose a photo</button></div><input id="scFile" type="file" hidden><input class="stin" id="scCap" maxlength="200" placeholder="Add a caption (optional)" aria-label="Caption"></div>
+    <div class="sthead">Who can see this</div>
+    <div class="seg" id="scPriv"><button type="button" data-p="all" aria-selected="true">Everyone</button><button type="button" data-p="only" aria-selected="false">Selected people</button></div>
+    <div id="scList" class="hidden"></div>
+    <p class="msg" id="scMsg" role="alert" style="padding:0 18px"></p>
+  </div>
 </section>
 <div id="viewer" class="hidden" role="dialog" aria-label="Photo"><button class="icon-btn" id="viewerClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><img id="viewerImg" alt=""></div>
 <div id="toast" class="hidden" role="status"></div>
@@ -323,7 +420,7 @@ div.th{display:grid;place-items:center;font-size:11px;font-weight:700;color:var(
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, updateProfile, sendEmailVerification } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, query, orderBy, limit, onSnapshot, serverTimestamp, where, writeBatch, deleteField } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, query, orderBy, limit, onSnapshot, serverTimestamp, where, writeBatch, deleteField, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAaSeGyLRFzT9lScxS9bY8wrccRCJAOzI4",
@@ -494,6 +591,7 @@ function renderDmList() {
   if (!user) return;
   const q = chatQ.trim().toLowerCase();
   $("#openMain").classList.toggle("hidden", !!q && !"cs 200 level".includes(q));
+  $("#openAnn").classList.toggle("hidden", !!q && !"announcements".includes(q));
   const items = Object.keys(dmConvs).map((id) => Object.assign({ id: id }, dmConvs[id])).sort((a, b) => tms(b.lastAt) - tms(a.lastAt));
   const frag = document.createDocumentFragment();
   let shown = 0;
@@ -778,14 +876,36 @@ function startRealtime() {
     dmReady = true; renderDmList();
     if (dmOpenId) { renderDm(); markDmRead(); }
   }, () => {}));
+  unsubs.push(onSnapshot(query(collection(db, "announcements"), orderBy("createdAt", "desc"), limit(50)), (snap) => {
+    snap.docChanges().forEach((c) => {
+      if (!anReady || c.type !== "added" || c.doc.metadata.hasPendingWrites) return;
+      const d = c.doc.data();
+      if (d.authorUid !== user.uid) toast("\uD83D\uDCE2 " + d.title);
+    });
+    anItems = snap.docs.map((d) => Object.assign({ id: d.id }, d.data({ serverTimestamps: "estimate" })));
+    anReady = true;
+    if ($("#annScreen").classList.contains("active")) { anMarkSeen(); anRender(); }
+    anRenderRow();
+  }, () => { $("#annLast").textContent = "Can't load. Publish the new Firestore rules."; }));
+  getDoc(doc(db, "admins", user.uid)).then((d) => { isAdmin = d.exists(); anRender(); }).catch(() => {});
+  unsubs.push(onSnapshot(query(collection(db, "statuses"), where("createdAt", ">", Timestamp.fromMillis(Date.now() - DAY)), orderBy("createdAt", "desc"), limit(200)), (snap) => {
+    stPub = snap.docs.map((d) => Object.assign({ id: d.id, col: "statuses" }, d.data({ serverTimestamps: "estimate" })));
+    stRender();
+  }, () => { const e = $("#stEmpty"); e.textContent = "Can't load statuses. Publish the new Firestore rules."; e.classList.remove("hidden"); }));
+  unsubs.push(onSnapshot(query(collection(db, "privateStatuses"), where("viewers", "array-contains", user.uid), limit(200)), (snap) => {
+    stPriv = snap.docs.map((d) => Object.assign({ id: d.id, col: "privateStatuses" }, d.data({ serverTimestamps: "estimate" })));
+    stRender();
+  }, () => {}));
   ping();
   pingTimer = setInterval(ping, 60000);
-  tickTimer = setInterval(() => { updateSub(); renderPeople(); if (viewingId) renderPerson(); renderDmList(); if (dmOpenId) dmHead(); }, 30000);
+  tickTimer = setInterval(() => { stRender(); updateSub(); renderPeople(); if (viewingId) renderPerson(); renderDmList(); if (dmOpenId) dmHead(); }, 30000);
 }
 
 function stopRealtime() {
   unsubs.forEach((f) => f());
   unsubs = []; msgs = []; reads = {}; readsReady = false; people = {};
+  stStop(true); stPub = []; stPriv = []; $("#stList").replaceChildren();
+  anItems = []; isAdmin = false; anReady = false; $("#annList").replaceChildren();
   clearInterval(pingTimer); clearInterval(tickTimer);
   viewingId = null; peopleQ = ""; $("#peopleSearch").value = ""; $("#peopleList").replaceChildren();
   if (dmUnsub) dmUnsub();
@@ -988,6 +1108,425 @@ if (window.visualViewport) {
     const el = $("#msgs"); el.scrollTop = el.scrollHeight;
   });
 }
+
+/* ---------- Phase 6: status ---------- */
+const ST_BG = ["#1f6f8b", "#e8710a", "#6a4c93", "#2a9d8f", "#c8553d", "#3d405b"];
+const ST_EMOJI = ["👍", "😂", "😍", "😮", "😢", "🙏"];
+const DAY = 86400000;
+const STSEND = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a1 1 0 0 0-1.4 1.2L4 11l9 1-9 1-2 6.2a1 1 0 0 0 1.4 1.2z"/></svg>';
+let stPub = [], stPriv = [], st = null, stTimer = null, stPaused = false;
+const scState = { kind: "text", bg: 0, priv: "all", file: null, url: "", sel: new Set(), busy: false };
+const stQa = (s) => Array.prototype.slice.call(document.querySelectorAll(s));
+
+function stSeenSet() { try { return new Set(JSON.parse(localStorage.getItem("cohort-seen-status") || "[]")); } catch (e) { return new Set(); } }
+function stMarkSeen(key) { try { const s = stSeenSet(); s.add(key); localStorage.setItem("cohort-seen-status", JSON.stringify(Array.from(s).slice(-500))); } catch (e) {} }
+function stAgo(t) {
+  const m = Math.floor((Date.now() - t) / 60000);
+  if (m < 1) return "Just now";
+  if (m < 60) return m + "m ago";
+  return Math.floor(m / 60) + "h ago";
+}
+function stActive() {
+  const now = Date.now();
+  return stPub.concat(stPriv).filter((s) => tms(s.createdAt) + DAY > now).sort((a, b) => tms(a.createdAt) - tms(b.createdAt));
+}
+function stGroups() {
+  const by = {};
+  stActive().forEach((s) => { (by[s.uid] = by[s.uid] || []).push(s); });
+  const seen = stSeenSet(), mine = by[user.uid] || [], others = [];
+  Object.keys(by).forEach((uid) => {
+    if (uid === user.uid) return;
+    const items = by[uid];
+    others.push({ uid: uid, items: items, unseen: items.some((s) => !seen.has(s.col + "/" + s.id)), last: tms(items[items.length - 1].createdAt) });
+  });
+  others.sort((a, b) => (Number(b.unseen) - Number(a.unseen)) || (b.last - a.last));
+  return { mine: mine, others: others };
+}
+
+function stRender() {
+  if (!user) return;
+  const g = stGroups();
+  const av = $("#myStAv");
+  const w = avatarEl(myName(), profile && profile.photoURL, "");
+  if (g.mine.length) { w.classList.add("ring"); w.classList.add("unseen"); }
+  av.replaceChildren(w);
+  $("#myStSub").textContent = g.mine.length ? g.mine.length + (g.mine.length === 1 ? " update, " : " updates, ") + stAgo(tms(g.mine[g.mine.length - 1].createdAt)) : "Tap to add a status update";
+  const frag = document.createDocumentFragment();
+  g.others.forEach((o) => {
+    const p = people[o.uid] || { name: o.items[0].name, photo: "" };
+    const row = h("div", "row tap");
+    row.dataset.uid = o.uid; row.tabIndex = 0; row.setAttribute("role", "button");
+    const a = avatarEl(p.name, p.photo, "");
+    a.classList.add("ring"); if (o.unseen) a.classList.add("unseen");
+    const t = h("div", "grow");
+    t.appendChild(h("b", null, p.name)); t.appendChild(h("span", null, stAgo(o.last)));
+    row.appendChild(a); row.appendChild(t); frag.appendChild(row);
+  });
+  $("#stList").replaceChildren(frag);
+  $("#stEmpty").classList.toggle("hidden", g.others.length > 0);
+  $("#stHead").classList.toggle("hidden", g.others.length === 0);
+  $('.tab[data-view="status"]').classList.toggle("has", g.others.some((o) => o.unseen));
+}
+
+/* ----- viewer ----- */
+function stClear() {
+  clearInterval(stTimer); stTimer = null;
+  if (st && st.video) { try { st.video.pause(); } catch (e) {} }
+}
+function stPause(on) {
+  stPaused = on;
+  if (st && st.video) { try { if (on) st.video.pause(); else st.video.play().catch(() => {}); } catch (e) {} }
+}
+function stStop(quiet) {
+  stClear();
+  if (st) st.unsubs.forEach((f) => f());
+  st = null; stPaused = false;
+  $("#vsheet").classList.add("hidden"); $("#stBody").replaceChildren(); $("#stFoot").replaceChildren();
+  if (!quiet) { window.Cohort.show("app"); stRender(); }
+}
+function stNext() { if (!st) return; if (st.i < st.items.length - 1) { st.i++; stShow(); } else stStop(); }
+function stPrev() { if (!st) return; if (st.i > 0) st.i--; stShow(); }
+
+function stOpen(uid) {
+  const g = stGroups();
+  const items = uid === user.uid ? g.mine : ((g.others.find((o) => o.uid === uid) || {}).items);
+  if (!items || !items.length) return;
+  let i = 0;
+  if (uid !== user.uid) { const seen = stSeenSet(); const k = items.findIndex((s) => !seen.has(s.col + "/" + s.id)); i = k < 0 ? 0 : k; }
+  st = { uid: uid, items: items.slice(), i: i, unsubs: [], views: {}, reacts: {}, mine: null, video: null, bar: null, elapsed: 0 };
+  window.Cohort.show("story");
+  stShow();
+}
+
+function stShow() {
+  stClear();
+  st.unsubs.forEach((f) => f()); st.unsubs = []; st.views = {}; st.reacts = {}; st.mine = null;
+  $("#vsheet").classList.add("hidden");
+  const s = st.items[st.i], own = st.uid === user.uid, key = s.col + "/" + s.id;
+  const p = people[st.uid] || { name: s.name, photo: "" };
+  const bars = $("#stBars"); bars.replaceChildren();
+  st.items.forEach((_, k) => { const i = document.createElement("i"), b = document.createElement("b"); if (k < st.i) b.style.width = "100%"; i.appendChild(b); bars.appendChild(i); });
+  st.bar = bars.children[st.i].firstChild;
+  $("#stAv").replaceChildren(avatarEl(p.name, p.photo, "sm"));
+  $("#stName").textContent = own ? "My status" : p.name;
+  $("#stTime").textContent = stAgo(tms(s.createdAt));
+  $("#stDel").classList.toggle("hidden", !own);
+
+  const body = $("#stBody"); body.replaceChildren();
+  st.video = null;
+  const okUrl = s.media && typeof s.media.url === "string" && /^https:\/\/res\.cloudinary\.com\//.test(s.media.url);
+  if (s.kind === "text") {
+    const d = h("div", "stText", s.text);
+    d.style.background = ST_BG[s.bg] || ST_BG[0];
+    d.style.fontSize = s.text.length > 80 ? "20px" : s.text.length > 30 ? "26px" : "32px";
+    body.appendChild(d);
+  } else if (s.kind === "image" && okUrl) {
+    const im = document.createElement("img"); im.src = cld(s.media.url, "c_limit,w_1200,f_auto,q_auto"); im.alt = ""; body.appendChild(im);
+  } else if (s.kind === "video" && okUrl) {
+    const v = document.createElement("video"); v.src = s.media.url; v.playsInline = true; v.autoplay = true; body.appendChild(v); st.video = v;
+  } else body.appendChild(h("div", "stText", "This status can't be shown."));
+  if (s.kind !== "text" && s.text) body.appendChild(h("div", "stCap", s.text));
+
+  stPaused = false;
+  if (st.video) {
+    const v = st.video;
+    v.addEventListener("timeupdate", () => { if (v.duration && st && st.bar) st.bar.style.width = (v.currentTime / v.duration * 100) + "%"; });
+    v.addEventListener("ended", stNext); v.addEventListener("error", stNext);
+    v.play().catch(() => { v.muted = true; v.play().catch(() => {}); });
+  } else {
+    let last = Date.now(); st.elapsed = 0;
+    stTimer = setInterval(() => {
+      const n = Date.now();
+      if (!stPaused) st.elapsed += n - last;
+      last = n;
+      st.bar.style.width = Math.min(100, st.elapsed / 5000 * 100) + "%";
+      if (st.elapsed >= 5000) stNext();
+    }, 50);
+  }
+
+  const foot = $("#stFoot"); foot.replaceChildren();
+  if (own) {
+    const b = h("button", "vbtn", "0 views"); b.type = "button"; b.id = "stViews"; foot.appendChild(b);
+    st.unsubs.push(onSnapshot(collection(db, s.col, s.id, "views"), (snap) => {
+      st.views = {}; snap.forEach((d) => { st.views[d.id] = tms(d.data({ serverTimestamps: "estimate" }).at); }); stOwnCount();
+    }, () => {}));
+    st.unsubs.push(onSnapshot(collection(db, s.col, s.id, "reacts"), (snap) => {
+      st.reacts = {}; snap.forEach((d) => { st.reacts[d.id] = d.data().emoji; }); stOwnCount();
+    }, () => {}));
+  } else {
+    const wasSeen = stSeenSet().has(key);
+    stMarkSeen(key);
+    if (!wasSeen) setDoc(doc(db, s.col, s.id, "views", user.uid), { at: serverTimestamp() }).catch(() => {});
+    const rb = h("div", "reacts");
+    ST_EMOJI.forEach((e) => { const b = h("button", null, e); b.type = "button"; b.dataset.e = e; b.setAttribute("aria-label", "React " + e); rb.appendChild(b); });
+    foot.appendChild(rb);
+    getDoc(doc(db, s.col, s.id, "reacts", user.uid)).then((d) => { if (d.exists() && st && st.items[st.i] === s) stMarkReact(d.data().emoji); }).catch(() => {});
+    const f = document.createElement("form"); f.className = "strep"; f.autocomplete = "off";
+    const inp = document.createElement("input"); inp.placeholder = "Reply to " + p.name.split(" ")[0] + "..."; inp.maxLength = 500; inp.setAttribute("aria-label", "Reply to status");
+    const sb = document.createElement("button"); sb.className = "send"; sb.type = "submit"; sb.setAttribute("aria-label", "Send reply"); sb.innerHTML = STSEND;
+    inp.addEventListener("focus", () => stPause(true));
+    inp.addEventListener("blur", () => { if ($("#vsheet").classList.contains("hidden")) stPause(false); });
+    f.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const t = inp.value.trim();
+      if (!t) return;
+      inp.value = ""; inp.blur();
+      sendStatusReply(s, t).then(() => toast("Reply sent.")).catch(() => toast("Reply not sent. Try again."));
+    });
+    f.appendChild(inp); f.appendChild(sb); foot.appendChild(f);
+  }
+}
+
+function stMarkReact(e) {
+  if (!st) return;
+  st.mine = e;
+  stQa(".reacts button").forEach((b) => b.classList.toggle("on", b.dataset.e === e));
+}
+function stReact(e) {
+  if (!st) return;
+  const s = st.items[st.i], ref = doc(db, s.col, s.id, "reacts", user.uid);
+  if (st.mine === e) { deleteDoc(ref).catch(() => {}); stMarkReact(null); }
+  else { setDoc(ref, { emoji: e, at: serverTimestamp() }).catch(() => toast("Couldn't send your reaction.")); stMarkReact(e); }
+}
+function stOwnCount() {
+  if (!st) return;
+  const ids = Array.from(new Set(Object.keys(st.views).concat(Object.keys(st.reacts)))).filter((id) => id !== user.uid);
+  const b = $("#stViews");
+  if (b) b.textContent = ids.length + (ids.length === 1 ? " view" : " views");
+  if (!$("#vsheet").classList.contains("hidden")) stRenderViews();
+}
+function stRenderViews() {
+  const ids = Array.from(new Set(Object.keys(st.views).concat(Object.keys(st.reacts)))).filter((id) => id !== user.uid);
+  ids.sort((a, b) => (st.views[b] || 0) - (st.views[a] || 0));
+  $("#vtitle").textContent = "Viewed by " + ids.length;
+  const box = $("#vlist"); box.replaceChildren();
+  if (!ids.length) { box.appendChild(h("div", "empty", "No views yet.")); return; }
+  ids.forEach((id) => {
+    const p = people[id] || { name: "Student", photo: "" };
+    const row = h("div", "row");
+    row.appendChild(avatarEl(p.name, p.photo, "sm"));
+    const g = h("div", "grow"); g.appendChild(h("b", null, p.name)); g.appendChild(h("span", null, st.views[id] ? stAgo(st.views[id]) : ""));
+    row.appendChild(g);
+    if (st.reacts[id]) row.appendChild(h("span", "remoji", st.reacts[id]));
+    box.appendChild(row);
+  });
+}
+
+async function sendStatusReply(s, text) {
+  const pid = s.uid, id = dmId(user.uid, pid);
+  const what = s.kind === "text" ? s.text : (s.kind === "image" ? "Photo" : "Video") + (s.text ? ": " + s.text : "");
+  const body = ("\u21A9 Status reply (" + what.slice(0, 40) + ")\n" + text).slice(0, 2000);
+  const b = writeBatch(db), cref = doc(db, "dms", id), mref = doc(collection(db, "dms", id, "messages"));
+  b.set(cref, { members: [user.uid, pid].sort(), lastText: ("\u21A9 " + text).slice(0, 100), lastUid: user.uid, lastAt: serverTimestamp(), seen: { [user.uid]: serverTimestamp() } }, { merge: true });
+  b.set(mref, { text: body, uid: user.uid, createdAt: serverTimestamp() });
+  await b.commit();
+}
+
+/* ----- composer ----- */
+function scDraw() {
+  const k = scState.kind, word = k === "image" ? "photo" : "video";
+  stQa("#scKind button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.k === k)));
+  stQa("#scPriv button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.p === scState.priv)));
+  $("#scText").classList.toggle("hidden", k !== "text");
+  $("#scMedia").classList.toggle("hidden", k === "text");
+  $("#scBox").style.background = ST_BG[scState.bg];
+  stQa("#scSw button").forEach((b, i) => b.classList.toggle("on", i === scState.bg));
+  $("#scPickBtn").textContent = scState.file ? "Choose a different " + word : "Choose a " + word;
+  $("#scFile").accept = k === "image" ? "image/*" : "video/*";
+  const pv = $("#scPrev"); pv.replaceChildren();
+  if (scState.url) { URL.revokeObjectURL(scState.url); scState.url = ""; }
+  if (!scState.file) pv.textContent = "No " + word + " chosen";
+  else {
+    scState.url = URL.createObjectURL(scState.file);
+    const el = document.createElement(k === "image" ? "img" : "video");
+    el.src = scState.url;
+    if (k === "video") { el.controls = true; el.playsInline = true; el.muted = true; } else el.alt = "";
+    pv.appendChild(el);
+  }
+  const lst = $("#scList");
+  lst.classList.toggle("hidden", scState.priv !== "only");
+  if (scState.priv === "only") scDrawList();
+}
+function scDrawList() {
+  const lst = $("#scList");
+  const ids = Object.keys(people).filter((id) => id !== user.uid).sort((a, b) => people[a].name.localeCompare(people[b].name));
+  lst.replaceChildren(h("div", "sthead", "Choose who can see it"));
+  ids.forEach((id) => {
+    const l = document.createElement("label"); l.className = "pickrow";
+    const c = document.createElement("input"); c.type = "checkbox"; c.checked = scState.sel.has(id); c.dataset.id = id;
+    l.appendChild(c); l.appendChild(avatarEl(people[id].name, people[id].photo, "sm")); l.appendChild(h("span", null, people[id].name));
+    lst.appendChild(l);
+  });
+}
+function scOpen() {
+  scState.kind = "text"; scState.bg = 0; scState.priv = "all"; scState.file = null; scState.sel = new Set(); scState.busy = false;
+  $("#scTa").value = ""; $("#scCap").value = ""; msg($("#scMsg"), "");
+  scDraw(); window.Cohort.show("stComp");
+}
+function scClose() {
+  if (scState.url) { URL.revokeObjectURL(scState.url); scState.url = ""; }
+  scState.file = null;
+  window.Cohort.show("app");
+}
+function stDurationOk(f) {
+  return new Promise((res) => {
+    const v = document.createElement("video"), u = URL.createObjectURL(f);
+    v.preload = "metadata";
+    v.onloadedmetadata = () => { URL.revokeObjectURL(u); res(!isFinite(v.duration) || v.duration <= 31); };
+    v.onerror = () => { URL.revokeObjectURL(u); res(true); };
+    v.src = u;
+  });
+}
+async function scPost() {
+  if (scState.busy) return;
+  const m = $("#scMsg"), k = scState.kind; msg(m, "");
+  let text = "";
+  if (k === "text") { text = $("#scTa").value.trim(); if (!text) { msg(m, "Type something first."); return; } }
+  else { if (!scState.file) { msg(m, "Choose a " + (k === "image" ? "photo" : "video") + " first."); return; } text = $("#scCap").value.trim(); }
+  if (scState.priv === "only" && scState.sel.size === 0) { msg(m, "Choose at least one person, or switch to Everyone."); return; }
+  if (scState.sel.size > 199) { msg(m, "Choose up to 199 people."); return; }
+  if (k !== "text" && (!CLOUD_NAME || !UPLOAD_PRESET)) { msg(m, "Media uploads aren't set up yet."); return; }
+  scState.busy = true; busy($("#scPost"), true);
+  try {
+    let media = null;
+    if (k !== "text") {
+      msg(m, "Uploading...", true);
+      const f = k === "image" ? await shrink(scState.file, 1600, 0.82) : scState.file;
+      const r = await cloudUpload(f, "status", (pct) => msg(m, "Uploading " + pct + "%", true));
+      media = { url: r.secure_url, type: k, name: scState.file.name.slice(0, 120), size: f.size };
+    }
+    const data = { uid: user.uid, name: myName(), kind: k, text: text, bg: scState.bg, createdAt: serverTimestamp(), expiresAt: Timestamp.fromMillis(Date.now() + DAY) };
+    if (media) data.media = media;
+    if (scState.priv === "only") { data.viewers = [user.uid].concat(Array.from(scState.sel)); await addDoc(collection(db, "privateStatuses"), data); }
+    else await addDoc(collection(db, "statuses"), data);
+    scClose(); toast("Status posted.");
+  } catch (err) {
+    msg(m, err && err.code === "permission-denied" ? "Couldn't post. Publish the new Firestore rules first." : "Couldn't post your status. Check your connection and try again.");
+  } finally { scState.busy = false; busy($("#scPost"), false); }
+}
+
+/* ----- wiring ----- */
+ST_BG.forEach((c, i) => { const b = document.createElement("button"); b.type = "button"; b.style.background = c; b.setAttribute("aria-label", "Background " + (i + 1)); b.addEventListener("click", () => { scState.bg = i; scDraw(); }); $("#scSw").appendChild(b); });
+$("#myStatus").addEventListener("click", (e) => { if (e.target.closest("#myStAdd")) { scOpen(); return; } if (stGroups().mine.length) stOpen(user.uid); else scOpen(); });
+$("#myStatus").addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("#myStatus").click(); } });
+$("#stList").addEventListener("click", (e) => { const r = e.target.closest(".row"); if (r) stOpen(r.dataset.uid); });
+$("#stList").addEventListener("keydown", (e) => { if (e.key !== "Enter" && e.key !== " ") return; const r = e.target.closest(".row"); if (r) { e.preventDefault(); stOpen(r.dataset.uid); } });
+$("#stClose").addEventListener("click", () => stStop());
+$("#stTapL").addEventListener("click", stPrev);
+$("#stTapR").addEventListener("click", stNext);
+$("#stFoot").addEventListener("click", (e) => {
+  const b = e.target.closest(".reacts button");
+  if (b && st) { stReact(b.dataset.e); return; }
+  if (e.target.closest("#stViews") && st) { stPause(true); $("#vsheet").classList.remove("hidden"); stRenderViews(); }
+});
+function stCloseViews() { $("#vsheet").classList.add("hidden"); stPause(false); }
+$("#vclose").addEventListener("click", stCloseViews);
+$("#vsheet").addEventListener("click", (e) => { if (e.target.id === "vsheet") stCloseViews(); });
+$("#stDel").addEventListener("click", async () => {
+  if (!st) return;
+  const s = st.items[st.i];
+  stPause(true);
+  if (!confirm("Delete this status?")) { stPause(false); return; }
+  try { await deleteDoc(doc(db, s.col, s.id)); } catch (err) { toast("Couldn't delete the status."); stPause(false); return; }
+  st.items.splice(st.i, 1);
+  if (!st.items.length) { stStop(); return; }
+  if (st.i >= st.items.length) st.i = st.items.length - 1;
+  stShow();
+});
+$("#scBack").addEventListener("click", scClose);
+$("#scPost").addEventListener("click", scPost);
+$("#scKind").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; scState.kind = b.dataset.k; scState.file = null; msg($("#scMsg"), ""); scDraw(); });
+$("#scPriv").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; scState.priv = b.dataset.p; scDraw(); });
+$("#scList").addEventListener("change", (e) => { const c = e.target; if (!c.dataset || !c.dataset.id) return; if (c.checked) scState.sel.add(c.dataset.id); else scState.sel.delete(c.dataset.id); });
+$("#scPickBtn").addEventListener("click", () => $("#scFile").click());
+$("#scFile").addEventListener("change", async (e) => {
+  const f = e.target.files && e.target.files[0]; e.target.value = "";
+  if (!f) return;
+  const k = scState.kind, m = $("#scMsg"); msg(m, "");
+  if (f.type.indexOf(k + "/") !== 0) { msg(m, "Choose a " + (k === "image" ? "photo." : "video.")); return; }
+  const max = k === "video" ? 25 : 20;
+  if (f.size > max * 1048576) { msg(m, "That file is too big. The limit is " + max + " MB."); return; }
+  if (k === "video" && !(await stDurationOk(f))) { msg(m, "Videos can be up to 30 seconds."); return; }
+  scState.file = f; scDraw();
+});
+
+/* ---------- Phase 9: announcements ---------- */
+let anItems = [], isAdmin = false, anReady = false;
+const AN_KEY = "cohort-ann-seen";
+function anSeenAt() { try { return Number(localStorage.getItem(AN_KEY) || 0); } catch (e) { return 0; } }
+function anMarkSeen() { try { localStorage.setItem(AN_KEY, String(anItems.reduce((m, a) => Math.max(m, tms(a.createdAt)), 0))); } catch (e) {} }
+function anSorted() { return anItems.slice().sort((a, b) => (Number(!!b.pinned) - Number(!!a.pinned)) || (tms(b.createdAt) - tms(a.createdAt))); }
+function anUnread() { const seen = anSeenAt(); return anItems.filter((a) => a.authorUid !== user.uid && tms(a.createdAt) > seen).length; }
+
+function anRenderRow() {
+  if (!user) return;
+  const newest = anItems.slice().sort((a, b) => tms(b.createdAt) - tms(a.createdAt))[0];
+  $("#annLast").textContent = newest ? (newest.pinned ? "\uD83D\uDCCC " : "") + newest.title : "No announcements yet";
+  const n = $("#annScreen").classList.contains("active") ? 0 : anUnread();
+  const b = $("#annBadge"); b.textContent = n > 99 ? "99+" : String(n); b.classList.toggle("hidden", n === 0);
+  const pin = anSorted().find((a) => a.pinned), bar = $("#pinBar");
+  bar.classList.toggle("hidden", !pin);
+  if (pin) bar.textContent = "\uD83D\uDCCC " + pin.title;
+}
+
+function anRender() {
+  const items = anSorted(), frag = document.createDocumentFragment();
+  items.forEach((a) => {
+    const c = h("div", "anCard" + (a.pinned ? " pinned" : ""));
+    if (a.pinned) c.appendChild(h("div", "anPin", "\uD83D\uDCCC Pinned"));
+    c.appendChild(h("b", "anTitle", a.title));
+    c.appendChild(h("div", "anBody", a.body));
+    const t = tms(a.createdAt) || Date.now();
+    c.appendChild(h("div", "anMeta", (a.authorName || "Admin") + ", " + dayLabel(t) + " at " + timeStr(t)));
+    if (isAdmin) {
+      const r = h("div", "anAct");
+      const p = h("button", null, a.pinned ? "Unpin" : "Pin"); p.type = "button"; p.dataset.act = "pin"; p.dataset.id = a.id;
+      const d = h("button", "danger", "Delete"); d.type = "button"; d.dataset.act = "del"; d.dataset.id = a.id;
+      r.appendChild(p); r.appendChild(d); c.appendChild(r);
+    }
+    frag.appendChild(c);
+  });
+  $("#annList").replaceChildren(frag);
+  $("#annEmpty").classList.toggle("hidden", items.length > 0);
+  $("#annNew").classList.toggle("hidden", !isAdmin);
+}
+
+function anOpen() { anRender(); window.Cohort.show("annScreen"); anMarkSeen(); anRenderRow(); }
+function anClose() { window.Cohort.show("app"); anRenderRow(); }
+
+async function acPost() {
+  if (!isAdmin) return;
+  const m = $("#acMsg"), t = $("#acTitle").value.trim(), b = $("#acText").value.trim();
+  msg(m, "");
+  if (t.length < 2) { msg(m, "Add a title (at least 2 characters)."); return; }
+  if (!b) { msg(m, "Write the announcement."); return; }
+  busy($("#acPost"), true);
+  try {
+    await addDoc(collection(db, "announcements"), { title: t, body: b, authorUid: user.uid, authorName: myName(), createdAt: serverTimestamp(), pinned: $("#acPin").checked });
+    $("#acTitle").value = ""; $("#acText").value = ""; $("#acPin").checked = false;
+    anOpen(); toast("Announcement posted.");
+  } catch (err) {
+    msg(m, err && err.code === "permission-denied" ? "Couldn't post. Check that your account is set up as an admin and the new rules are published." : "Couldn't post. Check your connection and try again.");
+  } finally { busy($("#acPost"), false); }
+}
+
+$("#openAnn").addEventListener("click", anOpen);
+$("#openAnn").addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); anOpen(); } });
+$("#annBack").addEventListener("click", anClose);
+$("#annNew").addEventListener("click", () => { msg($("#acMsg"), ""); window.Cohort.show("annComp"); });
+$("#acBack").addEventListener("click", () => window.Cohort.show("annScreen"));
+$("#acPost").addEventListener("click", acPost);
+$("#pinBar").addEventListener("click", () => { closeChat(); anOpen(); });
+$("#annList").addEventListener("click", async (e) => {
+  const b = e.target.closest("button");
+  if (!b || !isAdmin) return;
+  const a = anItems.find((x) => x.id === b.dataset.id);
+  if (!a) return;
+  try {
+    if (b.dataset.act === "pin") await updateDoc(doc(db, "announcements", a.id), { pinned: !a.pinned });
+    else if (b.dataset.act === "del" && confirm("Delete this announcement for everyone?")) await deleteDoc(doc(db, "announcements", a.id));
+  } catch (err) { toast("Couldn't update the announcement."); }
+});
 
 function route() {
   if (!window.__splashDone || !authKnown) return;
