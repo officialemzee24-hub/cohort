@@ -30,7 +30,8 @@
   --text:#f1f3f4; --muted:#9aa3a8; --accent:#f58220; --err:#ff8a80; --ok:#6fcf97; --own:#1f4a58;
   color-scheme:dark;
 }
-*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+input,textarea,[contenteditable="true"],#pUid{ -webkit-user-select:text;user-select:text }
 html,body{height:100%}
 body{font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
 button,input{font:inherit;color:inherit}
@@ -124,6 +125,12 @@ nav{display:flex;border-top:1px solid var(--line);background:var(--bg)}
 #replyBar div{flex:1;min-width:0}
 #replyBar b{display:block;font-size:12px}
 #replyBar span{display:block;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#dmReplyBar{display:flex;align-items:center;gap:8px;padding:6px 8px 6px 12px;border-top:1px solid var(--line);background:var(--bg);border-left:3px solid var(--orange);font-size:13px}
+#dmReplyBar div{flex:1;min-width:0}
+#dmReplyBar b{display:block;font-size:12px}
+#dmReplyBar span{display:block;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow.swiping .bubble{transition:none;box-shadow:0 0 0 2px color-mix(in srgb,var(--orange) 45%,transparent)}
+.mrow{touch-action:pan-y}
 #composer,#dmForm{display:flex;gap:8px;align-items:flex-end;padding:8px 10px;border-top:1px solid var(--line);background:var(--bg)}
 #mi,#dmInput{flex:1;resize:none;max-height:120px;padding:11px 14px;border-radius:20px;border:1.5px solid var(--line);background:var(--surface);outline:none;line-height:1.35}
 #mi:focus-visible,#dmInput:focus-visible{border-color:var(--teal)}
@@ -343,7 +350,7 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
     <div class="view" id="v-people"><div class="search"><input id="peopleSearch" type="search" placeholder="Search students" aria-label="Search students" autocomplete="off"></div><div id="peopleList"></div></div>
     <div class="view" id="v-profile">
       <div class="row"><div class="avatar lg" id="pAvatar">?</div><div><b id="pName">Your profile</b><span id="pEmail"></span></div></div>
-      <div class="setting" style="flex-direction:column;align-items:flex-start;gap:4px"><span style="font-size:13px;color:var(--muted)">Account ID (used to set up admins)</span><span id="pUid" style="font-size:12.5px;word-break:break-all;user-select:all"></span><span id="pAdmin" style="font-size:13px"></span><button class="btn hidden" id="pMakeAdmin" type="button" style="margin:8px 0 0;width:auto;padding:9px 18px">Set me up as admin</button><button class="btn" id="pCopy" type="button" style="margin:8px 0 0;width:auto;padding:9px 18px;background:var(--surface);color:var(--text);border:1px solid var(--line)">Copy account ID</button></div>
+      <div class="setting hidden" id="adminIdCard" style="flex-direction:column;align-items:flex-start;gap:4px"><span style="font-size:13px;color:var(--muted)">Admin account ID</span><span id="pUid" style="font-size:12.5px;word-break:break-all;user-select:all"></span><span id="pAdmin" style="font-size:13px"></span><button class="btn hidden" id="pMakeAdmin" type="button" style="margin:8px 0 0;width:auto;padding:9px 18px">Set me up as admin</button><button class="btn" id="pCopy" type="button" style="margin:8px 0 0;width:auto;padding:9px 18px;background:var(--surface);color:var(--text);border:1px solid var(--line)">Copy account ID</button></div>
       <div class="edit"><button class="btn" id="photoBtn" type="button" style="margin-top:0;background:var(--surface);color:var(--text);border:1px solid var(--line)">Change profile photo</button><input type="file" id="photoIn" accept="image/*" hidden><p class="msg" id="photoMsg" role="alert"></p></div>
       <div class="edit"><div class="field"><label for="pn">Display name</label><input id="pn" type="text" autocomplete="name" maxlength="60"></div><button class="btn" id="saveName" type="button">Save changes</button><p class="msg" id="profMsg" role="status"></p></div>
       <div class="setting" id="notifRow"><span>Phone notifications</span><button class="toggle" id="notifToggle" role="switch" aria-checked="false" aria-label="Phone notifications"></button></div>
@@ -401,6 +408,7 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
 <section id="dm" class="screen" aria-label="Private chat">
   <header class="chathead"><button class="icon-btn" id="dmBack" aria-label="Back to chats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><div id="dmAv"></div><div class="ct"><b id="dmName"></b><span id="dmSub"></span></div></header>
   <div id="dmMsgs" role="log" aria-live="polite"></div>
+  <div id="dmReplyBar" class="hidden"><div><b id="dmRbName"></b><span id="dmRbText"></span></div><button class="icon-btn" id="dmRbClose" type="button" aria-label="Cancel reply"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <div id="dmAttBar" class="attbar hidden"></div>
   <form id="dmForm" autocomplete="off"><button class="icon-btn" id="dmAttBtn" type="button" aria-label="Attach a file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button><input type="file" id="dmAttIn" accept="image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt" hidden><textarea id="dmInput" rows="1" maxlength="2000" placeholder="Message" aria-label="Message"></textarea><button class="send" type="submit" aria-label="Send message"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a1 1 0 0 0-1.4 1.2L4 11l9 1-9 1-2 6.2a1 1 0 0 0 1.4 1.2z"/></svg></button></form>
 </section>
@@ -770,7 +778,7 @@ function closePerson() {
 }
 
 /* ---------- Phase 5: private messages ---------- */
-let dmConvs = {}, dmReady = false, dmOpenId = null, dmPeer = null, dmMsgs = [], dmUnsub = null, chatQ = "";
+let dmConvs = {}, dmReady = false, dmOpenId = null, dmPeer = null, dmMsgs = [], dmUnsub = null, chatQ = "", dmReplyRef = null;
 const dmId = (a, b) => [a, b].sort().join("_");
 const peerOf = (c) => c.members.find((x) => x !== user.uid);
 const unreadDm = (c) => !!c.lastUid && c.lastUid !== user.uid && tms(c.lastAt) > tms(c.seen && c.seen[user.uid]);
@@ -831,6 +839,14 @@ function renderDm(force) {
     if (day !== prevDay) { frag.appendChild(h("div", "daysep", day)); prevDay = day; }
     const mine = m.uid === user.uid, row = h("div", "mrow" + (mine ? " mine" : "")), b = h("div", "bubble");
     b.style.cursor = "default";
+    row.dataset.id = m.id;
+    if (m.replyTo) {
+      const q = h("div", "quote");
+      q.dataset.ref = m.replyTo.id;
+      q.appendChild(h("b", null, m.replyTo.name || "Student"));
+      q.appendChild(h("span", null, m.replyTo.text || ""));
+      b.appendChild(q);
+    }
     if (m.media) b.appendChild(mediaEl(m.media));
     { const t = capOf(m); if (t) b.appendChild(h("div", "txt", t)); }
     const meta = h("div", "meta");
@@ -861,8 +877,23 @@ function openDm(pid) {
   window.Cohort.show("dm");
 }
 
+function clearDmReply() {
+  dmReplyRef = null;
+  $("#dmReplyBar").classList.add("hidden");
+}
+
+function setDmReply(m) {
+  if (!m || !dmOpenId) return;
+  dmReplyRef = { id: m.id, name: m.uid === user.uid ? myName() : ((people[m.uid] || {}).name || "Student"), text: capOf(m).slice(0, 120) };
+  $("#dmRbName").textContent = dmReplyRef.name;
+  $("#dmRbText").textContent = dmReplyRef.text;
+  $("#dmReplyBar").classList.remove("hidden");
+  $("#dmInput").focus();
+}
+
 function closeDm() {
   clearPending("dm");
+  clearDmReply();
   if (dmUnsub) dmUnsub();
   dmUnsub = null; dmOpenId = null; dmPeer = null; dmMsgs = [];
   $("#dm").style.height = "";
@@ -883,10 +914,11 @@ async function sendDm() {
   const body = text || mediaLabel(media);
   box.value = ""; dmAuto();
   const b = writeBatch(db), cref = doc(db, "dms", id), mref = doc(collection(db, "dms", id, "messages")), msg = { text: body, uid: user.uid, createdAt: serverTimestamp() };
+  if (dmReplyRef) msg.replyTo = { id: dmReplyRef.id, name: dmReplyRef.name, text: dmReplyRef.text };
   if (media) msg.media = media;
   b.set(cref, { members: [user.uid, pid].sort(), lastText: body.slice(0, 100), lastUid: user.uid, lastAt: serverTimestamp(), seen: { [user.uid]: serverTimestamp() } }, { merge: true });
   b.set(mref, msg);
-  try { await b.commit(); clearPending("dm"); }
+  try { await b.commit(); clearPending("dm"); clearDmReply(); }
   catch (err) { box.value = text; dmAuto(); toast("Message not sent. Check your connection and try again."); }
 }
 
@@ -1088,12 +1120,23 @@ function startRealtime() {
     if ($("#annScreen").classList.contains("active")) { anMarkSeen(); anRender(); }
     anRenderRow();
   }, () => { $("#annLast").textContent = "Can't load. Publish the new Firestore rules."; }));
-  $("#pUid").textContent = user.uid;
+  $("#adminIdCard").classList.add("hidden");
+  $("#pUid").textContent = "";
+  $("#pAdmin").textContent = "";
   getDoc(doc(db, "admins", user.uid)).then((d) => {
     isAdmin = d.exists(); anRender(); modAdminInit();
-    $("#pAdmin").textContent = isAdmin ? "Role: admin" : "Role: student (no admin entry found for this ID)";
+    if (isAdmin) {
+      $("#adminIdCard").classList.remove("hidden");
+      $("#pUid").textContent = user.uid;
+      $("#pAdmin").textContent = "Role: admin";
+    }
     $("#pMakeAdmin").classList.toggle("hidden", isAdmin || !user.email || user.email.toLowerCase() !== ADMIN_EMAIL);
-  }).catch((err) => { $("#pAdmin").textContent = "Admin check failed: " + ((err && err.code) || "error"); });
+  }).catch((err) => {
+    isAdmin = false;
+    $("#adminIdCard").classList.add("hidden");
+    $("#pAdmin").textContent = "";
+    anRender(); modAdminInit();
+  });
   unsubs.push(onSnapshot(query(collection(db, "statuses"), where("createdAt", ">", Timestamp.fromMillis(Date.now() - DAY)), orderBy("createdAt", "desc"), limit(200)), (snap) => {
     stPub = snap.docs.map((d) => Object.assign({ id: d.id, col: "statuses" }, d.data({ serverTimestamps: "estimate" })));
     stRender(); watchMyReacts();
@@ -1125,6 +1168,7 @@ function stopRealtime() {
   viewingId = null; peopleQ = ""; $("#peopleSearch").value = ""; $("#peopleList").replaceChildren();
   if (dmUnsub) dmUnsub();
   dmUnsub = null; dmOpenId = null; dmPeer = null; dmMsgs = []; dmConvs = {}; dmReady = false; chatQ = "";
+  clearDmReply();
   $("#chatSearch").value = ""; $("#dmList").replaceChildren(); $("#dm").style.height = "";
   $('.tab[data-view="chats"]').classList.remove("has");
   clearPending("main"); clearPending("dm");
@@ -1267,7 +1311,66 @@ $("#mi").addEventListener("input", autosize);
 $("#mi").addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey && !/Android|iPhone|iPad|Mobi/i.test(navigator.userAgent)) { e.preventDefault(); send(); }
 });
+const swipeState = { row: null, startX: 0, startY: 0, active: false, moved: false, suppressUntil: 0 };
+
+function beginSwipe(e, row) {
+  if (!row || e.pointerType === "mouse") return;
+  swipeState.row = row;
+  swipeState.startX = e.clientX;
+  swipeState.startY = e.clientY;
+  swipeState.active = true;
+  swipeState.moved = false;
+}
+
+function moveSwipe(e) {
+  const st = swipeState;
+  if (!st.active || !st.row) return;
+  const dx = e.clientX - st.startX, dy = e.clientY - st.startY;
+  if (Math.abs(dy) > 24 && Math.abs(dy) > Math.abs(dx)) {
+    st.active = false;
+    st.row.style.transform = "";
+    st.row.classList.remove("swiping");
+    return;
+  }
+  if (dx <= 0) return;
+  st.moved = dx > 12;
+  const shift = Math.min(dx, 88);
+  if (st.moved) {
+    st.row.classList.add("swiping");
+    st.row.style.transform = "translateX(" + shift + "px)";
+  }
+}
+
+function finishSwipe(e) {
+  const st = swipeState;
+  if (!st.active || !st.row) return;
+  const row = st.row, dx = e.clientX - st.startX, dy = e.clientY - st.startY;
+  st.active = false;
+  row.style.transform = "";
+  row.classList.remove("swiping");
+  st.row = null;
+}
+
+function bindSwipe(container, getMessage, reply) {
+  container.addEventListener("pointerdown", (e) => {
+    const row = e.target.closest(".mrow");
+    if (row && container.contains(row)) beginSwipe(e, row);
+  });
+  container.addEventListener("pointermove", moveSwipe);
+  container.addEventListener("pointerup", (e) => {
+    if (swipeState.row && container.contains(swipeState.row)) {
+      const row = swipeState.row, dx = e.clientX - swipeState.startX, dy = e.clientY - swipeState.startY;
+      const id = row.dataset.id;
+      const m = getMessage(id);
+      if (dx >= 64 && Math.abs(dy) < 45 && m) reply(m);
+    }
+    finishSwipe(e);
+  });
+  container.addEventListener("pointercancel", (e) => finishSwipe(e));
+}
+
 $("#msgs").addEventListener("click", (e) => {
+  if (swipeState.suppressUntil > Date.now()) { e.preventDefault(); return; }
   const q = e.target.closest(".quote");
   if (q) { jumpTo(q.dataset.ref); return; }
   const b = e.target.closest(".bubble");
@@ -1277,6 +1380,7 @@ $("#msgs").addEventListener("click", (e) => {
 });
 $("#actCancel").addEventListener("click", closeSheet);
 $("#sheet").addEventListener("click", (e) => { if (e.target.id === "sheet") closeSheet(); });
+$("#rbClose").addEventListener("click", clearReply);
 $("#actReply").addEventListener("click", () => {
   if (!picked) return;
   replyRef = { id: picked.id, name: picked.name, text: picked.text.slice(0, 120) };
@@ -1285,6 +1389,40 @@ $("#actReply").addEventListener("click", () => {
   $("#replyBar").classList.remove("hidden");
   closeSheet(); $("#mi").focus();
 });
+bindSwipe($("#msgs"), (id) => msgs.find((x) => x.id === id), (m) => {
+  replyRef = { id: m.id, name: m.name || myName(), text: (m.text || mediaLabel(m.media)).slice(0, 120) };
+  $("#rbName").textContent = replyRef.name;
+  $("#rbText").textContent = replyRef.text;
+  $("#replyBar").classList.remove("hidden");
+  $("#mi").focus();
+  swipeState.suppressUntil = Date.now() + 450;
+});
+
+$("#dmMsgs").addEventListener("click", (e) => {
+  if (swipeState.suppressUntil > Date.now()) { e.preventDefault(); return; }
+  const q = e.target.closest(".quote");
+  if (!q) return;
+  const row = q.closest(".mrow");
+  const id = q.dataset.ref;
+  const target = dmMsgs.find((m) => m.id === id);
+  if (target) {
+    row && row.classList.remove("flash");
+    const targetRow = $("#dmMsgs").querySelector('[data-id="' + CSS.escape(id) + '"]');
+    if (targetRow) {
+      targetRow.scrollIntoView({ block: "center" });
+      targetRow.classList.add("flash");
+      setTimeout(() => targetRow.classList.remove("flash"), 1000);
+    }
+  }
+});
+
+bindSwipe($("#dmMsgs"), (id) => dmMsgs.find((x) => x.id === id), (m) => {
+  setDmReply(m);
+  swipeState.suppressUntil = Date.now() + 450;
+});
+
+$("#dmRbClose").addEventListener("click", clearDmReply);
+
 $("#actDelete").addEventListener("click", async () => {
   const m = picked; closeSheet();
   if (!m || !(await pickSheet("Delete this message for everyone?", "", [{ label: "Delete message", value: true, danger: true }]))) return;
@@ -2172,7 +2310,7 @@ $("#pMakeAdmin").addEventListener("click", async () => {
   finally { busy(b, false); }
 });
 $("#pCopy").addEventListener("click", async () => {
-  if (!user) return;
+  if (!user || !isAdmin) return;
   try { await navigator.clipboard.writeText(user.uid); toast("Account ID copied."); }
   catch (e) {
     const r = document.createRange(); r.selectNodeContents($("#pUid"));
