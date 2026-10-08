@@ -1,7 +1,7 @@
 /* Cohort service worker: keeps the app shell available and fast.
    It never touches Firebase, Cloudinary or fonts (those go straight to the network). */
-const VERSION = "cohort-v1";
-const SHELL = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "icon-maskable-512.png", "apple-touch-icon.png"];
+const VERSION = "cohort-v2";
+const SHELL = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "icon-maskable-512.png", "apple-touch-icon.png", "logo-mark.png"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -49,18 +49,6 @@ self.addEventListener("fetch", (event) => {
         })
         .catch(() => cached);
       return cached || network;
-    })
-  );
-});
-
-// Tapping a notification brings the app forward and tells it where to go
-self.addEventListener("notificationclick", (e) => {
-  e.notification.close();
-  const data = e.notification.data || {};
-  e.waitUntil(
-    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
-      if (list.length) { list[0].focus(); list[0].postMessage({ notif: data }); return; }
-      return self.clients.openWindow("./");
     })
   );
 });
