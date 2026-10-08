@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "io.github.officialemzee24_hub.twa",
+    "sha256_cert_fingerprints": ["BA:DF:C0:DC:11:01:9C:CB:DD:97:A9:78:39:5C:53:92:6D:D0:8A:AE:1E:8A:8D:DA:B5:39:B5:1D:C8:2A:29:59"]
+  }
+}]
