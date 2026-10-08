@@ -52,3 +52,15 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
+// Tapping a notification brings the app forward and tells it where to go
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  const data = e.notification.data || {};
+  e.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+      if (list.length) { list[0].focus(); list[0].postMessage({ notif: data }); return; }
+      return self.clients.openWindow("./");
+    })
+  );
+});

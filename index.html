@@ -246,6 +246,17 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
 .auditHead{padding:18px 18px 6px;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
 .auditRow{padding:10px 18px;border-top:1px solid var(--line);font-size:14px}
 .auditRow .modWho{margin:2px 0 0}
+/* Phase 8: notifications */
+#bellBtn{position:relative}
+#bellBtn .badge{position:absolute;top:1px;right:-2px;min-width:18px;height:18px;font-size:11px;padding:0 5px;border:2px solid var(--bg)}
+.nitem{display:flex;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);cursor:pointer}
+.nitem.new{background:color-mix(in srgb,var(--orange) 9%,transparent)}
+.nico{width:38px;height:38px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-size:18px;flex:none}
+.nbody{min-width:0;flex:1}.nbody b{display:block;font-size:15px}
+.nbody span{display:block;font-size:13.5px;color:var(--muted);overflow-wrap:anywhere}
+.nbody small{font-size:12px;color:var(--muted)}
+#mentionBox{border-top:1px solid var(--line);background:var(--bg);max-height:200px;overflow:auto}
+#mentionBox button{display:block;width:100%;padding:11px 16px;background:none;border:0;border-bottom:1px solid var(--line);color:var(--text);font-size:15px;text-align:left;cursor:pointer}
 </style>
 </head>
 <body>
@@ -289,9 +300,9 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
 <section id="app" class="screen">
   <header class="topbar">
     <h2 id="viewTitle">Cohort</h2>
-    <button class="icon-btn" id="themeQuick" aria-label="Switch theme">
+    <div style="display:flex;gap:2px"><button class="icon-btn" id="bellBtn" type="button" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge hidden" id="bellBadge">0</span></button><button class="icon-btn" id="themeQuick" aria-label="Switch theme">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-    </button>
+    </button></div>
   </header>
   <div class="restrictbar hidden" id="restrictBar" role="status">Your account is restricted by an admin. You can read messages but can't send or post.</div>
   <main>
@@ -313,6 +324,8 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
       <div class="setting" style="flex-direction:column;align-items:flex-start;gap:4px"><span style="font-size:13px;color:var(--muted)">Account ID (used to set up admins)</span><span id="pUid" style="font-size:12.5px;word-break:break-all;user-select:all"></span><span id="pAdmin" style="font-size:13px"></span><button class="btn hidden" id="pMakeAdmin" type="button" style="margin:8px 0 0;width:auto;padding:9px 18px">Set me up as admin</button><button class="btn" id="pCopy" type="button" style="margin:8px 0 0;width:auto;padding:9px 18px;background:var(--surface);color:var(--text);border:1px solid var(--line)">Copy account ID</button></div>
       <div class="edit"><button class="btn" id="photoBtn" type="button" style="margin-top:0;background:var(--surface);color:var(--text);border:1px solid var(--line)">Change profile photo</button><input type="file" id="photoIn" accept="image/*" hidden><p class="msg" id="photoMsg" role="alert"></p></div>
       <div class="edit"><div class="field"><label for="pn">Display name</label><input id="pn" type="text" autocomplete="name" maxlength="60"></div><button class="btn" id="saveName" type="button">Save changes</button><p class="msg" id="profMsg" role="status"></p></div>
+      <div class="setting" id="notifRow"><span>Phone notifications</span><button class="toggle" id="notifToggle" role="switch" aria-checked="false" aria-label="Phone notifications"></button></div>
+      <div class="setting" id="groupRow"><span>Group chat alerts</span><button class="toggle" id="groupToggle" role="switch" aria-checked="true" aria-label="Group chat alerts"></button></div>
       <div class="setting hidden" id="installRow" style="flex-direction:column;align-items:flex-start;gap:8px"><span>Install Cohort on your phone</span><span id="installHint" style="font-size:13px;color:var(--muted);line-height:1.45"></span><button class="btn hidden" id="installBtn" type="button" style="margin:0;width:auto;padding:9px 18px">Install app</button></div>
       <div class="setting"><span>Dark theme</span><button class="toggle" id="themeToggle" role="switch" aria-checked="false" aria-label="Dark theme"></button></div>
       <button class="rowbtn hidden" id="openMod" type="button"><span>Moderation</span><span class="badge hidden" id="modBadge">0</span></button>
@@ -336,6 +349,7 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
   <div id="pinBar" class="pinbar hidden" role="button" tabindex="0"></div>
   <div id="msgs" role="log" aria-live="polite"></div>
   <div id="replyBar" class="hidden"><div><b id="rbName"></b><span id="rbText"></span></div><button class="icon-btn" id="rbClose" type="button" aria-label="Cancel reply"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div id="mentionBox" class="hidden"></div>
   <div id="attBar" class="attbar hidden"></div>
   <form id="composer" autocomplete="off">
     <button class="icon-btn" id="attBtn" type="button" aria-label="Attach a file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button><input type="file" id="attIn" accept="image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt" hidden><textarea id="mi" rows="1" maxlength="2000" placeholder="Message" aria-label="Message"></textarea>
@@ -395,6 +409,10 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
   </div>
 </section>
 <div id="viewer" class="hidden" role="dialog" aria-label="Photo"><button class="icon-btn" id="viewerClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><img id="viewerImg" alt=""></div>
+<section id="notifScreen" class="screen" aria-label="Notifications">
+  <header class="chathead"><button class="icon-btn" id="notifBack" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><div class="ct" style="flex:1"><b>Notifications</b></div><button id="notifClear" type="button" style="background:none;border:0;color:var(--teal);font-weight:600;cursor:pointer;padding:8px 12px">Clear all</button></header>
+  <div style="overflow-y:auto;flex:1"><div id="notifList"></div><div class="empty hidden" id="notifEmpty"><b>Nothing new</b>Messages, mentions and announcements will show up here.</div></div>
+</section>
 <section id="modScreen" class="screen" aria-label="Moderation">
   <header class="chathead"><button class="icon-btn" id="modBack" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><div class="ct" style="flex:1"><b>Moderation</b><span>Open reports</span></div></header>
   <div style="overflow-y:auto;flex:1"><div id="modList"></div><div class="empty hidden" id="modEmpty"><b>No open reports</b>Reports from students will appear here.</div><div class="auditHead">Recent admin actions</div><div id="auditList"></div></div>
@@ -614,6 +632,7 @@ function dayLabel(t) {
 const ONLINE_MS = 120000;
 let peopleQ = "", viewingId = null, adminIds = new Set();
 let restricted = false, restrictedIds = new Set(), modReports = [], modSubbed = false, auditItems = [];
+let notifs = [], notifReadAt = 0, msgsReady = false, reactWatch = {};
 const isOn = (p) => Date.now() - p.last < ONLINE_MS;
 
 function seenStr(p) {
@@ -965,8 +984,15 @@ function ping() {
 
 function startRealtime() {
   if (unsubs.length) return;
+  loadNotifs();
   const q = query(collection(db, "chats", MAIN, "messages"), orderBy("createdAt", "desc"), limit(100));
   unsubs.push(onSnapshot(q, (snap) => {
+    if (msgsReady) snap.docChanges().forEach((c) => {
+      if (c.type !== "added" || c.doc.metadata.hasPendingWrites) return;
+      const m = c.doc.data();
+      if (m.uid !== user.uid && !m.deleted) groupNotify(m);
+    });
+    msgsReady = true;
     msgs = snap.docs.map((d) => Object.assign({ id: d.id, pending: d.metadata.hasPendingWrites }, d.data({ serverTimestamps: "estimate" }))).reverse();
     renderList();
     if (chatOpen) { renderMsgs(false); markRead(); }
@@ -992,7 +1018,7 @@ function startRealtime() {
       const d = c.doc.data({ serverTimestamps: "estimate" }), prev = dmConvs[c.doc.id];
       if (d.lastUid && d.lastUid !== user.uid && (!prev || tms(d.lastAt) > tms(prev.lastAt))) {
         const p = people[peerOf(d)];
-        toast((p ? p.name : "New message") + ": " + d.lastText);
+        notify({ type: "dm", title: p ? p.name : "New message", body: d.lastText, ref: peerOf(d) });
       }
     });
     dmConvs = {};
@@ -1004,7 +1030,7 @@ function startRealtime() {
     snap.docChanges().forEach((c) => {
       if (!anReady || c.type !== "added" || c.doc.metadata.hasPendingWrites) return;
       const d = c.doc.data();
-      if (d.authorUid !== user.uid) toast("\uD83D\uDCE2 " + d.title);
+      if (d.authorUid !== user.uid) notify({ type: "announcement", title: d.pinned ? "Important announcement" : "Announcement", body: d.title, ref: "ann" });
     });
     anItems = snap.docs.map((d) => Object.assign({ id: d.id }, d.data({ serverTimestamps: "estimate" })));
     anReady = true;
@@ -1019,11 +1045,11 @@ function startRealtime() {
   }).catch((err) => { $("#pAdmin").textContent = "Admin check failed: " + ((err && err.code) || "error"); });
   unsubs.push(onSnapshot(query(collection(db, "statuses"), where("createdAt", ">", Timestamp.fromMillis(Date.now() - DAY)), orderBy("createdAt", "desc"), limit(200)), (snap) => {
     stPub = snap.docs.map((d) => Object.assign({ id: d.id, col: "statuses" }, d.data({ serverTimestamps: "estimate" })));
-    stRender();
+    stRender(); watchMyReacts();
   }, () => { const e = $("#stEmpty"); e.textContent = "Can't load statuses. Publish the new Firestore rules."; e.classList.remove("hidden"); }));
   unsubs.push(onSnapshot(query(collection(db, "privateStatuses"), where("viewers", "array-contains", user.uid), limit(200)), (snap) => {
     stPriv = snap.docs.map((d) => Object.assign({ id: d.id, col: "privateStatuses" }, d.data({ serverTimestamps: "estimate" })));
-    stRender();
+    stRender(); watchMyReacts();
   }, () => {}));
   if (isOwner()) unsubs.push(onSnapshot(collection(db, "admins"), (snap) => {
     adminIds = new Set(snap.docs.map((d) => d.id));
@@ -1039,6 +1065,8 @@ function stopRealtime() {
   unsubs.forEach((f) => f());
   unsubs = []; msgs = []; reads = {}; readsReady = false; people = {}; adminIds = new Set();
   restricted = false; restrictedIds = new Set(); modReports = []; modSubbed = false; auditItems = [];
+  Object.keys(reactWatch).forEach((k) => reactWatch[k].unsub && reactWatch[k].unsub()); reactWatch = {};
+  notifs = []; notifReadAt = 0; msgsReady = false; notifBadge();
   $("#restrictBar").classList.add("hidden"); $("#openMod").classList.add("hidden");
   stStop(true); stPub = []; stPriv = []; $("#stList").replaceChildren();
   anItems = []; isAdmin = false; anReady = false; $("#annList").replaceChildren();
@@ -1777,6 +1805,140 @@ async function modRestrict(r) {
   catch (err) { toast("Couldn't restrict. Admins can't be restricted."); return; }
   modClose(r, "resolved"); toast(r.targetName + " is restricted.");
 }
+
+/* ---------- Phase 8: notifications ---------- */
+const nKey = (k) => "cohort-" + k + "-" + (user ? user.uid : "");
+const N_ICON = { dm: "\uD83D\uDCAC", mention: "@", announcement: "\uD83D\uDCE2", reaction: "\u2764\uFE0F", group: "\uD83D\uDCAC" };
+const lsGet = (k) => { try { return localStorage.getItem(nKey(k)); } catch (e) { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(nKey(k), v); } catch (e) {} };
+
+function loadNotifs() {
+  try { notifs = JSON.parse(lsGet("notifs") || "[]"); } catch (e) { notifs = []; }
+  notifReadAt = Number(lsGet("nread") || 0);
+  notifBadge(); syncNotifToggle();
+}
+function saveNotifs() { lsSet("notifs", JSON.stringify(notifs.slice(0, 50))); lsSet("nread", String(notifReadAt)); }
+function notifBadge() {
+  const n = notifs.filter((x) => x.at > notifReadAt).length, b = $("#bellBadge");
+  b.textContent = n > 9 ? "9+" : String(n);
+  b.classList.toggle("hidden", !n);
+}
+function systemNotify(n) {
+  if (!("Notification" in window) || Notification.permission !== "granted" || lsGet("phone") === "off") return;
+  const opts = { body: n.body, icon: "icon-192.png", badge: "icon-192.png", tag: n.tag || n.type + (n.ref || ""), data: { type: n.type, ref: n.ref || "" } };
+  const fallback = () => { try { new Notification(n.title, opts); } catch (e) {} };
+  if (navigator.serviceWorker && navigator.serviceWorker.ready) navigator.serviceWorker.ready.then((reg) => reg.showNotification(n.title, opts)).catch(fallback);
+  else fallback();
+}
+function notify(n) {
+  n.id = Date.now() + "-" + Math.random().toString(36).slice(2, 6); n.at = Date.now(); n.body = (n.body || "").slice(0, 140);
+  notifs.unshift(n); notifs = notifs.slice(0, 50);
+  saveNotifs(); notifBadge();
+  if (document.hidden) systemNotify(n); else toast(n.title + (n.body ? ": " + n.body : ""));
+  if ($("#notifScreen").classList.contains("active")) notifRender();
+}
+function mentionsMe(text) {
+  const me = myName().toLowerCase(), t = (text || "").toLowerCase();
+  if (!me) return false;
+  const first = me.split(/\s+/)[0].replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return t.includes("@" + me) || new RegExp("@" + first + "(?![\\w])").test(t);
+}
+function groupNotify(m) {
+  if (mentionsMe(m.text)) { notify({ type: "mention", title: m.name + " mentioned you", body: m.text, ref: "main" }); return; }
+  if (document.hidden && !chatOpen && lsGet("group") !== "off") systemNotify({ type: "group", tag: "group", title: "CS 200 Level", body: m.name + ": " + (m.text || ""), ref: "main" });
+}
+function watchMyReacts() {
+  const ids = {};
+  stPub.concat(stPriv).filter((x) => x.uid === user.uid).forEach((x) => { ids[x.col + "/" + x.id] = x; });
+  Object.keys(reactWatch).forEach((k) => { if (!ids[k]) { if (reactWatch[k].unsub) reactWatch[k].unsub(); delete reactWatch[k]; } });
+  Object.keys(ids).forEach((k) => {
+    if (reactWatch[k]) return;
+    const x = ids[k], w = { ready: false, unsub: null };
+    reactWatch[k] = w;
+    w.unsub = onSnapshot(collection(db, x.col, x.id, "reacts"), (snap) => {
+      if (w.ready) snap.docChanges().forEach((c) => {
+        if (c.type === "removed" || c.doc.id === user.uid || c.doc.metadata.hasPendingWrites) return;
+        const p = people[c.doc.id];
+        notify({ type: "reaction", title: (p ? p.name : "Someone") + " reacted to your status", body: c.doc.data().emoji || "", ref: "status" });
+      });
+      w.ready = true;
+    }, () => {});
+  });
+}
+
+function notifRender() {
+  const frag = document.createDocumentFragment();
+  $("#notifEmpty").classList.toggle("hidden", notifs.length > 0);
+  $("#notifClear").classList.toggle("hidden", !notifs.length);
+  notifs.forEach((n) => {
+    const row = h("div", "nitem" + (n.at > notifReadAt ? " new" : "")), b = h("div", "nbody");
+    row.setAttribute("role", "button"); row.tabIndex = 0;
+    row.appendChild(h("div", "nico", N_ICON[n.type] || "\uD83D\uDD14"));
+    b.appendChild(h("b", null, n.title));
+    if (n.body) b.appendChild(h("span", null, n.body));
+    b.appendChild(h("small", null, dayLabel(n.at) + ", " + timeStr(n.at)));
+    row.appendChild(b);
+    row.addEventListener("click", () => openNotif(n));
+    frag.appendChild(row);
+  });
+  $("#notifList").replaceChildren(frag);
+}
+function openNotifCenter() {
+  notifRender();
+  window.Cohort.show("notifScreen");
+  notifReadAt = Date.now(); saveNotifs(); notifBadge();
+}
+function openNotif(n) {
+  window.Cohort.show("app");
+  if (n.type === "dm" && n.ref) { if (people[n.ref]) openDm(n.ref); else $('.tab[data-view="chats"]').click(); }
+  else if (n.type === "mention" || n.type === "group") $("#openMain").click();
+  else if (n.type === "announcement") $("#openAnn").click();
+  else if (n.type === "reaction") $('.tab[data-view="status"]').click();
+}
+
+function syncNotifToggle() {
+  if (!("Notification" in window)) { $("#notifRow").classList.add("hidden"); $("#groupRow").classList.add("hidden"); return; }
+  $("#notifToggle").setAttribute("aria-checked", String(Notification.permission === "granted" && lsGet("phone") !== "off"));
+  $("#groupToggle").setAttribute("aria-checked", String(lsGet("group") !== "off"));
+}
+$("#notifToggle").addEventListener("click", async () => {
+  if ($("#notifToggle").getAttribute("aria-checked") === "true") { lsSet("phone", "off"); syncNotifToggle(); return; }
+  if (Notification.permission === "denied") { toast("Notifications are blocked. Allow them in your browser or app settings."); return; }
+  let perm = Notification.permission;
+  if (perm !== "granted") { try { perm = await Notification.requestPermission(); } catch (e) {} }
+  if (perm === "granted") { lsSet("phone", "on"); toast("Phone notifications are on."); } else toast("Notifications weren't allowed.");
+  syncNotifToggle();
+});
+$("#groupToggle").addEventListener("click", () => { lsSet("group", $("#groupToggle").getAttribute("aria-checked") === "true" ? "off" : "on"); syncNotifToggle(); });
+$("#bellBtn").addEventListener("click", openNotifCenter);
+$("#notifBack").addEventListener("click", () => window.Cohort.show("app"));
+$("#notifClear").addEventListener("click", () => { notifs = []; saveNotifs(); notifBadge(); notifRender(); });
+if (navigator.serviceWorker) navigator.serviceWorker.addEventListener("message", (e) => { if (e.data && e.data.notif && user) openNotif(e.data.notif); });
+
+/* @mention suggestions in the group chat box */
+function mentionUpdate() {
+  const el = $("#mi"), box = $("#mentionBox"), m = /(^|\s)@([^\s@]{0,30})$/.exec(el.value.slice(0, el.selectionStart));
+  if (!m || !user) { box.classList.add("hidden"); return; }
+  const q = m[2].toLowerCase();
+  const hits = Object.keys(people).filter((id) => id !== user.uid && people[id].name.toLowerCase().includes(q)).sort((a, b) => people[a].name.localeCompare(people[b].name)).slice(0, 5);
+  if (!hits.length) { box.classList.add("hidden"); return; }
+  box.replaceChildren();
+  hits.forEach((id) => {
+    const b = h("button", null, people[id].name);
+    b.type = "button";
+    b.addEventListener("mousedown", (e) => e.preventDefault());
+    b.addEventListener("click", () => {
+      const pos = el.selectionStart, before = el.value.slice(0, pos).replace(/@([^\s@]{0,30})$/, "@" + people[id].name + " ");
+      el.value = before + el.value.slice(pos);
+      el.focus(); el.setSelectionRange(before.length, before.length);
+      box.classList.add("hidden"); autosize();
+    });
+    box.appendChild(b);
+  });
+  box.classList.remove("hidden");
+}
+$("#mi").addEventListener("input", mentionUpdate);
+$("#composer").addEventListener("submit", () => $("#mentionBox").classList.add("hidden"));
 
 /* ---------- Phase 9: announcements ---------- */
 const ADMIN_EMAIL = "official@gmail.com";
