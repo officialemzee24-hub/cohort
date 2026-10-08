@@ -257,6 +257,16 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
 .nbody small{font-size:12px;color:var(--muted)}
 #mentionBox{border-top:1px solid var(--line);background:var(--bg);max-height:200px;overflow:auto}
 #mentionBox button{display:block;width:100%;padding:11px 16px;background:none;border:0;border-bottom:1px solid var(--line);color:var(--text);font-size:15px;text-align:left;cursor:pointer}
+/* Polish: admin tools card */
+.admintools{margin:14px 18px;border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
+.atHead{padding:10px 14px 6px;font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.atRow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-top:1px solid var(--line)}
+.atTxt{min-width:0;flex:1}
+.atTxt b{display:block;font-size:15px}
+.atTxt span{display:block;font-size:12.5px;line-height:1.35;color:var(--muted)}
+.atBtn{flex:none;white-space:nowrap;padding:9px 14px;border-radius:10px;border:1.5px solid var(--teal);background:none;color:var(--teal);font-weight:600;font-size:14px;cursor:pointer}
+.atBtn.warn{border-color:var(--err);color:var(--err)}
+.atBtn:disabled{opacity:.5}
 </style>
 </head>
 <body>
@@ -368,8 +378,11 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
   <header class="phead"><button class="icon-btn" id="personBack" aria-label="Back to people"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><b>Profile</b></header>
   <div class="pbody"><div id="uAv"></div><h3 id="uName"></h3><div class="pstat" id="uStat"></div></div>
   <button class="btn" id="uMsg" type="button" style="margin:8px 18px;width:calc(100% - 36px)">Send message</button>
-  <div class="setting hidden" id="uAdminRow"><div><b id="uAdminLbl" style="display:block;font-size:15px"></b><span class="pstat" style="font-size:12.5px">Admins can post and pin announcements.</span></div><button class="btn" id="uAdminBtn" type="button" style="margin:0;width:auto;padding:9px 16px"></button></div>
-  <div class="setting hidden" id="uModRow"><div><b id="uModLbl" style="display:block;font-size:15px"></b><span class="pstat" style="font-size:12.5px">Restricted students can read but can't send or post.</span></div><button class="btn" id="uModBtn" type="button" style="margin:0;width:auto;padding:9px 16px"></button></div>
+  <div class="admintools hidden" id="adminTools">
+    <div class="atHead">Admin tools</div>
+    <div class="atRow hidden" id="uAdminRow"><div class="atTxt"><b id="uAdminLbl"></b><span>Admins can post and pin announcements.</span></div><button class="atBtn" id="uAdminBtn" type="button"></button></div>
+    <div class="atRow hidden" id="uModRow"><div class="atTxt"><b id="uModLbl"></b><span>Restricted students can read but can't send or post.</span></div><button class="atBtn" id="uModBtn" type="button"></button></div>
+  </div>
   <button class="link hidden" id="uReport" type="button" style="margin:10px 18px;color:var(--err)">Report this student</button>
 </section>
 <section id="dm" class="screen" aria-label="Private chat">
@@ -700,9 +713,7 @@ function renderPerson() {
     const a = adminIds.has(viewingId), b = $("#uAdminBtn");
     $("#uAdminLbl").textContent = a ? "Admin" : "Student";
     b.textContent = a ? "Remove admin" : "Make admin";
-    b.style.background = a ? "var(--surface)" : "";
-    b.style.color = a ? "var(--text)" : "";
-    b.style.border = a ? "1px solid var(--line)" : "";
+    b.classList.toggle("warn", a);
   }
   $("#uReport").classList.toggle("hidden", own);
   $("#uModRow").classList.toggle("hidden", !isAdmin || own);
@@ -710,7 +721,9 @@ function renderPerson() {
     const r = restrictedIds.has(viewingId);
     $("#uModLbl").textContent = r ? "Restricted" : "Account active";
     $("#uModBtn").textContent = r ? "Lift restriction" : "Restrict";
+    $("#uModBtn").classList.toggle("warn", !r);
   }
+  $("#adminTools").classList.toggle("hidden", $("#uAdminRow").classList.contains("hidden") && $("#uModRow").classList.contains("hidden"));
 }
 
 function openPerson(id) {
@@ -1285,7 +1298,7 @@ $("#uAdminBtn").addEventListener("click", async () => {
   const id = viewingId, p = people[id], b = $("#uAdminBtn");
   if (!id || !p || !isOwner() || id === user.uid) return;
   const make = !adminIds.has(id);
-  if (!confirm(make ? "Make " + p.name + " an admin? Admins can post and pin announcements." : "Remove admin access from " + p.name + "?")) return;
+  if (!(await pickSheet(make ? "Make " + p.name + " an admin?" : "Remove admin access from " + p.name + "?", make ? "Admins can post and pin announcements and delete any message." : "They lose the admin tools the next time they open the app.", [{ label: make ? "Make admin" : "Remove admin", value: true, danger: !make }]))) return;
   busy(b, true);
   try {
     const wb = writeBatch(db);
@@ -1654,7 +1667,7 @@ $("#stDel").addEventListener("click", async () => {
   if (!st) return;
   const s = st.items[st.i];
   stPause(true);
-  if (!confirm("Delete this status?")) { stPause(false); return; }
+  if (!(await pickSheet("Delete this status?", "It will be removed for everyone.", [{ label: "Delete status", value: true, danger: true }]))) { stPause(false); return; }
   try { await deleteDoc(doc(db, s.col, s.id)); } catch (err) { toast("Couldn't delete the status."); stPause(false); return; }
   st.items.splice(st.i, 1);
   if (!st.items.length) { stStop(); return; }
@@ -2072,7 +2085,7 @@ $("#annList").addEventListener("click", async (e) => {
   if (!a) return;
   try {
     if (b.dataset.act === "pin") await updateDoc(doc(db, "announcements", a.id), { pinned: !a.pinned });
-    else if (b.dataset.act === "del" && confirm("Delete this announcement for everyone?")) await deleteDoc(doc(db, "announcements", a.id));
+    else if (b.dataset.act === "del" && await pickSheet("Delete this announcement?", "It will be removed for everyone.", [{ label: "Delete announcement", value: true, danger: true }])) await deleteDoc(doc(db, "announcements", a.id));
   } catch (err) { toast("Couldn't update the announcement."); }
 });
 
