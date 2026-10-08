@@ -131,6 +131,17 @@ nav{display:flex;border-top:1px solid var(--line);background:var(--bg)}
 #dmReplyBar span{display:block;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mrow.swiping .bubble{transition:none;box-shadow:0 0 0 2px color-mix(in srgb,var(--orange) 45%,transparent)}
 .mrow{touch-action:pan-y}
+.reactionbar{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;min-height:0}
+.reactionbar.empty{display:none}
+.reaction-btn{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:14px;padding:2px 7px;font-size:13px;line-height:20px;cursor:pointer}
+.reaction-btn.on{border-color:var(--orange);background:color-mix(in srgb,var(--orange) 14%,var(--surface))}
+#reactionPicker{position:fixed;z-index:9999;display:flex;gap:3px;padding:7px 9px;border:1px solid rgba(255,255,255,.13);border-radius:28px;background:#25282b;box-shadow:0 8px 28px #0008;transform-origin:center;animation:reactPop .14s ease-out}
+#reactionPicker.hidden{display:none}
+#reactionPicker button{border:0;background:transparent;padding:3px;font-size:25px;line-height:1.15;border-radius:50%;min-width:34px;min-height:34px}
+#reactionPicker button:active{background:#ffffff25;transform:scale(1.18)}
+@keyframes reactPop{from{opacity:0;transform:translateY(5px) scale(.88)}to{opacity:1;transform:translateY(0) scale(1)}}
+.bubble{user-select:none;-webkit-user-select:none}
+
 #composer,#dmForm{display:flex;gap:8px;align-items:flex-end;padding:8px 10px;border-top:1px solid var(--line);background:var(--bg)}
 #mi,#dmInput{flex:1;resize:none;max-height:120px;padding:11px 14px;border-radius:20px;border:1.5px solid var(--line);background:var(--surface);outline:none;line-height:1.35}
 #mi:focus-visible,#dmInput:focus-visible{border-color:var(--teal)}
@@ -387,7 +398,8 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
     <button class="icon-btn" id="attBtn" type="button" aria-label="Attach a file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button><input type="file" id="attIn" accept="image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt" hidden><textarea id="mi" rows="1" maxlength="2000" placeholder="Message" aria-label="Message"></textarea>
     <button class="send" id="sendBtn" type="submit" aria-label="Send message"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a1 1 0 0 0-1.4 1.2L4 11l9 1-9 1-2 6.2a1 1 0 0 0 1.4 1.2z"/></svg></button>
   </form>
-  <div id="sheet" class="sheet hidden"><div class="sheet-card">
+  <div id="reactionPicker" class="hidden" role="menu" aria-label="Choose a reaction"></div>\n  <div id="sheet" class="sheet hidden"><div class="sheet-card">
+    <button class="sheet-btn" id="actReact" type="button">React</button>
     <button class="sheet-btn" id="actReply" type="button">Reply</button>
     <button class="sheet-btn" id="actReport" type="button">Report</button>
     <button class="sheet-btn danger" id="actDelete" type="button">Delete message</button>
@@ -666,6 +678,8 @@ function fillProfile() {
 /* ---------- Phase 3: group chat ---------- */
 const MAIN = "main";
 let unsubs = [], msgs = [], reads = {}, readsReady = false, people = {}, replyRef = null, picked = null, chatOpen = false, pingTimer = null, tickTimer = null;
+const REACTION_EMOJIS = ["👍", "😂", "😍", "😮", "😢", "🙏"];
+let groupReactions = {}, dmReactions = {}, groupReactionUnsub = null, dmReactionUnsub = null;
 const h = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 const tms = (t) => (t && t.toMillis ? t.toMillis() : 0);
 function toast(text) { const t = $("#toast"); t.textContent = text; t.classList.remove("hidden"); clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.add("hidden"), 3200); }
@@ -852,7 +866,9 @@ function renderDm(force) {
     const meta = h("div", "meta");
     meta.appendChild(h("span", null, timeStr(t)));
     if (mine) meta.appendChild(m.pending ? h("span", null, "...") : peerSeen >= t ? h("span", "seen", "\u2713\u2713") : h("span", null, "\u2713"));
-    b.appendChild(meta); row.appendChild(b); frag.appendChild(row);
+    b.appendChild(meta);
+    if (!m.deleted) b.appendChild(reactionBar("dm", m.id, dmReactions));
+    row.appendChild(b); frag.appendChild(row);
   }
   el.replaceChildren(frag);
   const lastMine = dmMsgs.length && dmMsgs[dmMsgs.length - 1].uid === user.uid;
@@ -868,7 +884,14 @@ function markDmRead() {
 function openDm(pid) {
   if (!user || !people[pid] || pid === user.uid) return;
   if (dmUnsub) dmUnsub();
+  if (dmReactionUnsub) { try { dmReactionUnsub(); } catch (_) {} }
+  dmReactionUnsub = null;
+  dmReactions = {};
   dmOpenId = dmId(user.uid, pid); dmPeer = pid; dmMsgs = [];
+  dmReactionUnsub = onSnapshot(query(collection(db, "messageReactions"), where("dmId", "==", dmOpenId)), (snap) => {
+    dmReactions = buildReactionMap(snap);
+    if (dmOpenId) renderDm();
+  }, () => {});
   dmUnsub = onSnapshot(query(collection(db, "dms", dmOpenId, "messages"), orderBy("createdAt", "desc"), limit(100)), (snap) => {
     dmMsgs = snap.docs.map((d) => Object.assign({ id: d.id, pending: d.metadata.hasPendingWrites }, d.data({ serverTimestamps: "estimate" }))).reverse();
     renderDm(); markDmRead();
@@ -892,6 +915,8 @@ function setDmReply(m) {
 }
 
 function closeDm() {
+  if (dmReactionUnsub) { try { dmReactionUnsub(); } catch (_) {} }
+  dmReactionUnsub = null; dmReactions = {};
   clearPending("dm");
   clearDmReply();
   if (dmUnsub) dmUnsub();
@@ -1083,6 +1108,10 @@ function startRealtime() {
     $("#lastMsg").textContent = "Can't load the chat. Publish the new Firestore rules.";
     $("#chatSub").textContent = "Can't load messages";
   }));
+  groupReactionUnsub = onSnapshot(query(collection(db, "messageReactions"), where("scope", "==", "group")), (snap) => {
+    groupReactions = buildReactionMap(snap);
+    if (chatOpen) renderMsgs(false);
+  }, () => {});
   unsubs.push(onSnapshot(collection(db, "chats", MAIN, "reads"), (snap) => {
     reads = {};
     snap.forEach((d) => { const a = d.data({ serverTimestamps: "estimate" }).at; if (a) reads[d.id] = tms(a); });
@@ -1167,6 +1196,7 @@ function stopRealtime() {
   clearInterval(pingTimer); clearInterval(tickTimer);
   viewingId = null; peopleQ = ""; $("#peopleSearch").value = ""; $("#peopleList").replaceChildren();
   if (dmUnsub) dmUnsub();
+  clearReactionListeners();
   dmUnsub = null; dmOpenId = null; dmPeer = null; dmMsgs = []; dmConvs = {}; dmReady = false; chatQ = "";
   clearDmReply();
   $("#chatSearch").value = ""; $("#dmList").replaceChildren(); $("#dm").style.height = "";
@@ -1198,6 +1228,152 @@ function updateSub() {
   if (!ids.length) { $("#chatSub").textContent = "Loading..."; return; }
   const on = ids.filter((id) => now - people[id].last < ONLINE_MS).length;
   $("#chatSub").textContent = ids.length + " members, " + on + " online";
+}
+
+function reactionSummary(source, messageId) {
+  return source[messageId] || {};
+}
+function reactionBar(scope, messageId, source) {
+  const box = h("div", "reactionbar");
+  const data = reactionSummary(source, messageId);
+  REACTION_EMOJIS.forEach((emoji) => {
+    const x = data[emoji];
+    if (!x || !x.count) return;
+    const b = h("button", "reaction-btn" + (x.mine ? " on" : ""), emoji + " " + x.count);
+    b.type = "button";
+    b.dataset.reaction = emoji;
+    b.dataset.scope = scope;
+    b.dataset.msg = messageId;
+    box.appendChild(b);
+  });
+  if (!box.childElementCount) box.classList.add("empty");
+  return box;
+}
+
+function buildReactionMap(snap) {
+  const out = {};
+  snap.forEach((d) => {
+    const x = d.data();
+    if (!x.messageId || !REACTION_EMOJIS.includes(x.emoji)) return;
+    const r = out[x.messageId] || (out[x.messageId] = {});
+    const e = r[x.emoji] || (r[x.emoji] = { count: 0, mine: false });
+    e.count++;
+    if (x.uid === user.uid) e.mine = true;
+  });
+  return out;
+}
+function clearReactionListeners() {
+  if (groupReactionUnsub) { try { groupReactionUnsub(); } catch (_) {} }
+  if (dmReactionUnsub) { try { dmReactionUnsub(); } catch (_) {} }
+  groupReactionUnsub = null;
+  dmReactionUnsub = null;
+  groupReactions = {};
+  dmReactions = {};
+}
+function reactionDocId(scope, messageId) {
+  return (scope === "group" ? "g_" + messageId : "d_" + dmOpenId + "_" + messageId) + "_" + user.uid;
+}
+async function toggleReaction(scope, messageId, emoji) {
+  if (!user || !messageId || !REACTION_EMOJIS.includes(emoji)) return;
+  const source = scope === "group" ? groupReactions : dmReactions;
+  const current = source[messageId] && source[messageId][emoji] && source[messageId][emoji].mine;
+  const ref = doc(db, "messageReactions", reactionDocId(scope, messageId));
+  try {
+    if (current) await deleteDoc(ref);
+    else await setDoc(ref, scope === "group"
+      ? { scope: "group", chatId: MAIN, messageId, uid: user.uid, emoji, at: serverTimestamp() }
+      : { scope: "dm", dmId: dmOpenId, messageId, uid: user.uid, emoji, at: serverTimestamp() });
+  } catch (_) {
+    toast("Couldn't update your reaction.");
+  }
+}
+async function chooseReaction(scope, messageId) {
+  const emoji = await pickSheet("React to message", "Choose an emoji", REACTION_EMOJIS.map((e) => ({ label: e, value: e })));
+  if (emoji) await toggleReaction(scope, messageId, emoji);
+}
+const reactionPicker = $("#reactionPicker");
+let reactionPressTimer = null, reactionPressTarget = null, reactionPressStart = null, suppressMessageClickUntil = 0;
+function closeReactionPicker() {
+  reactionPicker.classList.add("hidden");
+  reactionPicker.replaceChildren();
+  reactionPressTarget = null;
+}
+function showReactionPicker(container, row, scope) {
+  if (!row || !row.dataset.id) return;
+  const id = row.dataset.id;
+  const m = scope === "group" ? msgs.find(x => x.id === id) : dmMsgs.find(x => x.id === id);
+  if (!m || m.deleted) return;
+  closeReactionPicker();
+  reactionPressTarget = { scope, id };
+  REACTION_EMOJIS.forEach(emoji => {
+    const b = h("button", null, emoji);
+    b.type = "button";
+    b.setAttribute("aria-label", "React " + emoji);
+    b.addEventListener("click", async ev => {
+      ev.preventDefault(); ev.stopPropagation();
+      const target = reactionPressTarget;
+      closeReactionPicker();
+      if (target) await toggleReaction(target.scope, target.id, emoji);
+    });
+    reactionPicker.appendChild(b);
+  });
+  const r = row.getBoundingClientRect();
+  reactionPicker.classList.remove("hidden");
+  const width = reactionPicker.offsetWidth, height = reactionPicker.offsetHeight;
+  let left = Math.max(8, Math.min(innerWidth - width - 8, r.left + r.width / 2 - width / 2));
+  let top = r.top - height - 8;
+  if (top < 8) top = Math.min(innerHeight - height - 8, r.bottom + 8);
+  reactionPicker.style.left = left + "px";
+  reactionPicker.style.top = top + "px";
+  suppressMessageClickUntil = Date.now() + 650;
+}
+function bindLongPressReactions(container, scope) {
+  container.addEventListener("pointerdown", e => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    const row = e.target.closest(".mrow");
+    if (!row || !container.contains(row) || e.target.closest(".reaction-btn, .quote, button, a")) return;
+    clearTimeout(reactionPressTimer);
+    reactionPressTarget = null;
+    reactionPressStart = { x:e.clientX, y:e.clientY };
+    reactionPressTimer = setTimeout(() => {
+      showReactionPicker(container, row, scope);
+      reactionPressTimer = null;
+      if (navigator.vibrate) { try { navigator.vibrate(18); } catch (_) {} }
+    }, 480);
+  });
+  container.addEventListener("pointermove", e => {
+    if (reactionPressTimer && reactionPressStart &&
+        (Math.abs(e.clientX-reactionPressStart.x)>12 || Math.abs(e.clientY-reactionPressStart.y)>12)) {
+      clearTimeout(reactionPressTimer); reactionPressTimer = null;
+    }
+  });
+  ["pointerup","pointercancel","pointerleave"].forEach(type => container.addEventListener(type, () => {
+    if (reactionPressTimer) clearTimeout(reactionPressTimer);
+    reactionPressTimer = null; reactionPressStart = null;
+  }));
+  container.addEventListener("contextmenu", e => {
+    const row = e.target.closest(".mrow");
+    if (!row || !container.contains(row)) return;
+    e.preventDefault();
+    showReactionPicker(container, row, scope);
+  });
+}
+document.addEventListener("pointerdown", e => {
+  if (!e.target.closest("#reactionPicker")) closeReactionPicker();
+});
+bindLongPressReactions($("#msgs"), "group");
+bindLongPressReactions($("#dmMsgs"), "dm");
+
+function bindReactionClicks(container) {
+  container.addEventListener("click", (e) => {
+    const b = e.target.closest(".reaction-btn");
+    if (!b || !container.contains(b)) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    const scope = b.dataset.scope, id = b.dataset.msg;
+    if (b.dataset.reactAdd) chooseReaction(scope, id);
+    else toggleReaction(scope, id, b.dataset.reaction);
+  });
 }
 
 function renderMsgs(forceBottom) {
@@ -1233,6 +1409,7 @@ function renderMsgs(forceBottom) {
       else meta.appendChild(h("span", null, "\u2713"));
     }
     b.appendChild(meta);
+    if (!m.deleted) b.appendChild(reactionBar("group", m.id, groupReactions));
     row.appendChild(b);
     frag.appendChild(row);
     prev = m;
@@ -1378,8 +1555,14 @@ $("#msgs").addEventListener("click", (e) => {
   const m = msgs.find((x) => x.id === b.parentElement.dataset.id);
   if (m && !m.deleted) openSheet(m);
 });
+$("#actReact").addEventListener("click", () => {
+  const m = picked; closeSheet();
+  if (m && !m.deleted) chooseReaction("group", m.id);
+});
 $("#actCancel").addEventListener("click", closeSheet);
 $("#sheet").addEventListener("click", (e) => { if (e.target.id === "sheet") closeSheet(); });
+bindReactionClicks($("#msgs"));
+bindReactionClicks($("#dmMsgs"));
 $("#rbClose").addEventListener("click", clearReply);
 $("#actReply").addEventListener("click", () => {
   if (!picked) return;
