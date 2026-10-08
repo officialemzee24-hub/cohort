@@ -221,6 +221,24 @@ div.th{display:grid;place-items:center;font-size:11px;font-weight:700;color:var(
 #viewer{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:30;display:flex;align-items:center;justify-content:center}
 #viewer img{max-width:100%;max-height:100%;object-fit:contain}
 #viewer .icon-btn{position:absolute;top:calc(8px + env(safe-area-inset-top,0px));right:8px;color:#fff}
+/* Phase 10: moderation */
+#pick{position:fixed;z-index:60}
+#pickCard{max-height:80vh;overflow:auto}
+.pkTitle{padding:12px 8px 2px;font-size:17px;font-weight:700}
+.pkNote{padding:0 8px 8px;font-size:13.5px;line-height:1.45;color:var(--muted)}
+.restrictbar{padding:10px 18px;background:#b3261e;color:#fff;font-size:13.5px;line-height:1.4}
+button.rowbtn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:16px 18px;background:none;border:0;border-bottom:1px solid var(--line);color:var(--text);font-size:15px;cursor:pointer;text-align:left}
+.mod{margin:12px 14px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.modHead{font-weight:700;font-size:15px}
+.modWho{font-size:12.5px;color:var(--muted);margin:3px 0 8px}
+.modText{padding:10px 12px;border-radius:10px;background:var(--bg);font-size:14px;overflow-wrap:anywhere;white-space:pre-wrap;margin-bottom:10px}
+.modAct{display:flex;gap:8px;flex-wrap:wrap}
+.modAct button{padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-weight:600;font-size:13.5px;cursor:pointer}
+.modAct button.danger{color:var(--err)}
+.modAct button:disabled{opacity:.5}
+.auditHead{padding:18px 18px 6px;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.auditRow{padding:10px 18px;border-top:1px solid var(--line);font-size:14px}
+.auditRow .modWho{margin:2px 0 0}
 </style>
 </head>
 <body>
@@ -268,6 +286,7 @@ div.th{display:grid;place-items:center;font-size:11px;font-weight:700;color:var(
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
     </button>
   </header>
+  <div class="restrictbar hidden" id="restrictBar" role="status">Your account is restricted by an admin. You can read messages but can't send or post.</div>
   <main>
     <div class="view active" id="v-chats">
       <div class="search"><input id="chatSearch" type="search" placeholder="Search chats" aria-label="Search chats" autocomplete="off"></div>
@@ -288,6 +307,7 @@ div.th{display:grid;place-items:center;font-size:11px;font-weight:700;color:var(
       <div class="edit"><button class="btn" id="photoBtn" type="button" style="margin-top:0;background:var(--surface);color:var(--text);border:1px solid var(--line)">Change profile photo</button><input type="file" id="photoIn" accept="image/*" hidden><p class="msg" id="photoMsg" role="alert"></p></div>
       <div class="edit"><div class="field"><label for="pn">Display name</label><input id="pn" type="text" autocomplete="name" maxlength="60"></div><button class="btn" id="saveName" type="button">Save changes</button><p class="msg" id="profMsg" role="status"></p></div>
       <div class="setting"><span>Dark theme</span><button class="toggle" id="themeToggle" role="switch" aria-checked="false" aria-label="Dark theme"></button></div>
+      <button class="rowbtn hidden" id="openMod" type="button"><span>Moderation</span><span class="badge hidden" id="modBadge">0</span></button>
       <button class="btn logout" id="logout">Log out</button>
     </div>
   </main>
@@ -315,6 +335,7 @@ div.th{display:grid;place-items:center;font-size:11px;font-weight:700;color:var(
   </form>
   <div id="sheet" class="sheet hidden"><div class="sheet-card">
     <button class="sheet-btn" id="actReply" type="button">Reply</button>
+    <button class="sheet-btn" id="actReport" type="button">Report</button>
     <button class="sheet-btn danger" id="actDelete" type="button">Delete message</button>
     <button class="sheet-btn" id="actCancel" type="button">Cancel</button>
   </div></div>
@@ -323,6 +344,9 @@ div.th{display:grid;place-items:center;font-size:11px;font-weight:700;color:var(
   <header class="phead"><button class="icon-btn" id="personBack" aria-label="Back to people"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><b>Profile</b></header>
   <div class="pbody"><div id="uAv"></div><h3 id="uName"></h3><div class="pstat" id="uStat"></div></div>
   <button class="btn" id="uMsg" type="button" style="margin:8px 18px;width:calc(100% - 36px)">Send message</button>
+  <div class="setting hidden" id="uAdminRow"><div><b id="uAdminLbl" style="display:block;font-size:15px"></b><span class="pstat" style="font-size:12.5px">Admins can post and pin announcements.</span></div><button class="btn" id="uAdminBtn" type="button" style="margin:0;width:auto;padding:9px 16px"></button></div>
+  <div class="setting hidden" id="uModRow"><div><b id="uModLbl" style="display:block;font-size:15px"></b><span class="pstat" style="font-size:12.5px">Restricted students can read but can't send or post.</span></div><button class="btn" id="uModBtn" type="button" style="margin:0;width:auto;padding:9px 16px"></button></div>
+  <button class="link hidden" id="uReport" type="button" style="margin:10px 18px;color:var(--err)">Report this student</button>
 </section>
 <section id="dm" class="screen" aria-label="Private chat">
   <header class="chathead"><button class="icon-btn" id="dmBack" aria-label="Back to chats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><div id="dmAv"></div><div class="ct"><b id="dmName"></b><span id="dmSub"></span></div></header>
@@ -363,6 +387,11 @@ div.th{display:grid;place-items:center;font-size:11px;font-weight:700;color:var(
   </div>
 </section>
 <div id="viewer" class="hidden" role="dialog" aria-label="Photo"><button class="icon-btn" id="viewerClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><img id="viewerImg" alt=""></div>
+<section id="modScreen" class="screen" aria-label="Moderation">
+  <header class="chathead"><button class="icon-btn" id="modBack" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><div class="ct" style="flex:1"><b>Moderation</b><span>Open reports</span></div></header>
+  <div style="overflow-y:auto;flex:1"><div id="modList"></div><div class="empty hidden" id="modEmpty"><b>No open reports</b>Reports from students will appear here.</div><div class="auditHead">Recent admin actions</div><div id="auditList"></div></div>
+</section>
+<div id="pick" class="sheet hidden"><div class="sheet-card" id="pickCard"></div></div>
 <div id="toast" class="hidden" role="status"></div>
 
 <script>
@@ -508,7 +537,8 @@ function dayLabel(t) {
 
 /* ---------- Phase 4: people ---------- */
 const ONLINE_MS = 120000;
-let peopleQ = "", viewingId = null;
+let peopleQ = "", viewingId = null, adminIds = new Set();
+let restricted = false, restrictedIds = new Set(), modReports = [], modSubbed = false, auditItems = [];
 const isOn = (p) => Date.now() - p.last < ONLINE_MS;
 
 function seenStr(p) {
@@ -568,6 +598,23 @@ function renderPerson() {
   $("#uMsg").classList.toggle("hidden", viewingId === user.uid);
   $("#uStat").textContent = seenStr(p);
   $("#uStat").classList.toggle("on", on);
+  const own = viewingId === user.uid, row = $("#uAdminRow");
+  row.classList.toggle("hidden", !isOwner() || own);
+  if (isOwner() && !own) {
+    const a = adminIds.has(viewingId), b = $("#uAdminBtn");
+    $("#uAdminLbl").textContent = a ? "Admin" : "Student";
+    b.textContent = a ? "Remove admin" : "Make admin";
+    b.style.background = a ? "var(--surface)" : "";
+    b.style.color = a ? "var(--text)" : "";
+    b.style.border = a ? "1px solid var(--line)" : "";
+  }
+  $("#uReport").classList.toggle("hidden", own);
+  $("#uModRow").classList.toggle("hidden", !isAdmin || own);
+  if (isAdmin && !own) {
+    const r = restrictedIds.has(viewingId);
+    $("#uModLbl").textContent = r ? "Restricted" : "Account active";
+    $("#uModBtn").textContent = r ? "Lift restriction" : "Restrict";
+  }
 }
 
 function openPerson(id) {
@@ -682,6 +729,7 @@ function closeDm() {
 function dmAuto() { const t = $("#dmInput"); t.style.height = "auto"; t.style.height = Math.min(t.scrollHeight, 120) + "px"; }
 
 async function sendDm() {
+  if (restricted) { toast(RESTRICTED_MSG); return; }
   const box = $("#dmInput"), text = box.value.trim(), att = pend.dm;
   if ((!text && !att) || !dmOpenId || (att && att.busy)) return;
   const id = dmOpenId, pid = dmPeer;
@@ -890,7 +938,7 @@ function startRealtime() {
   }, () => { $("#annLast").textContent = "Can't load. Publish the new Firestore rules."; }));
   $("#pUid").textContent = user.uid;
   getDoc(doc(db, "admins", user.uid)).then((d) => {
-    isAdmin = d.exists(); anRender();
+    isAdmin = d.exists(); anRender(); modAdminInit();
     $("#pAdmin").textContent = isAdmin ? "Role: admin" : "Role: student (no admin entry found for this ID)";
     $("#pMakeAdmin").classList.toggle("hidden", isAdmin || !user.email || user.email.toLowerCase() !== ADMIN_EMAIL);
   }).catch((err) => { $("#pAdmin").textContent = "Admin check failed: " + ((err && err.code) || "error"); });
@@ -902,6 +950,11 @@ function startRealtime() {
     stPriv = snap.docs.map((d) => Object.assign({ id: d.id, col: "privateStatuses" }, d.data({ serverTimestamps: "estimate" })));
     stRender();
   }, () => {}));
+  if (isOwner()) unsubs.push(onSnapshot(collection(db, "admins"), (snap) => {
+    adminIds = new Set(snap.docs.map((d) => d.id));
+    if (viewingId) renderPerson();
+  }, () => {}));
+  unsubs.push(onSnapshot(doc(db, "restrictions", user.uid), (d) => { restricted = d.exists(); $("#restrictBar").classList.toggle("hidden", !restricted); }, () => {}));
   ping();
   pingTimer = setInterval(ping, 60000);
   tickTimer = setInterval(() => { stRender(); updateSub(); renderPeople(); if (viewingId) renderPerson(); renderDmList(); if (dmOpenId) dmHead(); }, 30000);
@@ -909,7 +962,9 @@ function startRealtime() {
 
 function stopRealtime() {
   unsubs.forEach((f) => f());
-  unsubs = []; msgs = []; reads = {}; readsReady = false; people = {};
+  unsubs = []; msgs = []; reads = {}; readsReady = false; people = {}; adminIds = new Set();
+  restricted = false; restrictedIds = new Set(); modReports = []; modSubbed = false; auditItems = [];
+  $("#restrictBar").classList.add("hidden"); $("#openMod").classList.add("hidden");
   stStop(true); stPub = []; stPriv = []; $("#stList").replaceChildren();
   anItems = []; isAdmin = false; anReady = false; $("#annList").replaceChildren();
   clearInterval(pingTimer); clearInterval(tickTimer);
@@ -1012,6 +1067,7 @@ function autosize() { const t = $("#mi"); t.style.height = "auto"; t.style.heigh
 function clearReply() { replyRef = null; $("#replyBar").classList.add("hidden"); }
 
 async function send() {
+  if (restricted) { toast(RESTRICTED_MSG); return; }
   const box = $("#mi"), text = box.value.trim(), att = pend.main;
   if (!text && !att) return;
   if (att && att.busy) return;
@@ -1024,7 +1080,14 @@ async function send() {
   catch (err) { box.value = text; autosize(); toast("Message not sent. Check your connection and try again."); }
 }
 
-function openSheet(m) { picked = m; $("#actDelete").classList.toggle("hidden", m.uid !== user.uid); $("#sheet").classList.remove("hidden"); }
+function openSheet(m) {
+  picked = m;
+  const mine = m.uid === user.uid;
+  $("#actDelete").classList.toggle("hidden", !(mine || isAdmin));
+  $("#actDelete").textContent = mine ? "Delete message" : "Delete message (admin)";
+  $("#actReport").classList.toggle("hidden", mine);
+  $("#sheet").classList.remove("hidden");
+}
 function closeSheet() { picked = null; $("#sheet").classList.add("hidden"); }
 function jumpTo(id) {
   const row = $("#msgs").querySelector('[data-id="' + CSS.escape(id) + '"]');
@@ -1062,8 +1125,13 @@ $("#actReply").addEventListener("click", () => {
 });
 $("#actDelete").addEventListener("click", async () => {
   const m = picked; closeSheet();
-  if (!m || !confirm("Delete this message for everyone?")) return;
-  try { await updateDoc(doc(db, "chats", MAIN, "messages", m.id), { deleted: true, text: "", media: deleteField() }); }
+  if (!m || !(await pickSheet("Delete this message for everyone?", "", [{ label: "Delete message", value: true, danger: true }]))) return;
+  try {
+    const b = writeBatch(db);
+    b.update(doc(db, "chats", MAIN, "messages", m.id), { deleted: true, text: "", media: deleteField() });
+    if (m.uid !== user.uid) b.set(doc(collection(db, "auditLog")), logData("delete_message", m.uid, m.name, m.text));
+    await b.commit();
+  }
   catch (err) { toast("Couldn't delete the message. Try again."); }
 });
 $("#rbClose").addEventListener("click", clearReply);
@@ -1075,7 +1143,47 @@ $("#peopleList").addEventListener("keydown", (e) => {
   if (r) { e.preventDefault(); openPerson(r.dataset.id); }
 });
 $("#personBack").addEventListener("click", closePerson);
+$("#openMod").addEventListener("click", () => { modRender(); window.Cohort.show("modScreen"); });
+$("#modBack").addEventListener("click", () => window.Cohort.show("app"));
+$("#actReport").addEventListener("click", () => {
+  const m = picked; closeSheet();
+  if (m) startReport({ kind: "message", targetUid: m.uid, targetName: m.name || "Student", msgId: m.id, text: m.text });
+});
+$("#uReport").addEventListener("click", () => {
+  const id = viewingId;
+  if (id && people[id]) startReport({ kind: "user", targetUid: id, targetName: people[id].name });
+});
+$("#uModBtn").addEventListener("click", async () => {
+  const id = viewingId, p = people[id];
+  if (!id || !p || !isAdmin || id === user.uid) return;
+  const lift = restrictedIds.has(id);
+  const ok = await pickSheet(lift ? "Lift restriction for " + p.name + "?" : "Restrict " + p.name + "?", lift ? "They'll be able to send messages and post again." : "They can read but can't send messages or post statuses until you lift it.", [{ label: lift ? "Lift restriction" : "Restrict account", value: true, danger: !lift }]);
+  if (!ok) return;
+  try {
+    const b = writeBatch(db);
+    if (lift) b.delete(doc(db, "restrictions", id)); else b.set(doc(db, "restrictions", id), { by: user.uid, reason: "Restricted by an admin", createdAt: serverTimestamp() });
+    b.set(doc(collection(db, "auditLog")), logData(lift ? "lift_restriction" : "restrict", id, p.name, ""));
+    await b.commit();
+    toast(lift ? "Restriction lifted." : p.name + " is restricted.");
+  } catch (err) { toast("Couldn't update. Admins can't be restricted, and the new rules must be published."); }
+});
 $("#uMsg").addEventListener("click", () => { const id = viewingId; if (id) { viewingId = null; openDm(id); } });
+$("#uAdminBtn").addEventListener("click", async () => {
+  const id = viewingId, p = people[id], b = $("#uAdminBtn");
+  if (!id || !p || !isOwner() || id === user.uid) return;
+  const make = !adminIds.has(id);
+  if (!confirm(make ? "Make " + p.name + " an admin? Admins can post and pin announcements." : "Remove admin access from " + p.name + "?")) return;
+  busy(b, true);
+  try {
+    const wb = writeBatch(db);
+    if (make) wb.set(doc(db, "admins", id), { role: "admin" }); else wb.delete(doc(db, "admins", id));
+    wb.set(doc(collection(db, "auditLog")), logData(make ? "make_admin" : "remove_admin", id, p.name, ""));
+    await wb.commit();
+    if (make) adminIds.add(id); else adminIds.delete(id);
+    toast(make ? p.name + " is now an admin." : p.name + " is no longer an admin.");
+  } catch (err) { toast("Couldn't update. Make sure the new rules are published."); }
+  finally { busy(b, false); renderPerson(); }
+});
 $("#chatSearch").addEventListener("input", (e) => { chatQ = e.target.value; renderDmList(); });
 $("#dmList").addEventListener("click", (e) => { const r = e.target.closest(".row"); if (r) openDm(r.dataset.peer); });
 $("#dmList").addEventListener("keydown", (e) => {
@@ -1384,6 +1492,7 @@ function stDurationOk(f) {
   });
 }
 async function scPost() {
+  if (restricted) { toast(RESTRICTED_MSG); return; }
   if (scState.busy) return;
   const m = $("#scMsg"), k = scState.kind; msg(m, "");
   let text = "";
@@ -1456,8 +1565,147 @@ $("#scFile").addEventListener("change", async (e) => {
   scState.file = f; scDraw();
 });
 
+/* ---------- Phase 10: moderation ---------- */
+const RESTRICTED_MSG = "Your account is restricted by an admin.";
+const REASONS = [["spam", "Spam"], ["harassment", "Harassment or bullying"], ["inappropriate", "Inappropriate content"], ["other", "Something else"]];
+const reasonLabel = (c) => (REASONS.find((r) => r[0] === c) || [0, "Other"])[1];
+
+function pickSheet(title, note, items) {
+  return new Promise((resolve) => {
+    const sh = $("#pick"), card = $("#pickCard");
+    const done = (v) => { sh.classList.add("hidden"); resolve(v); };
+    card.replaceChildren();
+    card.appendChild(h("div", "pkTitle", title));
+    if (note) card.appendChild(h("div", "pkNote", note));
+    items.forEach((it) => {
+      const b = h("button", "sheet-btn" + (it.danger ? " danger" : ""), it.label);
+      b.type = "button"; b.addEventListener("click", () => done(it.value));
+      card.appendChild(b);
+    });
+    const c = h("button", "sheet-btn", "Cancel");
+    c.type = "button"; c.addEventListener("click", () => done(null));
+    card.appendChild(c);
+    sh.onclick = (e) => { if (e.target === sh) done(null); };
+    sh.classList.remove("hidden");
+  });
+}
+
+async function startReport(t) {
+  const reason = await pickSheet("Report " + (t.kind === "message" ? "this message" : t.targetName), "Admins will review it. The person isn't told who reported.", REASONS.map((r) => ({ label: r[1], value: r[0] })));
+  if (!reason) return;
+  const data = { kind: t.kind, targetUid: t.targetUid, targetName: t.targetName, reason: reason, reporterUid: user.uid, reporterName: myName(), createdAt: serverTimestamp(), status: "open" };
+  if (t.kind === "message") { data.msgId = t.msgId; data.text = (t.text || "").slice(0, 200); }
+  const rid = user.uid + "_" + (t.kind === "message" ? t.msgId : t.targetUid);
+  try { await setDoc(doc(db, "reports", rid), data); toast("Report sent. Thank you."); }
+  catch (err) { toast("Couldn't send the report. You may have already reported this."); }
+}
+
+function modAdminInit() {
+  $("#openMod").classList.toggle("hidden", !isAdmin);
+  if (!isAdmin || modSubbed || !user) return;
+  modSubbed = true;
+  unsubs.push(onSnapshot(query(collection(db, "reports"), where("status", "==", "open"), limit(100)), (snap) => {
+    modReports = snap.docs.map((d) => Object.assign({ id: d.id }, d.data({ serverTimestamps: "estimate" })));
+    modRender();
+  }, () => {}));
+  unsubs.push(onSnapshot(collection(db, "restrictions"), (snap) => {
+    restrictedIds = new Set(snap.docs.map((d) => d.id));
+    if (viewingId) renderPerson();
+    modRender();
+  }, () => {}));
+  unsubs.push(onSnapshot(query(collection(db, "auditLog"), orderBy("createdAt", "desc"), limit(30)), (snap) => {
+    auditItems = snap.docs.map((d) => Object.assign({ id: d.id }, d.data({ serverTimestamps: "estimate" })));
+    auditRender();
+  }, () => {}));
+}
+
+function logData(action, targetUid, targetName, detail) {
+  return { by: user.uid, byName: myName(), action: action, targetUid: targetUid, targetName: (targetName || "Student").slice(0, 60), detail: (detail || "").slice(0, 200), createdAt: serverTimestamp() };
+}
+function auditText(a) {
+  const by = a.byName || "An admin", t = a.targetName || "a student";
+  return a.action === "delete_message" ? by + " deleted a message by " + t
+    : a.action === "restrict" ? by + " restricted " + t
+    : a.action === "lift_restriction" ? by + " lifted the restriction on " + t
+    : a.action === "dismiss_report" ? by + " dismissed a report about " + t
+    : a.action === "make_admin" ? by + " made " + t + " an admin"
+    : a.action === "remove_admin" ? by + " removed admin access from " + t
+    : by + " " + a.action;
+}
+function auditRender() {
+  const frag = document.createDocumentFragment();
+  if (!auditItems.length) frag.appendChild(h("div", "modWho", "No admin actions yet.")).style.padding = "6px 18px";
+  auditItems.forEach((a) => {
+    const t = tms(a.createdAt) || Date.now(), d = h("div", "auditRow");
+    d.appendChild(h("div", null, auditText(a)));
+    d.appendChild(h("div", "modWho", dayLabel(t) + ", " + timeStr(t) + (a.detail ? " \u00B7 " + a.detail : "")));
+    frag.appendChild(d);
+  });
+  $("#auditList").replaceChildren(frag);
+}
+
+function modBtn(label, cls, fn, off) {
+  const b = h("button", cls, label);
+  b.type = "button"; b.disabled = !!off; b.addEventListener("click", fn);
+  return b;
+}
+
+function modRender() {
+  const items = modReports.slice().sort((a, b) => tms(b.createdAt) - tms(a.createdAt));
+  $("#modEmpty").classList.toggle("hidden", items.length > 0);
+  const badge = $("#modBadge");
+  badge.textContent = items.length; badge.classList.toggle("hidden", !items.length);
+  const frag = document.createDocumentFragment();
+  for (const r of items) {
+    const t = tms(r.createdAt) || Date.now(), c = h("div", "mod");
+    c.appendChild(h("div", "modHead", (r.kind === "message" ? "Message" : "Student") + " reported: " + reasonLabel(r.reason)));
+    c.appendChild(h("div", "modWho", "About " + r.targetName + " \u00B7 by " + (r.reporterName || "a student") + " \u00B7 " + dayLabel(t) + ", " + timeStr(t)));
+    if (r.text) c.appendChild(h("div", "modText", r.text));
+    const act = h("div", "modAct");
+    if (r.kind === "message") act.appendChild(modBtn("Delete message", "danger", () => modDelete(r)));
+    act.appendChild(modBtn(restrictedIds.has(r.targetUid) ? "Restricted" : "Restrict", "danger", () => modRestrict(r), restrictedIds.has(r.targetUid)));
+    act.appendChild(modBtn("Dismiss", "", () => modClose(r, "dismissed")));
+    c.appendChild(act); frag.appendChild(c);
+  }
+  $("#modList").replaceChildren(frag);
+}
+
+async function modClose(r, status) {
+  try {
+    const b = writeBatch(db);
+    b.update(doc(db, "reports", r.id), { status: status, resolvedBy: user.uid });
+    if (status === "dismissed") b.set(doc(collection(db, "auditLog")), logData("dismiss_report", r.targetUid, r.targetName, reasonLabel(r.reason)));
+    await b.commit();
+  } catch (err) { toast("Couldn't update the report."); }
+}
+async function modDelete(r) {
+  const ok = await pickSheet("Delete this message for everyone?", "", [{ label: "Delete message", value: true, danger: true }]);
+  if (!ok) return;
+  try {
+    const b = writeBatch(db);
+    b.update(doc(db, "chats", MAIN, "messages", r.msgId), { deleted: true, text: "", media: deleteField() });
+    b.set(doc(collection(db, "auditLog")), logData("delete_message", r.targetUid, r.targetName, r.text));
+    await b.commit();
+  }
+  catch (err) { toast("Couldn't delete the message. It may already be gone."); return; }
+  modClose(r, "resolved"); toast("Message deleted.");
+}
+async function modRestrict(r) {
+  const ok = await pickSheet("Restrict " + r.targetName + "?", "They can read but can't send messages or post statuses until you lift it.", [{ label: "Restrict account", value: true, danger: true }]);
+  if (!ok) return;
+  try {
+    const b = writeBatch(db);
+    b.set(doc(db, "restrictions", r.targetUid), { by: user.uid, reason: r.reason, createdAt: serverTimestamp() });
+    b.set(doc(collection(db, "auditLog")), logData("restrict", r.targetUid, r.targetName, reasonLabel(r.reason)));
+    await b.commit();
+  }
+  catch (err) { toast("Couldn't restrict. Admins can't be restricted."); return; }
+  modClose(r, "resolved"); toast(r.targetName + " is restricted.");
+}
+
 /* ---------- Phase 9: announcements ---------- */
 const ADMIN_EMAIL = "official@gmail.com";
+function isOwner() { return !!(user && user.email && user.email.toLowerCase() === ADMIN_EMAIL); }
 let anItems = [], isAdmin = false, anReady = false;
 const AN_KEY = "cohort-ann-seen";
 function anSeenAt() { try { return Number(localStorage.getItem(AN_KEY) || 0); } catch (e) { return 0; } }
@@ -1522,7 +1770,7 @@ $("#pMakeAdmin").addEventListener("click", async () => {
   const b = $("#pMakeAdmin"); busy(b, true);
   try {
     await setDoc(doc(db, "admins", user.uid), { role: "admin" });
-    isAdmin = true; anRender(); b.classList.add("hidden");
+    isAdmin = true; anRender(); modAdminInit(); b.classList.add("hidden");
     $("#pAdmin").textContent = "Role: admin"; toast("You're set up as an admin.");
   } catch (err) { $("#pAdmin").textContent = "Couldn't set up admin: " + ((err && err.code) || "error"); }
   finally { busy(b, false); }
