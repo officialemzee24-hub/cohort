@@ -888,7 +888,7 @@ function openDm(pid) {
   dmReactionUnsub = null;
   dmReactions = {};
   dmOpenId = dmId(user.uid, pid); dmPeer = pid; dmMsgs = [];
-  dmReactionUnsub = onSnapshot(query(collection(db, "messageReactions"), where("dmId", "==", dmOpenId)), (snap) => {
+  dmReactionUnsub = onSnapshot(collection(db, "dms", dmOpenId, "reactions"), (snap) => {
     dmReactions = buildReactionMap(snap);
     if (dmOpenId) renderDm();
   }, () => {});
@@ -1277,7 +1277,7 @@ async function toggleReaction(scope, messageId, emoji) {
   if (!user || !messageId || !REACTION_EMOJIS.includes(emoji)) return;
   const source = scope === "group" ? groupReactions : dmReactions;
   const current = source[messageId] && source[messageId][emoji] && source[messageId][emoji].mine;
-  const ref = doc(db, "messageReactions", reactionDocId(scope, messageId));
+  const ref = scope === "group" ? doc(db, "messageReactions", reactionDocId(scope, messageId)) : doc(db, "dms", dmOpenId, "reactions", messageId + "_" + user.uid);
   try {
     if (current) await deleteDoc(ref);
     else await setDoc(ref, scope === "group"
