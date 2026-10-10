@@ -325,6 +325,106 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
 @keyframes skel{50%{opacity:.45}}
 .stateBtn{margin-top:14px;padding:10px 18px;border-radius:12px;border:1.5px solid var(--teal);background:none;color:var(--teal);font-weight:600;cursor:pointer}
 .netbar{padding:8px 18px;background:#7a5c00;color:#fff;font-size:13px;line-height:1.4;text-align:center}
+
+/* ===== UI polish ===== */
+:root{--shadow-sm:0 1px 2px rgba(16,24,28,.09);--shadow-md:0 8px 22px rgba(16,24,28,.16)}
+:root[data-theme="dark"]{--shadow-sm:0 1px 2px rgba(0,0,0,.4);--shadow-md:0 8px 24px rgba(0,0,0,.5)}
+
+/* splash and sign in */
+#splash{background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--teal) 12%,var(--bg)),var(--bg) 64%)}
+#splash::after{content:"";position:absolute;bottom:calc(9% + env(safe-area-inset-bottom,0px));width:46px;height:4px;border-radius:2px;background:linear-gradient(90deg,var(--teal),var(--orange),var(--teal));background-size:200% 100%;animation:ldbar 1.1s linear infinite}
+@keyframes ldbar{to{background-position:-200% 0}}
+#auth{background:radial-gradient(120% 55% at 50% -5%,color-mix(in srgb,var(--teal) 16%,var(--bg)),var(--bg) 62%)}
+.auth-wrap{padding:44px 26px 32px}
+.auth-head{margin-bottom:30px}
+.auth-head img{width:96px;height:96px;filter:drop-shadow(0 6px 14px rgba(65,182,214,.3))}
+.auth-head h1{font-family:Figtree,"Plus Jakarta Sans",system-ui,sans-serif;font-size:28px;font-weight:800;margin-top:14px;letter-spacing:-.01em}
+.auth-head p{font-size:14.5px;margin-top:6px}
+.field label{font-weight:600;margin-bottom:7px}
+.field input{padding:14px 15px;border-radius:14px;background:color-mix(in srgb,var(--surface) 70%,var(--bg))}
+.field input::placeholder{color:color-mix(in srgb,var(--muted) 75%,transparent)}
+.field.pw{position:relative}
+.field.pw input{padding-right:70px}
+.pwtoggle{position:absolute;right:4px;bottom:4px;height:44px;padding:0 14px;background:none;border:0;color:var(--teal);font-weight:700;font-size:13px;cursor:pointer}
+.btn{border-radius:14px;padding:15px;font-size:15.5px;letter-spacing:.01em;box-shadow:0 6px 14px rgba(245,130,32,.28);transition:transform .08s,box-shadow .15s}
+.btn:active{transform:scale(.98);box-shadow:0 2px 6px rgba(245,130,32,.25)}
+.btn[style*="--surface"],.btn.alt,.btn[disabled]{box-shadow:none}
+
+/* top bar and bottom tabs */
+.topbar{padding:12px 14px 10px 18px;border-bottom:0;box-shadow:0 1px 0 var(--line)}
+.topbar h2{font-size:28px;font-weight:800;letter-spacing:-.015em}
+.icon-btn{transition:background .15s}
+.icon-btn:active{background:var(--surface)}
+nav{border-top:0;box-shadow:0 -1px 0 var(--line),0 -8px 20px rgba(16,24,28,.04)}
+.tab{position:relative;padding:8px 0;font-weight:600;gap:4px}
+.tab svg{position:relative;z-index:1}
+.tab::after{content:"";position:absolute;top:4px;left:50%;width:58px;height:32px;margin-left:-29px;border-radius:16px;background:transparent;transition:background .2s;z-index:0}
+.tab[aria-selected="true"]::after{background:color-mix(in srgb,var(--orange) 16%,transparent)}
+.tab[aria-selected="true"]{font-weight:700}
+
+/* lists */
+.row{padding:12px 16px;border-bottom:0;position:relative;transition:background .12s}
+.row::after{content:"";position:absolute;left:82px;right:0;bottom:0;height:1px;background:var(--line)}
+.row:last-child::after{display:none}
+.row.tap:active{background:var(--surface)}
+.avatar{width:52px;height:52px;font-size:17px;box-shadow:var(--shadow-sm);overflow:hidden}
+.avatar.sm,.chathead .avatar{width:42px;height:42px;font-size:14px}
+.avatar.xs{width:30px;height:30px;font-size:11px}
+.avatar.lg{width:104px;height:104px;font-size:36px}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.row b{font-size:16px;font-weight:700}
+.row span{font-size:13.5px}
+.rcol{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:6px;flex:none;align-self:stretch}
+.rtime{font-size:12px;color:var(--muted);font-weight:500}
+.badge{box-shadow:0 2px 6px rgba(245,130,32,.35)}
+.search{padding:8px 14px 10px;border-bottom:0}
+.search input{border:0;background:var(--surface);padding:12px 16px;border-radius:24px;font-size:14.5px}
+.search input:focus-visible{box-shadow:0 0 0 2px var(--teal)}
+.fab{box-shadow:0 8px 20px rgba(245,130,32,.45);transition:transform .1s}
+.fab:active{transform:scale(.94)}
+.empty{padding:64px 32px}
+.empty::before{content:"\1F4AC";display:block;font-size:44px;margin-bottom:12px}
+#peopleList .empty::before,#v-people .empty::before{content:"\1F465"}
+#v-status .empty::before,#stEmpty::before{content:"\2728"}
+#annEmpty::before{content:"\1F4E2"}
+#repEmpty::before,#modScreen .empty::before{content:"\2705"}
+.vcard .empty::before{content:"\1F440"}
+
+/* chats */
+.chathead{padding:8px 12px 8px 4px;border-bottom:0;box-shadow:0 1px 0 var(--line),0 4px 14px rgba(16,24,28,.04)}
+#msgs,#dmMsgs{padding:12px 10px 10px;gap:2px;background-color:var(--surface);background-image:radial-gradient(color-mix(in srgb,var(--text) 7%,transparent) 1px,transparent 1.3px);background-size:20px 20px}
+.mrow.first{margin-top:8px}
+.bubble{padding:7px 11px 5px;border-radius:17px;border:0;box-shadow:var(--shadow-sm);line-height:1.38}
+.mrow.first:not(.mine) .bubble{border-top-left-radius:5px}
+.mrow.first.mine .bubble{border-top-right-radius:5px}
+.daysep{padding:5px 14px;border-radius:14px;box-shadow:var(--shadow-sm);font-weight:600;margin:12px 0 8px}
+.quote{border-radius:8px;border-left-width:4px}
+#composer,#dmForm{border-top:0;box-shadow:0 -1px 0 var(--line)}
+#mi,#dmInput{border:0;background:var(--surface);border-radius:24px;padding:12px 16px}
+#mi:focus-visible,#dmInput:focus-visible{box-shadow:0 0 0 2px var(--teal)}
+.send{box-shadow:0 4px 12px rgba(245,130,32,.35);transition:transform .1s}
+.send:active{transform:scale(.92)}
+.sheet-card{border-radius:22px 22px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.18);padding-top:6px}
+.sheet-card::before{content:"";display:block;width:38px;height:4px;border-radius:2px;background:var(--line);margin:4px auto 8px}
+.sheet-btn{padding:16px 10px}
+#toast{background:#262b2e;border-radius:14px;padding:11px 18px;box-shadow:var(--shadow-md)}
+
+/* profile */
+.toggle{width:52px;height:32px;border-radius:16px}
+.toggle::after{width:26px;height:26px;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.toggle[aria-checked="true"]::after{transform:translateX(20px)}
+#v-profile{background:var(--surface);padding-bottom:20px}
+#v-profile>.row:first-child{flex-direction:column;text-align:center;gap:12px;padding:26px 16px 20px;background:var(--bg)}
+#v-profile>.row:first-child::after{display:none}
+#v-profile>.row:first-child .avatar{box-shadow:0 8px 22px rgba(16,24,28,.18),0 0 0 4px var(--bg),0 0 0 6px color-mix(in srgb,var(--teal) 45%,transparent)}
+#v-profile #pName{font-family:Figtree,"Plus Jakarta Sans",system-ui,sans-serif;font-size:22px;font-weight:800}
+#v-profile #pEmail{font-size:14px}
+#v-profile .edit,#v-profile .setting,#v-profile .rowbtn{background:var(--bg)}
+#v-profile .edit{margin-top:10px}
+#v-profile .setting{padding:15px 18px}
+#v-profile #notifRow{margin-top:10px}
+.logout{margin:18px 14px 6px;width:calc(100% - 28px);color:var(--err);background:var(--bg);border:1px solid color-mix(in srgb,var(--err) 40%,var(--line));box-shadow:none}
+@media (prefers-reduced-motion:reduce){#splash::after{animation:none}.btn,.fab,.send,.tab::after{transition:none}}
 </style>
 </head>
 <body>
@@ -377,8 +477,8 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
   <main>
     <div class="view active" id="v-chats">
       <div class="search"><input id="chatSearch" type="search" placeholder="Search chats" aria-label="Search chats" autocomplete="off"></div>
-      <div class="row tap" id="openAnn" role="button" tabindex="0"><div class="avatar" style="background:var(--orange)"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4a1 1 0 0 0 1 1h2l6 4V5L6 9H4a1 1 0 0 0-1 1z"/><path d="M16 8.5a5 5 0 0 1 0 7"/></svg></div><div class="grow"><b>Announcements</b><span id="annLast">Loading...</span></div><div class="badge hidden" id="annBadge">0</div></div>
-      <div class="row tap" id="openMain" role="button" tabindex="0"><div class="avatar">CS</div><div class="grow"><b>CS 200 Level</b><span id="lastMsg">Loading...</span></div><div class="badge hidden" id="unread">0</div></div>
+      <div class="row tap" id="openAnn" role="button" tabindex="0"><div class="avatar" style="background:var(--orange)"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4a1 1 0 0 0 1 1h2l6 4V5L6 9H4a1 1 0 0 0-1 1z"/><path d="M16 8.5a5 5 0 0 1 0 7"/></svg></div><div class="grow"><b>Announcements</b><span id="annLast">Loading...</span></div><div class="rcol"><div class="badge hidden" id="annBadge">0</div></div></div>
+      <div class="row tap" id="openMain" role="button" tabindex="0"><div class="avatar">CS</div><div class="grow"><b>CS 200 Level</b><span id="lastMsg">Loading...</span></div><div class="rcol"><small class="rtime" id="mainTime"></small><div class="badge hidden" id="unread">0</div></div></div>
       <button class="fab" id="fabNew" type="button" aria-label="New chat"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.8A8 8 0 1 1 21 12z"/><path d="M12 9v6M9 12h6"/></svg></button>
     <div id="dmList"></div>
     </div>
@@ -626,6 +726,14 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
     $('#viewTitle').textContent=titles[v];
     $('main').scrollTop=0;
   })});
+
+  /* Show / hide password */
+  $$('.field input[type=password]').forEach(function(inp){
+    var f=inp.parentElement;f.classList.add('pw');
+    var b=document.createElement('button');b.type='button';b.className='pwtoggle';b.textContent='Show';b.setAttribute('aria-label','Show password');
+    b.addEventListener('click',function(){var show=inp.type==='password';inp.type=show?'text':'password';b.textContent=show?'Hide':'Show';b.setAttribute('aria-label',show?'Hide password':'Show password')});
+    f.appendChild(b);
+  });
 
   /* Install as an app */
   var installEvt=null, isStandalone=matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
@@ -880,7 +988,10 @@ function renderDmList() {
     g.appendChild(h("b", null, p.name));
     g.appendChild(h("span", null, (c.lastUid === user.uid ? "You: " : "") + c.lastText));
     row.appendChild(g);
-    if (unreadDm(c)) row.appendChild(h("div", "badge", "New"));
+    const rc = h("div", "rcol");
+    rc.appendChild(h("small", "rtime", listTime(tms(c.lastAt))));
+    if (unreadDm(c)) rc.appendChild(h("div", "badge", "New"));
+    row.appendChild(rc);
     frag.appendChild(row);
   }
   if (!shown) {
@@ -908,12 +1019,14 @@ function renderDm(force) {
   const el = $("#dmMsgs"), near = el.scrollHeight - el.scrollTop - el.clientHeight < 140, top = el.scrollTop;
   const peerSeen = tms(((dmConvs[dmOpenId] || {}).seen || {})[dmPeer]);
   const frag = document.createDocumentFragment();
-  let prevDay = "";
+  let prevDay = "", prevUid = "";
   for (const m of dmMsgs) {
     if (isHidden("d", m.id)) continue;
     const t = tms(m.createdAt) || Date.now(), day = dayLabel(t);
-    if (day !== prevDay) { frag.appendChild(h("div", "daysep", day)); prevDay = day; }
-    const mine = m.uid === user.uid, row = h("div", "mrow" + (mine ? " mine" : "")), b = h("div", "bubble");
+    const dayChanged = day !== prevDay;
+    if (dayChanged) { frag.appendChild(h("div", "daysep", day)); prevDay = day; }
+    const cont = !dayChanged && prevUid === m.uid; prevUid = m.uid;
+    const mine = m.uid === user.uid, row = h("div", "mrow" + (mine ? " mine" : "") + (cont ? " cont" : " first")), b = h("div", "bubble");
     b.style.cursor = "default";
     row.dataset.id = m.id;
     if (m.replyTo) {
@@ -1286,6 +1399,7 @@ function renderList() {
     const who = last.uid === user.uid ? "You" : (last.name || "").split(" ")[0];
     el.textContent = who + ": " + (last.deleted ? "Message deleted" : last.text);
   }
+  $("#mainTime").textContent = last ? listTime(tms(last.createdAt)) : "";
   const mine = reads[user.uid] || 0;
   const n = (chatOpen || !readsReady) ? 0 : msgs.filter((m) => m.uid !== user.uid && !m.deleted && tms(m.createdAt) > mine).length;
   const b = $("#unread");
@@ -1462,7 +1576,7 @@ function renderMsgs(forceBottom) {
     if (day !== prevDay) { frag.appendChild(h("div", "daysep", day)); prevDay = day; prev = null; }
     if (chatOpen && chatReadAtOpen && !divDone && t > chatReadAtOpen && m.uid !== user.uid) { frag.appendChild(h("div", "daysep newdiv", "New messages")); divDone = true; prev = null; }
     const mine = m.uid === user.uid, sameRun = !!prev && prev.uid === m.uid;
-    const row = h("div", "mrow" + (mine ? " mine" : ""));
+    const row = h("div", "mrow" + (mine ? " mine" : "") + (sameRun ? " cont" : " first"));
     row.dataset.id = m.id;
     if (!mine) row.appendChild(avatarEl(m.name || "?", (people[m.uid] || {}).photo, "xs" + (sameRun ? " ghost" : ""), false));
     const b = h("div", "bubble" + (m.deleted ? " gone" : ""));
@@ -2881,6 +2995,15 @@ $("#annList").addEventListener("click", async (e) => {
     else if (b.dataset.act === "del" && await pickSheet("Delete this announcement?", "It will be removed for everyone.", [{ label: "Delete announcement", value: true, danger: true }])) await deleteDoc(doc(db, "announcements", a.id));
   } catch (err) { toast("Couldn't update the announcement."); }
 });
+
+function listTime(t) {
+  if (!t) return "";
+  const d = new Date(t), n = new Date(), y = new Date();
+  y.setDate(n.getDate() - 1);
+  if (d.toDateString() === n.toDateString()) return timeStr(t);
+  if (d.toDateString() === y.toDateString()) return "Yesterday";
+  return d.toLocaleDateString([], { day: "numeric", month: "short" });
+}
 
 function route() {
   if (!window.__splashDone || !authKnown) return;
