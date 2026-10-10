@@ -398,7 +398,7 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
     <button class="icon-btn" id="attBtn" type="button" aria-label="Attach a file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button><input type="file" id="attIn" accept="image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt" hidden><textarea id="mi" rows="1" maxlength="2000" placeholder="Message" aria-label="Message"></textarea>
     <button class="send" id="sendBtn" type="submit" aria-label="Send message"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a1 1 0 0 0-1.4 1.2L4 11l9 1-9 1-2 6.2a1 1 0 0 0 1.4 1.2z"/></svg></button>
   </form>
-  <div id="reactionPicker" class="hidden" role="menu" aria-label="Choose a reaction"></div>\n  <div id="sheet" class="sheet hidden"><div class="sheet-card">
+  <div id="sheet" class="sheet hidden"><div class="sheet-card">
     <button class="sheet-btn" id="actReact" type="button">React</button>
     <button class="sheet-btn" id="actReply" type="button">Reply</button>
     <button class="sheet-btn" id="actReport" type="button">Report</button>
@@ -481,6 +481,7 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
   <div style="overflow-y:auto;flex:1"><div id="modList"></div><div class="empty hidden" id="modEmpty"><b>No open reports</b>Reports from students will appear here.</div><div class="auditHead">Recent admin actions</div><div id="auditList"></div></div>
 </section>
 <div id="pick" class="sheet hidden"><div class="sheet-card" id="pickCard"></div></div>
+<div id="reactionPicker" class="hidden" role="menu" aria-label="Choose a reaction"></div>
 <div id="toast" class="hidden" role="status"></div>
 
 <script>
