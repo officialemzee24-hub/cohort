@@ -304,11 +304,17 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
 .findbar{display:flex;align-items:center;gap:4px;padding:6px 10px;border-bottom:1px solid var(--line);background:var(--bg)}
 .findbar input{flex:1;min-width:0;padding:9px 14px;border-radius:18px;border:1.5px solid var(--line);background:var(--surface);color:var(--text);outline:none}
 .findbar span{font-size:12.5px;color:var(--muted);min-width:34px;text-align:center}
-.pinbar{display:flex;gap:8px;align-items:center;padding:8px 14px;background:color-mix(in srgb,var(--orange) 12%,transparent);border-bottom:1px solid var(--line);font-size:13.5px;cursor:pointer}
-#pinText{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mpin{display:flex;gap:8px;align-items:center;padding:8px 14px;background:color-mix(in srgb,var(--orange) 12%,var(--bg));border-bottom:1px solid var(--line);font-size:13.5px;cursor:pointer}
+#mpText{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .recbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;align-items:center;gap:12px;padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid var(--line)}
 .recdot{width:12px;height:12px;border-radius:50%;background:#e53935;animation:recblink 1s infinite}
 @keyframes recblink{50%{opacity:.25}}
+.vn{display:flex;align-items:center;gap:10px;min-width:230px;padding:2px 0}
+.vnbtn{flex:none;width:38px;height:38px;border-radius:50%;border:0;background:var(--orange);color:#fff;font-size:13px;cursor:pointer;display:grid;place-items:center}
+.vnbar{flex:1;height:6px;border-radius:3px;background:color-mix(in srgb,var(--text) 18%,transparent);cursor:pointer}
+.vnbar i{display:block;height:100%;width:0;border-radius:3px;background:var(--orange)}
+.vntime{flex:none;font-size:12px;color:var(--muted);min-width:32px;text-align:right}
+.vnrate{flex:none;border:0;border-radius:10px;padding:3px 7px;font-size:12px;font-weight:700;background:color-mix(in srgb,var(--text) 12%,transparent);color:var(--text);cursor:pointer}
 </style>
 </head>
 <body>
@@ -405,7 +411,7 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
   </header>
   <div id="pinBar" class="pinbar hidden" role="button" tabindex="0"></div>
   <div id="csBar" class="findbar hidden"><input id="csIn" type="search" placeholder="Search in this chat" aria-label="Search in this chat" autocomplete="off"><span id="csCount"></span><button class="icon-btn" id="csPrev" type="button" aria-label="Older match">&#9650;</button><button class="icon-btn" id="csNext" type="button" aria-label="Newer match">&#9660;</button><button class="icon-btn" id="csHide" type="button" aria-label="Hide search">&#10005;</button></div>
-  <div id="pinBar" class="pinbar hidden"><span>&#128204;</span><span id="pinText"></span></div>
+  <div id="mpBar" class="mpin hidden"><span>&#128204;</span><span id="mpText"></span></div>
   <div id="msgs" role="log" aria-live="polite"></div>
   <button class="jump hidden" id="jumpDown" type="button" aria-label="Scroll to latest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg><span class="badge hidden" id="jumpBadge">0</span></button>
   <div id="replyBar" class="hidden"><div><b id="rbName"></b><span id="rbText"></span></div><button class="icon-btn" id="rbClose" type="button" aria-label="Cancel reply"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
@@ -1038,12 +1044,7 @@ function mediaEl(md) {
     i.addEventListener("click", () => openViewer(md.url));
     w.appendChild(i);
   } else if (md.type === "audio") {
-    const au = document.createElement("audio");
-    au.src = md.url; au.controls = true; au.preload = "metadata"; au.style.cssText = "width:min(240px,100%);display:block";
-    w.appendChild(au);
-    const sp = h("span", null, (md.name || "Voice note").replace(/\.\w+$/, ""));
-    sp.style.cssText = "display:block;font-size:12px;color:var(--muted)";
-    w.appendChild(sp);
+    w.appendChild(voicePlayer(md));
   } else if (md.type === "video") {
     const v = document.createElement("video");
     v.src = md.url; v.controls = true; v.preload = "metadata"; v.playsInline = true;
@@ -2474,6 +2475,49 @@ $("#openAnn").addEventListener("click", () => setTimeout(() => { const w = $("#a
 /* ---------- Chat tools: scroll button, search, pins, voice notes, forward, delete for me ---------- */
 let pinsList = [], pinIdx = 0, chatReadAtOpen = 0, fwdMsg = null, fwdFrom = "chat", dmPickedMsg = null, rec = null;
 
+/* Voice note player: play/pause, progress, speed */
+let voiceNow = null;
+function voicePlayer(md) {
+  const wrap = h("div", "vn"), btn = h("button", "vnbtn", "\u25B6"), bar = h("div", "vnbar"), fill = h("i"), time = h("span", "vntime"), rate = h("button", "vnrate", "1\u00D7");
+  const mt = /(\d+):(\d{2})/.exec(md.name || "");
+  const dur = mt ? Number(mt[1]) * 60 + Number(mt[2]) : 0;
+  const fmt = (n) => mmss(Math.max(0, Math.round(n)));
+  let au = null, speed = 1;
+  btn.type = "button"; rate.type = "button"; bar.appendChild(fill); time.textContent = fmt(dur);
+  btn.setAttribute("aria-label", "Play voice note"); rate.setAttribute("aria-label", "Playback speed");
+  const ensure = () => {
+    if (au) return au;
+    au = new Audio(md.url); au.preload = "auto";
+    au.addEventListener("timeupdate", () => {
+      const total = dur || au.duration || 0;
+      if (total && isFinite(total)) fill.style.width = Math.min(100, au.currentTime / total * 100) + "%";
+      time.textContent = fmt(au.currentTime);
+    });
+    au.addEventListener("ended", () => { btn.textContent = "\u25B6"; fill.style.width = "0"; time.textContent = fmt(dur); voiceNow = null; });
+    au.addEventListener("pause", () => { btn.textContent = "\u25B6"; });
+    au.addEventListener("play", () => { btn.textContent = "\u275A\u275A"; });
+    au.addEventListener("error", () => { btn.textContent = "\u25B6"; toast("Couldn't play this voice note."); });
+    return au;
+  };
+  btn.addEventListener("click", () => {
+    const a = ensure();
+    if (a.paused) {
+      if (voiceNow && voiceNow !== a) voiceNow.pause();
+      voiceNow = a; a.playbackRate = speed;
+      a.play().catch(() => toast("Couldn't play this voice note."));
+    } else a.pause();
+  });
+  rate.addEventListener("click", () => { speed = speed === 1 ? 1.5 : speed === 1.5 ? 2 : 1; rate.textContent = (speed === 1 ? "1" : String(speed)) + "\u00D7"; if (au) au.playbackRate = speed; });
+  bar.addEventListener("click", (e) => {
+    const a = ensure(), total = dur || a.duration;
+    if (!total || !isFinite(total)) return;
+    const r = bar.getBoundingClientRect();
+    a.currentTime = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * total;
+  });
+  wrap.appendChild(btn); wrap.appendChild(bar); wrap.appendChild(time); wrap.appendChild(rate);
+  return wrap;
+}
+
 /* Delete for me: hidden only on this phone */
 let hiddenSet = new Set();
 function loadHidden() { try { hiddenSet = new Set(JSON.parse(lsGet("hidden") || "[]")); } catch (e) { hiddenSet = new Set(); } }
@@ -2537,12 +2581,12 @@ function watchPins() {
   }, () => {}));
 }
 function renderPins() {
-  $("#pinBar").classList.toggle("hidden", !pinsList.length);
+  $("#mpBar").classList.toggle("hidden", !pinsList.length);
   if (!pinsList.length) return;
   const k = pinIdx % pinsList.length;
-  $("#pinText").textContent = (pinsList.length > 1 ? (k + 1) + "/" + pinsList.length + "  " : "") + pinsList[k].text;
+  $("#mpText").textContent = (pinsList.length > 1 ? (k + 1) + "/" + pinsList.length + "  " : "") + pinsList[k].text;
 }
-$("#pinBar").addEventListener("click", () => {
+$("#mpBar").addEventListener("click", () => {
   if (!pinsList.length) return;
   jumpTo(pinsList[pinIdx % pinsList.length].messageId);
   pinIdx = (pinIdx + 1) % pinsList.length; renderPins();
