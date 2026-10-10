@@ -1,0 +1,27 @@
+name: iOS Simulator Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check Xcode
+        run: xcodebuild -version
+
+      - name: List project files
+        run: find . -maxdepth 4 -type f | head -200
+
+      - name: Check for iOS project
+        run: |
+          if find . -name "*.xcodeproj" -o -name "*.xcworkspace" | grep -q .; then
+            echo "iOS Xcode project found."
+          else
+            echo "No Xcode project found."
+            exit 1
+          fi
