@@ -1,11 +1,15 @@
-name: iOS Simulator Build
+name: Cohort iOS Simulator Build
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - 'ios-app.zip'
+      - '.github/workflows/ios-simulator-build.yml'
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-15
 
     steps:
       - name: Checkout repository
@@ -14,14 +18,49 @@ jobs:
       - name: Check Xcode
         run: xcodebuild -version
 
-      - name: List project files
-        run: find . -maxdepth 4 -type f | head -200
-
-      - name: Check for iOS project
+      - name: Extract iOS project
         run: |
-          if find . -name "*.xcodeproj" -o -name "*.xcworkspace" | grep -q .; then
-            echo "iOS Xcode project found."
-          else
-            echo "No Xcode project found."
+          mkdir -p ios-project-extracted
+          unzip -q ios-app.zip -d ios-project-extracted
+
+          PODFILE=$(find ios-project-extracted \
+            -name Podfile -print -quit)
+
+          if [ -z "$PODFILE" ]; then
+            echo "ERROR: Podfile not found in archive."
             exit 1
           fi
+
+          IOS_DIR=$(dirname "$PODFILE")
+
+          if [ ! -d "$IOS_DIR/Cohort.xcworkspace" ]; then
+            echo "ERROR: Cohort.xcworkspace not found."
+            exit 1
+          fi
+
+          echo "IOS_DIR=$IOS_DIR" >> "$GITHUB_ENV"
+
+      - name: Install CocoaPods
+        run: |
+          sudo gem install cocoapods
+          pod install --project-directory="$IOS_DIR"
+
+      - name: Build for iOS Simulator
+        run: |
+          xcodebuild \
+            -workspace "$IOS_DIR/Cohort.xcworkspace" \
+            -scheme Cohort \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/CohortBuild" \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Upload simulator build
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Cohort-iOS-Simulator-Build
+          path: ${{ runner.temp }}/CohortBuild/Build/Products/Debug-iphonesimulator/Cohort.app
+          if-no-files-found: error
+          retention-days: 7
