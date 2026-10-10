@@ -315,6 +315,16 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
 .vnbar i{display:block;height:100%;width:0;border-radius:3px;background:var(--orange)}
 .vntime{flex:none;font-size:12px;color:var(--muted);min-width:32px;text-align:right}
 .vnrate{flex:none;border:0;border-radius:10px;padding:3px 7px;font-size:12px;font-weight:700;background:color-mix(in srgb,var(--text) 12%,transparent);color:var(--text);cursor:pointer}
+/* Loading, empty and offline states */
+.stateBox{padding:28px 22px;text-align:center;color:var(--muted)}
+.stateTxt{font-size:14.5px;line-height:1.45;margin-top:10px}
+.stateEmoji{font-size:34px}
+.skels{display:flex;flex-direction:column;gap:12px;padding:0 8px}
+.skel{height:44px;border-radius:16px;background:color-mix(in srgb,var(--text) 8%,transparent);animation:skel 1.2s ease-in-out infinite}
+.skel.l{align-self:flex-start}.skel.r{align-self:flex-end}
+@keyframes skel{50%{opacity:.45}}
+.stateBtn{margin-top:14px;padding:10px 18px;border-radius:12px;border:1.5px solid var(--teal);background:none;color:var(--teal);font-weight:600;cursor:pointer}
+.netbar{padding:8px 18px;background:#7a5c00;color:#fff;font-size:13px;line-height:1.4;text-align:center}
 </style>
 </head>
 <body>
@@ -363,6 +373,7 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
     </button></div>
   </header>
   <div class="restrictbar hidden" id="restrictBar" role="status">Your account is restricted by an admin. You can read messages but can't send or post.</div>
+  <div class="netbar hidden" id="netBar" role="status"></div>
   <main>
     <div class="view active" id="v-chats">
       <div class="search"><input id="chatSearch" type="search" placeholder="Search chats" aria-label="Search chats" autocomplete="off"></div>
@@ -650,7 +661,7 @@ button.rowbtn{display:flex;align-items:center;justify-content:space-between;widt
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, updateProfile, sendEmailVerification } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, query, orderBy, limit, onSnapshot, serverTimestamp, where, writeBatch, deleteField, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, getDoc, setDoc, updateDoc, addDoc, collection, query, orderBy, limit, onSnapshot, serverTimestamp, where, writeBatch, deleteField, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAaSeGyLRFzT9lScxS9bY8wrccRCJAOzI4",
@@ -670,7 +681,9 @@ const UPLOAD_PRESET = "wlahrctf";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
+let db;
+try { db = initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) }); }
+catch (e) { db = getFirestore(app); }
 const $ = (s) => document.querySelector(s);
 
 let user = null, profile = null, authKnown = false, registering = false, revealed = false;
@@ -742,6 +755,7 @@ const ONLINE_MS = 420000;
 let peopleQ = "", viewingId = null, adminIds = new Set();
 let restricted = false, restrictedIds = new Set(), modReports = [], modSubbed = false, auditItems = [];
 let notifs = [], notifReadAt = 0, msgsReady = false, reactWatch = {};
+let peopleLoaded = false, dmLoaded = false, slowLoad = false, loadTimer = null;
 let personFrom = "", pendingFrom = "";
 const isOn = (p) => Date.now() - p.last < ONLINE_MS;
 
@@ -768,6 +782,7 @@ function avatarEl(name, photo, size, on) {
 function renderPeople() {
   const box = $("#peopleList");
   if (!user) return;
+  if (!peopleLoaded) { box.replaceChildren(statePlaceholder("people")); return; }
   const q = peopleQ.trim().toLowerCase();
   const list = Object.keys(people).map((id) => Object.assign({ id: id }, people[id]))
     .filter((p) => !q || p.name.toLowerCase().includes(q))
@@ -888,6 +903,8 @@ function dmHead() {
 
 function renderDm(force) {
   if (!dmOpenId) return;
+  if (!dmLoaded) { $("#dmMsgs").replaceChildren(statePlaceholder("loading")); return; }
+  if (!dmMsgs.length) { $("#dmMsgs").replaceChildren(statePlaceholder("dm", (people[dmPeer] || {}).name || "this student")); return; }
   const el = $("#dmMsgs"), near = el.scrollHeight - el.scrollTop - el.clientHeight < 140, top = el.scrollTop;
   const peerSeen = tms(((dmConvs[dmOpenId] || {}).seen || {})[dmPeer]);
   const frag = document.createDocumentFragment();
@@ -933,13 +950,14 @@ function openDm(pid) {
   if (dmReactionUnsub) { try { dmReactionUnsub(); } catch (_) {} }
   dmReactionUnsub = null;
   dmReactions = {};
-  dmOpenId = dmId(user.uid, pid); dmPeer = pid; dmMsgs = [];
+  dmOpenId = dmId(user.uid, pid); dmPeer = pid; dmMsgs = []; dmLoaded = false;
   dmReactionUnsub = onSnapshot(collection(db, "dms", dmOpenId, "reactions"), (snap) => {
     dmReactions = buildReactionMap(snap);
     if (dmOpenId) renderDm();
   }, () => {});
   dmUnsub = onSnapshot(query(collection(db, "dms", dmOpenId, "messages"), orderBy("createdAt", "desc"), limit(100)), (snap) => {
     dmMsgs = snap.docs.map((d) => Object.assign({ id: d.id, pending: d.metadata.hasPendingWrites }, d.data({ serverTimestamps: "estimate" }))).reverse();
+    dmLoaded = true;
     renderDm(); markDmRead();
   }, () => toast("Can't load this chat. Publish the new Firestore rules."));
   dmHead(); renderDm(true);
@@ -1142,6 +1160,8 @@ function startRealtime() {
   if (unsubs.length) return;
   loadNotifs();
   watchPins();
+  slowLoad = false; clearTimeout(loadTimer);
+  loadTimer = setTimeout(() => { if (!msgsReady) { slowLoad = true; if (chatOpen) renderMsgs(false); } }, 8000);
   const q = query(collection(db, "chats", MAIN, "messages"), orderBy("createdAt", "desc"), limit(100));
   unsubs.push(onSnapshot(q, (snap) => {
     if (msgsReady) snap.docChanges().forEach((c) => {
@@ -1149,13 +1169,14 @@ function startRealtime() {
       const m = c.doc.data();
       if (m.uid !== user.uid && !m.deleted) groupNotify(m);
     });
-    msgsReady = true;
+    msgsReady = true; slowLoad = false; clearTimeout(loadTimer);
     msgs = snap.docs.map((d) => Object.assign({ id: d.id, pending: d.metadata.hasPendingWrites }, d.data({ serverTimestamps: "estimate" }))).reverse();
     renderList();
     if (chatOpen) { renderMsgs(false); markRead(); }
   }, () => {
     $("#lastMsg").textContent = "Can't load the chat. Publish the new Firestore rules.";
     $("#chatSub").textContent = "Can't load messages";
+    slowLoad = true; if (chatOpen) renderMsgs(false);
   }));
   groupReactionUnsub = onSnapshot(query(collection(db, "messageReactions"), where("scope", "==", "group")), (snap) => {
     groupReactions = buildReactionMap(snap);
@@ -1169,6 +1190,7 @@ function startRealtime() {
     if (chatOpen) renderMsgs(false);
   }, () => {}));
   unsubs.push(onSnapshot(collection(db, "publicProfiles"), (snap) => {
+    peopleLoaded = true;
     people = {};
     snap.forEach((d) => { const x = d.data({ serverTimestamps: "estimate" }); people[d.id] = { name: x.name || "Student", last: tms(x.lastSeen), photo: x.photoURL || "" }; });
     updateSub(); renderPeople(); if (viewingId) renderPerson(); renderDmList(); if (dmOpenId) dmHead();
@@ -1239,6 +1261,7 @@ function stopRealtime() {
   restricted = false; restrictedIds = new Set(); modReports = []; modSubbed = false; auditItems = [];
   Object.keys(reactWatch).forEach((k) => reactWatch[k].unsub && reactWatch[k].unsub()); reactWatch = {};
   notifs = []; notifReadAt = 0; msgsReady = false; notifBadge(); pinsList = [];
+  peopleLoaded = false; dmLoaded = false; slowLoad = false; clearTimeout(loadTimer);
   $("#restrictBar").classList.add("hidden"); $("#openMod").classList.add("hidden");
   stStop(true); stPub = []; stPriv = []; $("#stList").replaceChildren();
   anItems = []; isAdmin = false; anReady = false; $("#annList").replaceChildren();
@@ -1274,7 +1297,7 @@ function renderList() {
 function updateSub() {
   if (!chatOpen) return;
   const ids = Object.keys(people), now = Date.now();
-  if (!ids.length) { $("#chatSub").textContent = "Loading..."; return; }
+  if (!ids.length) { $("#chatSub").textContent = navigator.onLine ? "Loading..." : "Offline"; return; }
   const on = ids.filter((id) => now - people[id].last < ONLINE_MS).length;
   $("#chatSub").textContent = ids.length + " members, " + on + " online";
 }
@@ -1426,6 +1449,8 @@ function bindReactionClicks(container) {
 }
 
 function renderMsgs(forceBottom) {
+  if (!msgsReady) { $("#msgs").replaceChildren(statePlaceholder("loading")); return; }
+  if (!msgs.length) { $("#msgs").replaceChildren(statePlaceholder("empty")); return; }
   const el = $("#msgs");
   const near = el.scrollHeight - el.scrollTop - el.clientHeight < 140, top = el.scrollTop;
   const frag = document.createDocumentFragment();
@@ -2718,6 +2743,37 @@ $("#dmMicBtn").addEventListener("click", () => recStart("dm"));
 $("#recCancel").addEventListener("click", () => recFinish(false));
 $("#recSend").addEventListener("click", () => recFinish(true));
 document.addEventListener("visibilitychange", () => { if (document.hidden && rec) recFinish(false); });
+
+/* ---------- Loading, empty and offline states ---------- */
+function statePlaceholder(kind, who) {
+  const wrap = h("div", "stateBox");
+  if (kind === "loading") {
+    const sk = h("div", "skels");
+    [60, 40, 75, 50].forEach((w, i) => { const b = h("div", "skel " + (i % 2 ? "r" : "l")); b.style.width = w + "%"; sk.appendChild(b); });
+    wrap.appendChild(sk);
+    wrap.appendChild(h("div", "stateTxt", !navigator.onLine ? "You're offline. Waiting for a connection..." : slowLoad ? "Still trying to connect..." : "Loading messages..."));
+    if (slowLoad || !navigator.onLine) {
+      const b = h("button", "stateBtn", "Try again");
+      b.type = "button"; b.addEventListener("click", retryLoad);
+      wrap.appendChild(b);
+    }
+  } else if (kind === "people") {
+    wrap.appendChild(h("div", "stateTxt", !navigator.onLine ? "You're offline. Waiting for a connection..." : "Loading students..."));
+  } else {
+    wrap.appendChild(h("div", "stateEmoji", "\uD83D\uDC4B"));
+    wrap.appendChild(h("div", "stateTxt", kind === "dm" ? "No messages with " + who + " yet. Say hello." : "No messages yet. Say hello to your class."));
+  }
+  return wrap;
+}
+function retryLoad() { slowLoad = false; if (user) { stopRealtime(); startRealtime(); } }
+function netUpdate() {
+  const off = !navigator.onLine, bar = $("#netBar");
+  bar.classList.toggle("hidden", !off);
+  if (off) bar.textContent = "You're offline. Messages you send will go out when you reconnect.";
+}
+window.addEventListener("offline", () => { netUpdate(); updateSub(); if (chatOpen && !msgsReady) renderMsgs(false); renderPeople(); });
+window.addEventListener("online", () => { netUpdate(); updateSub(); toast("Back online."); });
+netUpdate();
 
 /* ---------- Phase 9: announcements ---------- */
 const ADMIN_EMAIL = "official@gmail.com";
