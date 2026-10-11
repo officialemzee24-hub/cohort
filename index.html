@@ -425,6 +425,53 @@ nav{border-top:0;box-shadow:0 -1px 0 var(--line),0 -8px 20px rgba(16,24,28,.04)}
 #v-profile #notifRow{margin-top:10px}
 .logout{margin:18px 14px 6px;width:calc(100% - 28px);color:var(--err);background:var(--bg);border:1px solid color-mix(in srgb,var(--err) 40%,var(--line));box-shadow:none}
 @media (prefers-reduced-motion:reduce){#splash::after{animation:none}.btn,.fab,.send,.tab::after{transition:none}}
+
+/* ===== fonts, doodle wallpaper, motion ===== */
+textarea,select{font:inherit;color:inherit}
+#mi,#dmInput{font-family:inherit;font-size:15px}
+:root{--chatbg:#edf3f4}
+:root[data-theme="dark"]{--chatbg:#14191b}
+#msgs,#dmMsgs{background-color:var(--chatbg);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='360' viewBox='0 0 360 360'%3E%3Cg fill='none' stroke='%230f2a33' stroke-opacity='0.12' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg transform='translate(25 23) rotate(-17 12.8 12.8) scale(1.07)'%3E%3Cpath d='M12 3l2.6 5.6 6 .7-4.4 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.4 9.3l6-.7z'/%3E%3C/g%3E%3Cg transform='translate(119 23) rotate(14 12.8 12.8) scale(1.07)'%3E%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E%3Cpath d='M7 10l3 2-3 2M12 15h5'/%3E%3C/g%3E%3Cg transform='translate(195 17) rotate(15 14.9 14.9) scale(1.24)'%3E%3Cellipse cx='12' cy='14' rx='5' ry='6'/%3E%3Cpath d='M12 8V4M8 4l2 2M16 4l-2 2M7 12H3M17 12h4M7 17l-3 2M17 17l3 2M12 8v12'/%3E%3C/g%3E%3Cg transform='translate(283 28) rotate(-19 14.8 14.8) scale(1.23)'%3E%3Cpath d='M2 9a15 15 0 0 1 20 0M5 12.5a10.5 10.5 0 0 1 14 0M8.5 16a5.5 5.5 0 0 1 7 0'/%3E%3Ccircle cx='12' cy='19' r='1'/%3E%3C/g%3E%3Cg transform='translate(19 101) rotate(-14 14.6 14.6) scale(1.22)'%3E%3Cpath d='M5 9h14M5 15h14M10 4L8 20M16 4l-2 16'/%3E%3C/g%3E%3Cg transform='translate(111 113) rotate(-15 13.1 13.1) scale(1.09)'%3E%3Cpath d='M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z'/%3E%3C/g%3E%3Cg transform='translate(210 109) rotate(21 14.6 14.6) scale(1.22)'%3E%3Cpath d='M5 9h11v5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z'/%3E%3Cpath d='M16 10h2a2 2 0 0 1 0 4h-2M8 4v2M11 4v2'/%3E%3C/g%3E%3Cg transform='translate(287 103) rotate(18 14.6 14.6) scale(1.22)'%3E%3Cpath d='M9 18h6M10 21h4'/%3E%3Cpath d='M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z'/%3E%3C/g%3E%3Cg transform='translate(18 201) rotate(-18 13.0 13.0) scale(1.08)'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M8.5 14a4 4 0 0 0 7 0M9 9.5h.01M15 9.5h.01'/%3E%3C/g%3E%3Cg transform='translate(120 191) rotate(9 14.9 14.9) scale(1.24)'%3E%3Crect x='7' y='7' width='10' height='10' rx='1.5'/%3E%3Cpath d='M10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4'/%3E%3C/g%3E%3Cg transform='translate(209 203) rotate(7 15.4 15.4) scale(1.28)'%3E%3Cpath d='M4 5h16v11h-9l-5 4v-4H4z'/%3E%3C/g%3E%3Cg transform='translate(300 204) rotate(-7 13.9 13.9) scale(1.16)'%3E%3Cpath d='M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16'/%3E%3C/g%3E%3Cg transform='translate(17 302) rotate(-17 15.4 15.4) scale(1.28)'%3E%3Cpath d='M2 9l10-5 10 5-10 5z'/%3E%3Cpath d='M6 11.5V16c3 2.5 9 2.5 12 0v-4.5'/%3E%3C/g%3E%3Cg transform='translate(120 289) rotate(-1 14.5 14.5) scale(1.21)'%3E%3Cpath d='M12 6c-2-1.5-5-2-8-2v14c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2zM12 6v14'/%3E%3C/g%3E%3Cg transform='translate(206 289) rotate(-18 14.8 14.8) scale(1.23)'%3E%3Crect x='5' y='5' width='14' height='10' rx='1.5'/%3E%3Cpath d='M2 19h20'/%3E%3C/g%3E%3Cg transform='translate(285 296) rotate(-1 14.2 14.2) scale(1.18)'%3E%3Cpath d='M4 20l1-4L16 5l3 3L8 19z'/%3E%3Cpath d='M14 7l3 3'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");background-size:360px 360px}
+:root[data-theme="dark"] #msgs,:root[data-theme="dark"] #dmMsgs{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='360' viewBox='0 0 360 360'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.09' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg transform='translate(25 23) rotate(-17 12.8 12.8) scale(1.07)'%3E%3Cpath d='M12 3l2.6 5.6 6 .7-4.4 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.4 9.3l6-.7z'/%3E%3C/g%3E%3Cg transform='translate(119 23) rotate(14 12.8 12.8) scale(1.07)'%3E%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E%3Cpath d='M7 10l3 2-3 2M12 15h5'/%3E%3C/g%3E%3Cg transform='translate(195 17) rotate(15 14.9 14.9) scale(1.24)'%3E%3Cellipse cx='12' cy='14' rx='5' ry='6'/%3E%3Cpath d='M12 8V4M8 4l2 2M16 4l-2 2M7 12H3M17 12h4M7 17l-3 2M17 17l3 2M12 8v12'/%3E%3C/g%3E%3Cg transform='translate(283 28) rotate(-19 14.8 14.8) scale(1.23)'%3E%3Cpath d='M2 9a15 15 0 0 1 20 0M5 12.5a10.5 10.5 0 0 1 14 0M8.5 16a5.5 5.5 0 0 1 7 0'/%3E%3Ccircle cx='12' cy='19' r='1'/%3E%3C/g%3E%3Cg transform='translate(19 101) rotate(-14 14.6 14.6) scale(1.22)'%3E%3Cpath d='M5 9h14M5 15h14M10 4L8 20M16 4l-2 16'/%3E%3C/g%3E%3Cg transform='translate(111 113) rotate(-15 13.1 13.1) scale(1.09)'%3E%3Cpath d='M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z'/%3E%3C/g%3E%3Cg transform='translate(210 109) rotate(21 14.6 14.6) scale(1.22)'%3E%3Cpath d='M5 9h11v5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z'/%3E%3Cpath d='M16 10h2a2 2 0 0 1 0 4h-2M8 4v2M11 4v2'/%3E%3C/g%3E%3Cg transform='translate(287 103) rotate(18 14.6 14.6) scale(1.22)'%3E%3Cpath d='M9 18h6M10 21h4'/%3E%3Cpath d='M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z'/%3E%3C/g%3E%3Cg transform='translate(18 201) rotate(-18 13.0 13.0) scale(1.08)'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M8.5 14a4 4 0 0 0 7 0M9 9.5h.01M15 9.5h.01'/%3E%3C/g%3E%3Cg transform='translate(120 191) rotate(9 14.9 14.9) scale(1.24)'%3E%3Crect x='7' y='7' width='10' height='10' rx='1.5'/%3E%3Cpath d='M10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4'/%3E%3C/g%3E%3Cg transform='translate(209 203) rotate(7 15.4 15.4) scale(1.28)'%3E%3Cpath d='M4 5h16v11h-9l-5 4v-4H4z'/%3E%3C/g%3E%3Cg transform='translate(300 204) rotate(-7 13.9 13.9) scale(1.16)'%3E%3Cpath d='M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16'/%3E%3C/g%3E%3Cg transform='translate(17 302) rotate(-17 15.4 15.4) scale(1.28)'%3E%3Cpath d='M2 9l10-5 10 5-10 5z'/%3E%3Cpath d='M6 11.5V16c3 2.5 9 2.5 12 0v-4.5'/%3E%3C/g%3E%3Cg transform='translate(120 289) rotate(-1 14.5 14.5) scale(1.21)'%3E%3Cpath d='M12 6c-2-1.5-5-2-8-2v14c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2zM12 6v14'/%3E%3C/g%3E%3Cg transform='translate(206 289) rotate(-18 14.8 14.8) scale(1.23)'%3E%3Crect x='5' y='5' width='14' height='10' rx='1.5'/%3E%3Cpath d='M2 19h20'/%3E%3C/g%3E%3Cg transform='translate(285 296) rotate(-1 14.2 14.2) scale(1.18)'%3E%3Cpath d='M4 20l1-4L16 5l3 3L8 19z'/%3E%3Cpath d='M14 7l3 3'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+:root[data-doodles="off"] #msgs,:root[data-doodles="off"] #dmMsgs{background-image:none}
+
+/* status cards */
+#v-status{padding-top:4px}
+.ststrip{display:flex;gap:10px;overflow-x:auto;padding:12px 16px 14px;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.ststrip::-webkit-scrollbar{display:none}
+#stList{display:contents}
+#stHead{display:none!important}
+.stcard{position:relative;flex:none;width:112px;height:176px;border-radius:18px;overflow:hidden;background:var(--surface);cursor:pointer;scroll-snap-align:start;box-shadow:var(--shadow-sm);transition:transform .12s}
+.stcard:active{transform:scale(.97)}
+.stbg{position:absolute;inset:0;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;padding:36px 10px 38px;text-align:center;color:#fff;font-size:12.5px;font-weight:700;line-height:1.3;overflow:hidden;overflow-wrap:anywhere}
+.stcard.noitems .stbg{background:linear-gradient(165deg,color-mix(in srgb,var(--teal) 28%,var(--surface)),color-mix(in srgb,var(--orange) 14%,var(--surface)))}
+.stshade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.38) 0%,rgba(0,0,0,0) 36%,rgba(0,0,0,0) 54%,rgba(0,0,0,.62) 100%)}
+.stcard.noitems .stshade{background:none}
+.stav{position:absolute;top:9px;left:9px}
+.stav .avatar{width:38px;height:38px;font-size:13px}
+.stcard .ring .avatar{box-shadow:0 0 0 2px rgba(0,0,0,.4),0 0 0 4px rgba(255,255,255,.65)}
+.stcard .ring.unseen .avatar{box-shadow:0 0 0 2px rgba(0,0,0,.4),0 0 0 4px var(--teal)}
+.stname{position:absolute;left:10px;right:10px;bottom:9px;color:#fff;font-weight:700;font-size:13.5px;line-height:1.2;text-shadow:0 1px 3px rgba(0,0,0,.55);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.stcard.noitems .stname{color:var(--text);text-shadow:none}
+.stplus{position:absolute;top:32px;left:32px;width:22px;height:22px;border-radius:50%;border:0;padding:0;background:var(--orange);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 0 0 2px var(--bg)}
+
+/* motion */
+@keyframes scrIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+.screen.active:not(#splash):not(#auth){animation:scrIn .26s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes viewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.view.active{animation:viewIn .22s ease backwards}
+@keyframes bubIn{from{opacity:0;transform:scale(.88) translateY(8px)}to{opacity:1;transform:none}}
+.mrow.pop .bubble{animation:bubIn .24s cubic-bezier(.2,.9,.3,1.15) backwards}
+.mrow.pop:not(.mine) .bubble{transform-origin:0 100%}
+.mrow.pop.mine .bubble{transform-origin:100% 100%}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}}
+#splash .wordmark{animation:fadeUp .6s .2s backwards}
+#splash .sub{animation:fadeUp .6s .4s backwards}
+@keyframes fabIn{from{opacity:0;transform:scale(.4)}}
+.fab{animation:fabIn .45s .25s cubic-bezier(.2,.9,.3,1.3) backwards}
+@keyframes badgePop{from{transform:scale(.4)}}
+.badge:not(.hidden){animation:badgePop .3s cubic-bezier(.2,.9,.3,1.4) backwards}
+@media (prefers-reduced-motion:reduce){.screen.active,.view.active,.mrow.pop .bubble,#splash .wordmark,#splash .sub,.fab,.badge{animation:none!important}}
 </style>
 </head>
 <body>
@@ -483,9 +530,11 @@ nav{border-top:0;box-shadow:0 -1px 0 var(--line),0 -8px 20px rgba(16,24,28,.04)}
     <div id="dmList"></div>
     </div>
     <div class="view" id="v-status">
-      <div class="row tap" id="myStatus" role="button" tabindex="0"><div id="myStAv"></div><div class="grow"><b>My status</b><span id="myStSub">Tap to add a status update</span></div><button class="icon-btn" id="myStAdd" type="button" aria-label="Add a status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div>
+      <div class="ststrip" id="stStrip">
+        <div class="stcard mine noitems" id="myStatus" role="button" tabindex="0"><div class="stbg" id="myStBg"></div><div class="stshade"></div><div class="stav" id="myStAv"></div><button class="stplus" id="myStAdd" type="button" aria-label="Add a status"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button><span class="stname" id="myStSub">My status</span></div>
+        <div id="stList"></div>
+      </div>
       <div class="sthead hidden" id="stHead">Recent updates</div>
-      <div id="stList"></div>
       <div class="empty hidden" id="stEmpty"><b>No updates yet</b>Statuses from your classmates will appear here for 24 hours.</div>
     </div>
     <div class="view" id="v-people"><div class="search"><input id="peopleSearch" type="search" placeholder="Search students" aria-label="Search students" autocomplete="off"></div><div id="peopleList"></div></div>
@@ -500,6 +549,7 @@ nav{border-top:0;box-shadow:0 -1px 0 var(--line),0 -8px 20px rgba(16,24,28,.04)}
       <button class="rowbtn" id="notifTest" type="button"><span>Send a test notification</span></button>
       <div class="setting hidden" id="installRow" style="flex-direction:column;align-items:flex-start;gap:8px"><span>Install Cohort on your phone</span><span id="installHint" style="font-size:13px;color:var(--muted);line-height:1.45"></span><button class="btn hidden" id="installBtn" type="button" style="margin:0;width:auto;padding:9px 18px">Install app</button></div>
       <div class="setting"><span>Dark theme</span><button class="toggle" id="themeToggle" role="switch" aria-checked="false" aria-label="Dark theme"></button></div>
+      <div class="setting"><span>Chat background doodles</span><button class="toggle" id="doodleToggle" role="switch" aria-checked="true" aria-label="Chat background doodles"></button></div>
       <button class="rowbtn hidden" id="openMod" type="button"><span>Moderation</span><span class="badge hidden" id="modBadge">0</span></button>
       <button class="btn logout" id="logout">Log out</button>
     </div>
@@ -656,6 +706,9 @@ nav{border-top:0;box-shadow:0 -1px 0 var(--line),0 -8px 20px rgba(16,24,28,.04)}
   function flip(){setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark',true)}
   $('#themeToggle').addEventListener('click',flip);
   $('#themeQuick').addEventListener('click',flip);
+  function setDoodles(on,save){root.setAttribute('data-doodles',on?'on':'off');$('#doodleToggle').setAttribute('aria-checked',String(on));if(save)store('cohort-doodles',on?'on':'off')}
+  setDoodles(store('cohort-doodles')!=='off',false);
+  $('#doodleToggle').addEventListener('click',function(){setDoodles($('#doodleToggle').getAttribute('aria-checked')!=='true',true)});
 
   /* Screens */
   var ROOT={splash:1,auth:1,app:1}, navStack=[], suppress=0, suppressUntil=0, inPop=false, syncQueued=false;
@@ -1029,6 +1082,8 @@ function renderDm(force) {
     const mine = m.uid === user.uid, row = h("div", "mrow" + (mine ? " mine" : "") + (cont ? " cont" : " first")), b = h("div", "bubble");
     b.style.cursor = "default";
     row.dataset.id = m.id;
+    if (popDOn && !popD.has(m.id)) row.classList.add("pop");
+    popD.add(m.id);
     if (m.replyTo) {
       const q = h("div", "quote");
       q.dataset.ref = m.replyTo.id;
@@ -1046,6 +1101,7 @@ function renderDm(force) {
     row.appendChild(b); frag.appendChild(row);
   }
   el.replaceChildren(frag);
+  popDOn = true;
   const lastMine = dmMsgs.length && dmMsgs[dmMsgs.length - 1].uid === user.uid;
   el.scrollTop = (force || near || lastMine) ? el.scrollHeight : top;
   jumpD.after(dmMsgs.length, force || near || lastMine);
@@ -1059,6 +1115,7 @@ function markDmRead() {
 
 function openDm(pid) {
   if (!user || !people[pid] || pid === user.uid) return;
+  popDOn = false; popD.clear();
   if (dmUnsub) dmUnsub();
   if (dmReactionUnsub) { try { dmReactionUnsub(); } catch (_) {} }
   dmReactionUnsub = null;
@@ -1578,6 +1635,8 @@ function renderMsgs(forceBottom) {
     const mine = m.uid === user.uid, sameRun = !!prev && prev.uid === m.uid;
     const row = h("div", "mrow" + (mine ? " mine" : "") + (sameRun ? " cont" : " first"));
     row.dataset.id = m.id;
+    if (popGOn && !popG.has(m.id)) row.classList.add("pop");
+    popG.add(m.id);
     if (!mine) row.appendChild(avatarEl(m.name || "?", (people[m.uid] || {}).photo, "xs" + (sameRun ? " ghost" : ""), false));
     const b = h("div", "bubble" + (m.deleted ? " gone" : ""));
     if (!mine && !sameRun) b.appendChild(h("div", "who", m.name));
@@ -1606,6 +1665,7 @@ function renderMsgs(forceBottom) {
     prev = m;
   }
   el.replaceChildren(frag);
+  popGOn = true;
   const lastMine = msgs.length && msgs[msgs.length - 1].uid === user.uid;
   el.scrollTop = (forceBottom || near || lastMine) ? el.scrollHeight : top;
   jumpG.after(msgs.length, forceBottom || near || lastMine);
@@ -1626,6 +1686,7 @@ function markRead(now) {
 }
 
 function openChat() {
+  popGOn = false; popG.clear();
   chatOpen = true;
   chatReadAtOpen = reads[user.uid] || 0;
   jumpG.reset();
@@ -1937,28 +1998,44 @@ function stGroups() {
   return { mine: mine, others: others };
 }
 
+function stFill(bg, items) {
+  bg.textContent = ""; bg.style.background = ""; bg.style.backgroundImage = ""; bg.classList.remove("sttext");
+  if (!items || !items.length) return;
+  const s = items[items.length - 1];
+  const okUrl = s.media && typeof s.media.url === "string" && /^https:\/\/res\.cloudinary\.com\/[^"')\s]+$/.test(s.media.url);
+  if (s.kind === "text") {
+    bg.classList.add("sttext"); bg.style.background = ST_BG[s.bg] || ST_BG[0]; bg.textContent = (s.text || "").slice(0, 90);
+  } else if (okUrl && s.kind === "image") {
+    bg.style.backgroundImage = 'url("' + cld(s.media.url, "c_fill,g_auto,w_300,h_420,q_auto,f_auto") + '")';
+  } else if (okUrl && s.kind === "video") {
+    bg.style.backgroundImage = 'url("' + cld(s.media.url, "so_0,c_fill,g_auto,w_300,h_420,q_auto").replace(/\.[A-Za-z0-9]+$/, ".jpg") + '")';
+  }
+}
+
 function stRender() {
   if (!user) return;
   const g = stGroups();
-  const av = $("#myStAv");
   const w = avatarEl(myName(), profile && profile.photoURL, "");
   if (g.mine.length) { w.classList.add("ring"); w.classList.add("unseen"); }
-  av.replaceChildren(w);
-  $("#myStSub").textContent = g.mine.length ? g.mine.length + (g.mine.length === 1 ? " update, " : " updates, ") + stAgo(tms(g.mine[g.mine.length - 1].createdAt)) : "Tap to add a status update";
+  $("#myStAv").replaceChildren(w);
+  stFill($("#myStBg"), g.mine);
+  $("#myStatus").classList.toggle("noitems", !g.mine.length);
   const frag = document.createDocumentFragment();
   g.others.forEach((o) => {
     const p = people[o.uid] || { name: o.items[0].name, photo: "" };
-    const row = h("div", "row tap");
-    row.dataset.uid = o.uid; row.tabIndex = 0; row.setAttribute("role", "button");
-    const a = avatarEl(p.name, p.photo, "");
+    const card = h("div", "stcard" + (o.unseen ? " unseen" : ""));
+    card.dataset.uid = o.uid; card.tabIndex = 0; card.setAttribute("role", "button");
+    const bg = h("div", "stbg"); stFill(bg, o.items); card.appendChild(bg);
+    card.appendChild(h("div", "stshade"));
+    const av = h("div", "stav"), a = avatarEl(p.name, p.photo, "");
     a.classList.add("ring"); if (o.unseen) a.classList.add("unseen");
-    const t = h("div", "grow");
-    t.appendChild(h("b", null, p.name)); t.appendChild(h("span", null, stAgo(o.last)));
-    row.appendChild(a); row.appendChild(t); frag.appendChild(row);
+    av.appendChild(a); card.appendChild(av);
+    card.appendChild(h("span", "stname", p.name));
+    frag.appendChild(card);
   });
   $("#stList").replaceChildren(frag);
   $("#stEmpty").classList.toggle("hidden", g.others.length > 0);
-  $("#stHead").classList.toggle("hidden", g.others.length === 0);
+  $("#stHead").classList.add("hidden");
   $('.tab[data-view="status"]').classList.toggle("has", g.others.some((o) => o.unseen));
 }
 
@@ -2204,8 +2281,8 @@ async function scPost() {
 ST_BG.forEach((c, i) => { const b = document.createElement("button"); b.type = "button"; b.style.background = c; b.setAttribute("aria-label", "Background " + (i + 1)); b.addEventListener("click", () => { scState.bg = i; scDraw(); }); $("#scSw").appendChild(b); });
 $("#myStatus").addEventListener("click", (e) => { if (e.target.closest("#myStAdd")) { scOpen(); return; } if (stGroups().mine.length) stOpen(user.uid); else scOpen(); });
 $("#myStatus").addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("#myStatus").click(); } });
-$("#stList").addEventListener("click", (e) => { const r = e.target.closest(".row"); if (r) stOpen(r.dataset.uid); });
-$("#stList").addEventListener("keydown", (e) => { if (e.key !== "Enter" && e.key !== " ") return; const r = e.target.closest(".row"); if (r) { e.preventDefault(); stOpen(r.dataset.uid); } });
+$("#stList").addEventListener("click", (e) => { const r = e.target.closest(".stcard"); if (r) stOpen(r.dataset.uid); });
+$("#stList").addEventListener("keydown", (e) => { if (e.key !== "Enter" && e.key !== " ") return; const r = e.target.closest(".stcard"); if (r) { e.preventDefault(); stOpen(r.dataset.uid); } });
 $("#stClose").addEventListener("click", () => stStop());
 $("#stTapL").addEventListener("click", stPrev);
 $("#stTapR").addEventListener("click", stNext);
@@ -3004,6 +3081,9 @@ function listTime(t) {
   if (d.toDateString() === y.toDateString()) return "Yesterday";
   return d.toLocaleDateString([], { day: "numeric", month: "short" });
 }
+
+const popG = new Set(), popD = new Set();
+let popGOn = false, popDOn = false;
 
 function route() {
   if (!window.__splashDone || !authKnown) return;
