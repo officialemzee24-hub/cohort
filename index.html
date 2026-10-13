@@ -455,6 +455,9 @@ textarea,select{font:inherit;color:inherit}
 .stcard.noitems .stname{color:var(--text);text-shadow:none}
 .stplus{position:absolute;top:32px;left:32px;width:22px;height:22px;border-radius:50%;border:0;padding:0;background:var(--orange);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 0 0 2px var(--bg)}
 
+/* Cohort Live Study room foundation */
+.stu-room-actions{display:flex;gap:8px;padding:12px 14px 2px}.stu-room-actions .stu-add{flex:1;justify-content:center;margin:0}.stu-room-note{margin:10px 14px;padding:12px 13px;border-radius:14px;background:color-mix(in srgb,var(--teal) 10%,var(--bg));border:1px solid color-mix(in srgb,var(--teal) 28%,var(--line));font-size:12.5px;line-height:1.5;color:var(--muted)}.stu-room-note b{color:var(--text)}.stu-room-card{align-items:flex-start}.stu-room-icon{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--teal) 15%,transparent);font-size:22px}.stu-room-actions-inline{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.stu-room-actions-inline .stu-pill{cursor:pointer}
+
 /* motion */
 @keyframes scrIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
 .screen.active:not(#splash):not(#auth){animation:scrIn .26s cubic-bezier(.2,.8,.2,1) backwards}
@@ -576,7 +579,7 @@ textarea,select{font:inherit;color:inherit}
       <div class="empty hidden" id="stEmpty"><b>No updates yet</b>Statuses from your classmates will appear here for 24 hours.</div>
     </div>
     <div class="view" id="v-people"><div class="search"><input id="peopleSearch" type="search" placeholder="Search students" aria-label="Search students" autocomplete="off"></div><div id="peopleList"></div></div>
-    <div class="view" id="v-study"><div class="seg" id="stuSeg"><button type="button" data-t="today" aria-selected="true">Today</button><button type="button" data-t="tasks" aria-selected="false">Tasks</button><button type="button" data-t="table" aria-selected="false">Timetable</button><button type="button" data-t="gpa" aria-selected="false">GPA</button><button type="button" data-t="lib" aria-selected="false">Library</button></div><div id="stuBody"></div></div>
+    <div class="view" id="v-study"><div class="seg" id="stuSeg"><button type="button" data-t="today" aria-selected="true">Today</button><button type="button" data-t="tasks" aria-selected="false">Tasks</button><button type="button" data-t="table" aria-selected="false">Timetable</button><button type="button" data-t="gpa" aria-selected="false">GPA</button><button type="button" data-t="lib" aria-selected="false">Library</button><button type="button" data-t="rooms" aria-selected="false">Live Study</button></div><div id="stuBody"></div></div>
     <div class="view" id="v-profile">
       <div class="row"><div class="avatar lg" id="pAvatar">?</div><div><b id="pName">Your profile</b><span id="pEmail"></span></div></div>
       <div class="setting hidden" id="adminIdCard" style="flex-direction:column;align-items:flex-start;gap:4px"><span style="font-size:13px;color:var(--muted)">Admin account ID</span><span id="pUid" style="font-size:12.5px;word-break:break-all;user-select:all"></span><span id="pAdmin" style="font-size:13px"></span><button class="btn hidden" id="pMakeAdmin" type="button" style="margin:8px 0 0;width:auto;padding:9px 18px">Set me up as admin</button><button class="btn" id="pCopy" type="button" style="margin:8px 0 0;width:auto;padding:9px 18px;background:var(--surface);color:var(--text);border:1px solid var(--line)">Copy account ID</button></div>
@@ -3411,7 +3414,7 @@ $("#gfLeave").addEventListener("click", async () => {
 });
 
 /* ---------- Phase 15: academic toolkit ---------- */
-let stuTab = "today", classes = [], exams = [], lib = [], libQ = "", libType = "all", remTimer = null;
+let stuTab = "today", classes = [], exams = [], lib = [], studyRooms = [], libQ = "", libType = "all", remTimer = null;
 let acad = { assignments: [], courses: [], scale: 5 };
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], DAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
 const fmtD = (t) => new Date(t).toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" });
@@ -3428,10 +3431,11 @@ function stuStart() {
   unsubs.push(onSnapshot(collection(db, "classes"), (s) => { classes = s.docs.map((d) => Object.assign({ id: d.id }, d.data())); stuRender(); }, err));
   unsubs.push(onSnapshot(query(collection(db, "exams"), orderBy("at", "asc"), limit(60)), (s) => { exams = s.docs.map((d) => Object.assign({ id: d.id }, d.data({ serverTimestamps: "estimate" }))); stuRender(); }, err));
   unsubs.push(onSnapshot(query(collection(db, "library"), orderBy("createdAt", "desc"), limit(150)), (s) => { lib = s.docs.map((d) => Object.assign({ id: d.id }, d.data({ serverTimestamps: "estimate" }))); stuRender(); }, err));
+  unsubs.push(onSnapshot(query(collection(db, "studyRooms"), orderBy("createdAt", "desc"), limit(50)), (s) => { studyRooms = s.docs.map((d) => Object.assign({ id: d.id }, d.data({ serverTimestamps: "estimate" }))); stuRender(); }, err));
   unsubs.push(onSnapshot(doc(db, "acad", user.uid), (d) => { acad = Object.assign({ assignments: [], courses: [], scale: 5 }, d.exists() ? d.data() : {}); stuRender(); }, err));
   clearInterval(remTimer); remTimer = setInterval(stuRemind, 60000); setTimeout(stuRemind, 5000); setTimeout(stuRender, 2500);
 }
-function stuReset() { clearInterval(remTimer); classes = []; exams = []; lib = []; acad = { assignments: [], courses: [], scale: 5 }; const b = $("#stuBody"); if (b) b.replaceChildren(); }
+function stuReset() { clearInterval(remTimer); classes = []; exams = []; lib = []; studyRooms = []; acad = { assignments: [], courses: [], scale: 5 }; const b = $("#stuBody"); if (b) b.replaceChildren(); }
 const acSave = (patch) => { Object.assign(acad, patch); stuRender(); return setDoc(doc(db, "acad", user.uid), { assignments: acad.assignments, courses: acad.courses, scale: acad.scale }).catch(() => toast("Couldn't save. Check your connection.")); };
 
 function askForm(title, fields, ok) {
@@ -3631,11 +3635,97 @@ function stuLib(f) {
   };
   s.oninput = () => { libQ = s.value; fill(); }; fill(); f.appendChild(wrap);
 }
+/* ---------- Cohort Live Study: room discovery and membership foundation ---------- */
+function stuRooms(out) {
+  const active = studyRooms.filter((r) => r.status === "open");
+  const hero = h("div", "stu-hero");
+  hero.appendChild(h("small", null, "COHORT LIVE STUDY"));
+  hero.appendChild(h("h2", null, "Study together"));
+  hero.appendChild(h("p", null, "Create a room for a course, gather classmates, and prepare for a focused study session."));
+  out.appendChild(hero);
+  const actions = h("div", "stu-room-actions");
+  actions.appendChild(stuAdd("Create a study room", stuCreateRoom));
+  out.appendChild(actions);
+  const note = h("div", "stu-room-note");
+  note.appendChild(h("b", null, "Live rooms are being prepared."));
+  note.appendChild(document.createTextNode(" Room creation and membership are the foundation. Real-time voice, video, screen sharing, and AI session summaries will be connected in the next integration stage. Your existing voice notes remain unchanged."));
+  out.appendChild(note);
+  out.appendChild(stuSec("Open study rooms", active.length));
+  if (!active.length) {
+    out.appendChild(stuEmpty("🎧", "No open study rooms yet", "Create one and invite classmates to join."));
+    return;
+  }
+  active.forEach((r) => {
+    const own = r.createdBy === user.uid, joined = Array.isArray(r.members) && r.members.includes(user.uid);
+    const icon = h("div", "stu-room-icon", "🎓");
+    const chips = [stuCourse(r.course), stuChip((r.members || []).length + "/12 joined"), stuChip(own ? "Host" : joined ? "Joined" : "Open")];
+    const card = stuRow("var(--teal)", icon, r.title, (r.course || "General study") + " · hosted by " + (r.createdByName || "a classmate"), chips);
+    card.classList.add("stu-room-card");
+    const body = card.querySelector(".body"), acts = h("div", "stu-room-actions-inline");
+    if (!joined) {
+      const join = h("button", "stu-pill pri", "Join room"); join.type = "button"; join.onclick = () => stuJoinRoom(r); acts.appendChild(join);
+    } else {
+      const ready = h("button", "stu-pill pri", "Room details"); ready.type = "button"; ready.onclick = () => stuRoomDetails(r); acts.appendChild(ready);
+      if (!own) { const leave = h("button", "stu-pill", "Leave"); leave.type = "button"; leave.onclick = () => stuLeaveRoom(r); acts.appendChild(leave); }
+    }
+    if (own) { const close = h("button", "stu-pill dng", "Close room"); close.type = "button"; close.onclick = () => stuCloseRoom(r); acts.appendChild(close); }
+    body.appendChild(acts); out.appendChild(card);
+  });
+}
+async function stuCreateRoom() {
+  if (restricted) { toast(RESTRICTED_MSG); return; }
+  const v = await askForm("Create a study room", [
+    { k: "title", ph: "Room name, e.g. CSC 201 revision", max: 80 },
+    { k: "course", ph: "Course code, e.g. CSC 201", max: 40 },
+    { k: "description", ph: "What are you studying? (optional)", max: 180 }
+  ], "Create room");
+  if (!v) return;
+  if (v.title.length < 3 || v.course.length < 2) { toast("Enter a room name and course code."); return; }
+  try {
+    await addDoc(collection(db, "studyRooms"), {
+      title: v.title, course: v.course.toUpperCase(), description: v.description,
+      createdBy: user.uid, createdByName: myName(), members: [user.uid],
+      status: "open", createdAt: serverTimestamp(), updatedAt: serverTimestamp()
+    });
+    stuTab = "rooms"; stuRender(); toast("Study room created.");
+  } catch (e) { console.error("Study room create failed", e); toast("Couldn't create the room. Check your Firestore rules are updated."); }
+}
+async function stuJoinRoom(r) {
+  if (restricted) { toast(RESTRICTED_MSG); return; }
+  const members = Array.isArray(r.members) ? r.members : [];
+  if (members.includes(user.uid)) { stuRoomDetails(r); return; }
+  if (members.length >= 12) { toast("This room is full."); return; }
+  try {
+    await updateDoc(doc(db, "studyRooms", r.id), { members: arrayUnion(user.uid), updatedAt: serverTimestamp() });
+    toast("You've joined the study room.");
+  } catch (e) { console.error("Study room join failed", e); toast("Couldn't join this room. It may have closed or reached capacity."); }
+}
+async function stuLeaveRoom(r) {
+  if (!confirm("Leave this study room?")) return;
+  try { await updateDoc(doc(db, "studyRooms", r.id), { members: arrayRemove(user.uid), updatedAt: serverTimestamp() }); toast("You've left the room."); }
+  catch (e) { console.error("Study room leave failed", e); toast("Couldn't leave this room."); }
+}
+async function stuCloseRoom(r) {
+  if (r.createdBy !== user.uid) return;
+  if (!confirm("Close this study room for everyone?")) return;
+  try { await updateDoc(doc(db, "studyRooms", r.id), { status: "closed", updatedAt: serverTimestamp() }); toast("Study room closed."); }
+  catch (e) { console.error("Study room close failed", e); toast("Couldn't close this room."); }
+}
+function stuRoomDetails(r) {
+  const sh = h("div", "sheet gsheet"), card = h("div", "sheet-card");
+  const title = h("b", null, r.title); title.style.cssText = "display:block;padding:6px 16px 2px;font-size:18px"; card.appendChild(title);
+  const info = h("div", null, (r.course || "General study") + " · " + (r.members || []).length + "/12 participants"); info.style.cssText = "padding:4px 16px;color:var(--muted);font-size:13px"; card.appendChild(info);
+  const desc = h("p", null, r.description || "No room description was added."); desc.style.cssText = "padding:0 16px;line-height:1.5"; card.appendChild(desc);
+  const status = h("div", null, "Room status: " + (r.status === "open" ? "Open" : "Closed")); status.style.cssText = "padding:0 16px 12px;color:var(--muted);font-size:13px"; card.appendChild(status);
+  const msg = h("div", null, "Voice/video joining will appear here after the secure real-time media service is connected."); msg.style.cssText = "margin:0 14px 12px;padding:12px;border-radius:12px;background:color-mix(in srgb,var(--teal) 10%,var(--bg));font-size:13px;line-height:1.5"; card.appendChild(msg);
+  card.appendChild(btn("Done", () => sh.remove(), "sheet-btn")); sh.addEventListener("click", (e) => { if (e.target === sh) sh.remove(); }); sh.appendChild(card); document.body.appendChild(sh);
+}
+
 function stuRender() {
   if (!user) return;
   document.querySelectorAll("#stuSeg button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.t === stuTab)));
   const f = document.createDocumentFragment();
-  ({ today: stuToday, tasks: stuTasks, table: stuTable, gpa: stuGpa, lib: stuLib })[stuTab](f);
+  ({ today: stuToday, tasks: stuTasks, table: stuTable, gpa: stuGpa, lib: stuLib, rooms: stuRooms })[stuTab](f);
   $("#stuBody").replaceChildren(f);
 }
 function stuRemind() {
