@@ -714,6 +714,7 @@ input[type="file"]::file-selector-button:active{transform:scale(.98)}
       <div class="setting" id="notifRow"><span>Phone notifications</span><button class="toggle" id="notifToggle" role="switch" aria-checked="false" aria-label="Phone notifications"></button></div>
       <div class="setting" id="groupRow"><span>Group chat alerts</span><button class="toggle" id="groupToggle" role="switch" aria-checked="true" aria-label="Group chat alerts"></button></div>
       <div class="setting" id="soundRow"><span>Sound and vibration (app open)</span><button class="toggle" id="soundToggle" role="switch" aria-checked="true" aria-label="Sound and vibration"></button></div>
+      <div class="setting" id="toneRow" style="align-items:center;gap:10px;flex-wrap:wrap"><div style="flex:1;min-width:145px"><b style="display:block;font-size:14px">Notification sound</b><span style="display:block;color:var(--muted);font-size:12px;margin-top:3px">Choose a tone for alerts while Cohort is open</span></div><select id="toneSelect" aria-label="Notification sound" style="max-width:160px;min-width:130px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text)"><option value="cohort">Cohort Chime</option><option value="ding">Apple iPhone Ding</option><option value="rebound">Apple Rebound</option><option value="silent">Silent</option></select><button class="link" id="tonePreview" type="button" style="white-space:nowrap">▶ Preview</button></div>
       <button class="rowbtn" id="notifTest" type="button"><span>Send a test notification</span></button>
       <div class="setting hidden" id="installRow" style="flex-direction:column;align-items:flex-start;gap:8px"><span>Install Cohort on your phone</span><span id="installHint" style="font-size:13px;color:var(--muted);line-height:1.45"></span><button class="btn hidden" id="installBtn" type="button" style="margin:0;width:auto;padding:9px 18px">Install app</button></div>
       <div class="setting"><span>Dark theme</span><button class="toggle" id="themeToggle" role="switch" aria-checked="false" aria-label="Dark theme"></button></div>
@@ -2685,18 +2686,33 @@ const N_ICON = { dm: "\uD83D\uDCAC", mention: "@", announcement: "\uD83D\uDCE2",
 const lsGet = (k) => { try { return localStorage.getItem(nKey(k)); } catch (e) { return null; } };
 const lsSet = (k, v) => { try { localStorage.setItem(nKey(k), v); } catch (e) {} };
 const isAway = () => document.hidden || !document.hasFocus();
-let audioCtx = null;
-function chime() {
-  if (lsGet("sound") === "off") return;
-  try {
-    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === "suspended") audioCtx.resume();
-    const o = audioCtx.createOscillator(), g = audioCtx.createGain(), t = audioCtx.currentTime;
-    o.type = "sine"; o.frequency.setValueAtTime(880, t); o.frequency.setValueAtTime(1175, t + 0.12);
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.25, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
-    o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t + 0.4);
-  } catch (e) {}
-  try { if (navigator.vibrate) navigator.vibrate([120, 60, 120]); } catch (e) {}
+let audioCtx = null, toneAudio = null;
+function playTone(preview) {
+  if (!preview && lsGet("sound") === "off") return;
+  const tone = lsGet("tone") || "cohort";
+  if (tone === "silent") return;
+  if (tone === "ding" || tone === "rebound") {
+    try {
+      if (toneAudio) { toneAudio.pause(); toneAudio.currentTime = 0; }
+      toneAudio = new Audio(tone === "ding" ? "iphone_ding.mp3" : "rebound_iphone.mp3");
+      toneAudio.preload = "auto"; toneAudio.volume = 0.8;
+      const p = toneAudio.play(); if (p && p.catch) p.catch(() => {});
+    } catch (e) {}
+  } else {
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain(), t = audioCtx.currentTime;
+      o.type = "sine"; o.frequency.setValueAtTime(880, t); o.frequency.setValueAtTime(1175, t + 0.12);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.25, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+      o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t + 0.4);
+    } catch (e) {}
+  }
+  if (!preview) { try { if (navigator.vibrate) navigator.vibrate([120, 60, 120]); } catch (e) {} }
+}
+function chime() { playTone(false); }
+function syncToneSetting() {
+  const sel = $("#toneSelect"); if (sel) sel.value = lsGet("tone") || "cohort";
 }
 
 function loadNotifs() {
@@ -2787,6 +2803,7 @@ function openNotif(n) {
 
 function syncNotifToggle() {
   $("#soundToggle").setAttribute("aria-checked", String(lsGet("sound") !== "off"));
+  syncToneSetting();
   if (!("Notification" in window)) { $("#notifRow").classList.add("hidden"); $("#groupRow").classList.add("hidden"); return; }
   $("#notifToggle").setAttribute("aria-checked", String(Notification.permission === "granted" && lsGet("phone") !== "off"));
   $("#groupToggle").setAttribute("aria-checked", String(lsGet("group") !== "off"));
@@ -2801,6 +2818,8 @@ $("#notifToggle").addEventListener("click", async () => {
 });
 $("#groupToggle").addEventListener("click", () => { lsSet("group", $("#groupToggle").getAttribute("aria-checked") === "true" ? "off" : "on"); syncNotifToggle(); });
 $("#soundToggle").addEventListener("click", () => { lsSet("sound", $("#soundToggle").getAttribute("aria-checked") === "true" ? "off" : "on"); syncNotifToggle(); if (lsGet("sound") !== "off") chime(); });
+$("#toneSelect").addEventListener("change", () => { lsSet("tone", $("#toneSelect").value); toast("Notification sound saved on this device."); playTone(true); });
+$("#tonePreview").addEventListener("click", () => playTone(true));
 $("#notifTest").addEventListener("click", () => {
   if (!("Notification" in window)) { toast("This app doesn't support web notifications (the Notification feature is missing)."); return; }
   if (Notification.permission !== "granted") { toast("Notification permission is '" + Notification.permission + "'. Turn on Phone notifications first."); return; }

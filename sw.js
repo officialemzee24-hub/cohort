@@ -1,7 +1,7 @@
 /* Cohort service worker: keeps the app shell available and fast.
    It never touches Firebase, Cloudinary or fonts (those go straight to the network). */
-const VERSION = "cohort-v3";
-const SHELL = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "icon-maskable-512.png", "apple-touch-icon.png", "logo-mark.png"];
+const VERSION = "cohort-v4";
+const SHELL = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "icon-maskable-512.png", "apple-touch-icon.png", "logo-mark.png", "iphone_ding.mp3", "rebound_iphone.mp3"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
