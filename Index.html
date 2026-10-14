@@ -636,6 +636,21 @@ input[type="file"]::file-selector-button:active{transform:scale(.98)}
 .cover-upload-control input[type="file"]{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;clip-path:inset(50%)}
 .cover-upload-btn:focus-within,.cover-upload-btn:focus-visible{outline:3px solid #38bdf866;outline-offset:2px}
 
+#callOv{position:fixed;inset:0;z-index:95;background:#0b0f14;color:#fff;display:flex;flex-direction:column}
+#callOv.hidden,#ringOv.hidden{display:none}
+#callTop{padding:calc(14px + env(safe-area-inset-top,0px)) 16px 6px;text-align:center}#callTop b{display:block;font-size:17px}#callTop span{font-size:13px;opacity:.7}
+#callGrid{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));grid-auto-rows:minmax(170px,1fr);gap:8px;padding:10px;overflow:auto}
+.ctile{position:relative;border-radius:18px;background:#1b2430;overflow:hidden;min-height:170px}
+.ctile video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ctile .cav{position:absolute;inset:0;display:grid;place-items:center;font-size:34px;font-weight:800;color:#8aa0b8}
+.ctile .cname{position:absolute;left:10px;bottom:8px;background:#0008;border-radius:999px;padding:3px 10px;font-size:12px}
+#callBar{display:flex;justify-content:center;gap:14px;padding:12px 12px calc(18px + env(safe-area-inset-bottom,0px))}
+#callBar button{width:56px;height:56px;border-radius:50%;border:0;background:#2a3544;color:#fff;font-size:22px;cursor:pointer}
+#callBar button.hidden{display:none}#callBar button.off{background:#fff;color:#111}#callBar button.on{background:var(--orange)}#callBar #cEnd{background:#e5484d}
+#ringOv{position:fixed;inset:0;z-index:96;background:#000b;display:flex;align-items:center;justify-content:center}
+.ringcard{background:var(--bg);color:var(--text);border-radius:24px;padding:26px 22px;width:min(320px,86vw);text-align:center}
+.ringcard b{display:block;font-size:20px;margin:6px 0 2px}.ringcard span{color:var(--muted);font-size:14px}
+.ringcard .rb{display:flex;gap:12px;margin-top:22px}.ringcard .rb button{flex:1;padding:13px;border:0;border-radius:14px;font:inherit;font-weight:700;color:#fff;cursor:pointer}
 </style>
 </head>
 <body>
@@ -704,7 +719,7 @@ input[type="file"]::file-selector-button:active{transform:scale(.98)}
       <div class="empty hidden" id="stEmpty"><b>No updates yet</b>Statuses from your classmates will appear here for 24 hours.</div>
     </div>
     <div class="view" id="v-people"><div class="search"><input id="peopleSearch" type="search" placeholder="Search students" aria-label="Search students" autocomplete="off"></div><div id="peopleList"></div></div>
-    <div class="view" id="v-study"><div class="seg" id="stuSeg"><button type="button" data-t="today" aria-selected="true">Today</button><button type="button" data-t="tasks" aria-selected="false">Tasks</button><button type="button" data-t="table" aria-selected="false">Timetable</button><button type="button" data-t="gpa" aria-selected="false">GPA</button><button type="button" data-t="lib" aria-selected="false">Library</button><button type="button" data-t="rooms" aria-selected="false">Live Study</button></div><div id="stuBody"></div></div>
+    <div class="view" id="v-study"><div class="seg" id="stuSeg"><button type="button" data-t="today" aria-selected="true">Today</button><button type="button" data-t="tasks" aria-selected="false">Tasks</button><button type="button" data-t="table" aria-selected="false">Timetable</button><button type="button" data-t="gpa" aria-selected="false">GPA</button><button type="button" data-t="lib" aria-selected="false">Library</button><button type="button" data-t="rooms" aria-selected="false">Live Study</button><button type="button" data-t="ai" aria-selected="false">✨ AI</button></div><div id="stuBody"></div></div>
     <div class="view" id="v-profile">
       <div class="row"><div class="avatar lg" id="pAvatar">?</div><div><b id="pName">Your profile</b><span id="pEmail"></span></div></div>
       <div class="setting hidden" id="adminIdCard" style="flex-direction:column;align-items:flex-start;gap:4px"><span style="font-size:13px;color:var(--muted)">Admin account ID</span><span id="pUid" style="font-size:12.5px;word-break:break-all;user-select:all"></span><span id="pAdmin" style="font-size:13px"></span><button class="btn hidden" id="pMakeAdmin" type="button" style="margin:8px 0 0;width:auto;padding:9px 18px">Set me up as admin</button><button class="btn" id="pCopy" type="button" style="margin:8px 0 0;width:auto;padding:9px 18px;background:var(--surface);color:var(--text);border:1px solid var(--line)">Copy account ID</button></div>
@@ -775,7 +790,7 @@ input[type="file"]::file-selector-button:active{transform:scale(.98)}
   <button class="link hidden" id="uReport" type="button" style="margin:10px 18px;color:var(--err)">Report this student</button>
 </section>
 <section id="dm" class="screen" aria-label="Private chat">
-  <header class="chathead"><button class="icon-btn" id="dmBack" aria-label="Back to chats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><div id="dmAv"></div><div class="ct" style="flex:1"><b id="dmName"></b><span id="dmSub"></span></div><button class="icon-btn" id="dsOpen" type="button" aria-label="Search in chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button></header>
+  <header class="chathead"><button class="icon-btn" id="dmBack" aria-label="Back to chats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><div id="dmAv"></div><div class="ct" style="flex:1"><b id="dmName"></b><span id="dmSub"></span></div><button class="icon-btn" id="dmCallV" type="button" aria-label="Voice call"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></button><button class="icon-btn" id="dmCallC" type="button" aria-label="Video call"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M22 8l-6 4 6 4z"/></svg></button><button class="icon-btn" id="dsOpen" type="button" aria-label="Search in chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button></header>
   <div id="dsBar" class="findbar hidden"><input id="dsIn" type="search" placeholder="Search in this chat" aria-label="Search in this chat" autocomplete="off"><span id="dsCount"></span><button class="icon-btn" id="dsPrev" type="button" aria-label="Older match">&#9650;</button><button class="icon-btn" id="dsNext" type="button" aria-label="Newer match">&#9660;</button><button class="icon-btn" id="dsHide" type="button" aria-label="Hide search">&#10005;</button></div>
   <div id="dmMsgs" role="log" aria-live="polite"></div>
   <button class="jump hidden" id="dmJump" type="button" aria-label="Scroll to latest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg><span class="badge hidden" id="dmJumpBadge">0</span></button>
@@ -869,12 +884,13 @@ input[type="file"]::file-selector-button:active{transform:scale(.98)}
   </div>
 </section>
 <section id="grpChat" class="screen" aria-label="Group chat">
-  <header class="chathead"><button class="icon-btn" id="gcBack" type="button" aria-label="Back to chats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><div class="avatar" id="gcAv"></div><div class="ct" style="flex:1"><b id="gcName"></b><span id="gcSub"></span></div><button class="icon-btn" id="gcInfoBtn" type="button" aria-label="Group info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button></header>
+  <header class="chathead"><button class="icon-btn" id="gcBack" type="button" aria-label="Back to chats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><div class="avatar" id="gcAv"></div><div class="ct" style="flex:1"><b id="gcName"></b><span id="gcSub"></span></div><button class="icon-btn" id="gcCallV" type="button" aria-label="Start a voice room"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></button><button class="icon-btn" id="gcCallC" type="button" aria-label="Start a video room"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M22 8l-6 4 6 4z"/></svg></button><button class="icon-btn" id="gcInfoBtn" type="button" aria-label="Group info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button></header>
+  <div id="gcLive" class="pinbar hidden" role="button" tabindex="0"></div>
   <div id="gcPin" class="pinbar hidden" role="button" tabindex="0"></div>
   <div id="gcMsgs" role="log" aria-live="polite"></div>
   <div id="gcReply" class="hidden"><div><b id="gcRbName"></b><span id="gcRbText"></span></div><button class="icon-btn" id="gcRbClose" type="button" aria-label="Cancel reply">&#10005;</button></div>
   <div id="gcAttBar" class="attbar hidden"></div>
-  <form id="gcForm" autocomplete="off"><button class="icon-btn" id="gcAttBtn" type="button" aria-label="Attach a file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button><input type="file" id="gcAttIn" accept="image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt" hidden><textarea id="gcIn" rows="1" maxlength="2000" placeholder="Message" aria-label="Message"></textarea><button class="send" type="submit" aria-label="Send message"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a1 1 0 0 0-1.4 1.2L4 11l9 1-9 1-2 6.2a1 1 0 0 0 1.4 1.2z"/></svg></button></form>
+  <form id="gcForm" autocomplete="off"><button class="icon-btn" id="gcAttBtn" type="button" aria-label="Attach a file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button><input type="file" id="gcAttIn" accept="image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt" hidden><button class="icon-btn" id="gcMicBtn" type="button" aria-label="Record a voice note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><textarea id="gcIn" rows="1" maxlength="2000" placeholder="Message" aria-label="Message"></textarea><button class="send" type="submit" aria-label="Send message"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a1 1 0 0 0-1.4 1.2L4 11l9 1-9 1-2 6.2a1 1 0 0 0 1.4 1.2z"/></svg></button></form>
 </section>
 <section id="grpInfo" class="screen" aria-label="Group info">
   <header class="chathead"><button class="icon-btn" id="gfBack" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><div class="ct" style="flex:1"><b>Group info</b></div></header>
@@ -891,6 +907,8 @@ input[type="file"]::file-selector-button:active{transform:scale(.98)}
     <button class="btn logout" id="gfLeave" type="button">Leave group</button>
   </div>
 </section>
+<div id="callOv" class="hidden" role="dialog" aria-label="Call"><div id="callTop"><b id="callTitle"></b><span id="callSub"></span></div><div id="callGrid"></div><div id="callBar"><button id="cMute" type="button" aria-label="Mute">🎤</button><button id="cCam" type="button" aria-label="Camera">📷</button><button id="cShare" type="button" aria-label="Share screen">🖥️</button><button id="cRec" type="button" aria-label="Record">⏺</button><button id="cEnd" type="button" aria-label="Leave">📞</button></div></div>
+<div id="ringOv" class="hidden" role="alertdialog" aria-label="Incoming call"><div class="ringcard"><b id="ringName"></b><span id="ringKind"></span><div class="rb"><button id="ringNo" type="button" style="background:#e5484d">Decline</button><button id="ringYes" type="button" style="background:#2eaa6a">Answer</button></div></div></div>
 <div id="pick" class="sheet hidden"><div class="sheet-card" id="pickCard"></div></div>
 <div id="reactionPicker" class="hidden" role="menu" aria-label="Choose a reaction"></div>
 <div id="toast" class="hidden" role="status"></div>
@@ -1034,7 +1052,7 @@ input[type="file"]::file-selector-button:active{transform:scale(.98)}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, updateProfile, sendEmailVerification } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, getDoc, setDoc, updateDoc, addDoc, collection, query, orderBy, limit, onSnapshot, serverTimestamp, where, writeBatch, deleteField, deleteDoc, Timestamp, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, getDoc, getDocs, setDoc, updateDoc, addDoc, collection, query, orderBy, limit, onSnapshot, serverTimestamp, where, writeBatch, deleteField, deleteDoc, Timestamp, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAaSeGyLRFzT9lScxS9bY8wrccRCJAOzI4",
@@ -1545,6 +1563,7 @@ function startRealtime() {
   watchPins();
   gStart();
   stuStart();
+  ringStart();
   slowLoad = false; clearTimeout(loadTimer);
   loadTimer = setTimeout(() => { if (!msgsReady) { slowLoad = true; if (chatOpen) renderMsgs(false); } }, 8000);
   const q = query(collection(db, "chats", MAIN, "messages"), orderBy("createdAt", "desc"), limit(100));
@@ -3149,7 +3168,7 @@ function onRecStop() {
   const file = new File([new Blob(r.chunks, { type: r.type })], "Voice note " + mmss(secs) + ext, { type: r.type });
   clearPending(r.ctx);
   pend[r.ctx] = { file: file, kind: "audio", preview: "", busy: false };
-  if (r.ctx === "main") send(); else sendDm();
+  if (r.ctx === "main") send(); else if (r.ctx === "grp") gSend(); else sendDm();
 }
 $("#micBtn").addEventListener("click", () => recStart("main"));
 $("#dmMicBtn").addEventListener("click", () => recStart("dm"));
@@ -3377,6 +3396,7 @@ function gOpen(id) {
   if (gRUnsub) gRUnsub();
   gReactions = {}; gClearReply(); clearPending("grp");
   gRUnsub = onSnapshot(collection(db, "groups", id, "reactions"), (snap) => { if (id !== gId) return; gReactions = buildReactionMap(snap); gRender(); }, () => {});
+  gLiveWatch(id);
   gId = id; gMsgs = []; lsSet("gseen-" + id, String(Date.now())); gRenderList(); gHead(); $("#gcMsgs").replaceChildren();
   gUnsub = onSnapshot(query(collection(db, "groups", id, "messages"), orderBy("createdAt", "desc"), limit(100)), (snap) => {
     if (id !== gId) return;
@@ -3390,6 +3410,7 @@ function gClose() {
   if (gUnsub) gUnsub();
   if (gRUnsub) gRUnsub();
   gRUnsub = null; gReactions = {}; gClearReply(); clearPending("grp");
+  gLiveStop();
   gUnsub = null; gId = null; gMsgs = [];
   window.Cohort.show("app");
 }
@@ -3568,7 +3589,7 @@ function stuStart() {
   unsubs.push(onSnapshot(doc(db, "acad", user.uid), (d) => { acad = Object.assign({ assignments: [], courses: [], scale: 5 }, d.exists() ? d.data() : {}); stuRender(); }, err));
   clearInterval(remTimer); remTimer = setInterval(stuRemind, 60000); setTimeout(stuRemind, 5000); setTimeout(stuRender, 2500);
 }
-function stuReset() { clearInterval(remTimer); classes = []; exams = []; lib = []; studyRooms = []; acad = { assignments: [], courses: [], scale: 5 }; const b = $("#stuBody"); if (b) b.replaceChildren(); }
+function stuReset() { callCleanup(); gLiveStop(); clearInterval(remTimer); classes = []; exams = []; lib = []; studyRooms = []; acad = { assignments: [], courses: [], scale: 5 }; const b = $("#stuBody"); if (b) b.replaceChildren(); }
 const acSave = (patch) => { Object.assign(acad, patch); stuRender(); return setDoc(doc(db, "acad", user.uid), { assignments: acad.assignments, courses: acad.courses, scale: acad.scale }).catch(() => toast("Couldn't save. Check your connection.")); };
 
 function askForm(title, fields, ok) {
@@ -3761,6 +3782,7 @@ function stuLib(f) {
       const pill = (t, cls, fn) => { const e = h("button", "stu-pill" + (cls ? " " + cls : ""), t); e.type = "button"; e.onclick = fn; acts.appendChild(e); return e; };
       if (x.media) pill("Open file", "pri", () => window.open(x.media.url, "_blank", "noopener"));
       if (x.body) { const r = pill("Read", "", () => { const on = txt.style.display === "none"; txt.style.display = on ? "block" : "none"; r.textContent = on ? "Hide" : "Read"; }); }
+      pill("Explain", "", () => aiLib("explain", x)); pill("Quiz me", "", () => aiLib("quiz", x));
       if (x.by === user.uid || isAdmin) pill("Delete", "dng", () => { if (confirm("Delete this?")) deleteDoc(doc(db, "library", x.id)).catch(() => toast("Couldn't delete that.")); });
       b.appendChild(txt); if (acts.childElementCount) b.appendChild(acts); out.push(c);
     });
@@ -3780,8 +3802,8 @@ function stuRooms(out) {
   actions.appendChild(stuAdd("Create a study room", stuCreateRoom));
   out.appendChild(actions);
   const note = h("div", "stu-room-note");
-  note.appendChild(h("b", null, "Live rooms are being prepared."));
-  note.appendChild(document.createTextNode(" Room creation and membership are the foundation. Real-time voice, video, screen sharing, and AI session summaries will be connected in the next integration stage. Your existing voice notes remain unchanged."));
+  note.appendChild(h("b", null, "Live rooms are on."));
+  note.appendChild(document.createTextNode(" Join voice or video from any room you've joined. Screen sharing works on desktop browsers. Up to 6 people on camera works best."));
   out.appendChild(note);
   out.appendChild(stuSec("Open study rooms", active.length));
   if (!active.length) {
@@ -3798,7 +3820,8 @@ function stuRooms(out) {
     if (!joined) {
       const join = h("button", "stu-pill pri", "Join room"); join.type = "button"; join.onclick = () => stuJoinRoom(r); acts.appendChild(join);
     } else {
-      const ready = h("button", "stu-pill pri", "Room details"); ready.type = "button"; ready.onclick = () => stuRoomDetails(r); acts.appendChild(ready);
+      [["Join voice", false], ["Join video", true]].forEach((o) => { const jb = h("button", "stu-pill pri", o[0]); jb.type = "button"; jb.onclick = () => callEnter(["studyRooms", r.id], r.title, o[1]); acts.appendChild(jb); });
+      const ready = h("button", "stu-pill", "Room details"); ready.type = "button"; ready.onclick = () => stuRoomDetails(r); acts.appendChild(ready);
       if (!own) { const leave = h("button", "stu-pill", "Leave"); leave.type = "button"; leave.onclick = () => stuLeaveRoom(r); acts.appendChild(leave); }
     }
     if (own) { const close = h("button", "stu-pill dng", "Close room"); close.type = "button"; close.onclick = () => stuCloseRoom(r); acts.appendChild(close); }
@@ -3850,7 +3873,7 @@ function stuRoomDetails(r) {
   const info = h("div", null, (r.course || "General study") + " · " + (r.members || []).length + "/12 participants"); info.style.cssText = "padding:4px 16px;color:var(--muted);font-size:13px"; card.appendChild(info);
   const desc = h("p", null, r.description || "No room description was added."); desc.style.cssText = "padding:0 16px;line-height:1.5"; card.appendChild(desc);
   const status = h("div", null, "Room status: " + (r.status === "open" ? "Open" : "Closed")); status.style.cssText = "padding:0 16px 12px;color:var(--muted);font-size:13px"; card.appendChild(status);
-  const msg = h("div", null, "Voice/video joining will appear here after the secure real-time media service is connected."); msg.style.cssText = "margin:0 14px 12px;padding:12px;border-radius:12px;background:color-mix(in srgb,var(--teal) 10%,var(--bg));font-size:13px;line-height:1.5"; card.appendChild(msg);
+  const msg = h("div", null, "Tap Join voice or Join video on the room card to start talking."); msg.style.cssText = "margin:0 14px 12px;padding:12px;border-radius:12px;background:color-mix(in srgb,var(--teal) 10%,var(--bg));font-size:13px;line-height:1.5"; card.appendChild(msg);
   card.appendChild(btn("Done", () => sh.remove(), "sheet-btn")); sh.addEventListener("click", (e) => { if (e.target === sh) sh.remove(); }); sh.appendChild(card); document.body.appendChild(sh);
 }
 
@@ -3858,7 +3881,7 @@ function stuRender() {
   if (!user) return;
   document.querySelectorAll("#stuSeg button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.t === stuTab)));
   const f = document.createDocumentFragment();
-  ({ today: stuToday, tasks: stuTasks, table: stuTable, gpa: stuGpa, lib: stuLib, rooms: stuRooms })[stuTab](f);
+  ({ today: stuToday, tasks: stuTasks, table: stuTable, gpa: stuGpa, lib: stuLib, rooms: stuRooms, ai: stuAi })[stuTab](f);
   $("#stuBody").replaceChildren(f);
 }
 function stuRemind() {
@@ -3876,6 +3899,283 @@ function stuRemind() {
 }
 $("#stuSeg").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; stuTab = b.dataset.t; stuRender(); });
 $('.tab[data-view="study"]').addEventListener("click", stuRender);
+
+/* ---------- Phase 16: voice, video & live rooms ---------- */
+const ICE = [{ urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"] }];
+let call = null, ringUnsub = null, ring = null, gLiveUnsub = null;
+const cdoc = (...p) => doc(db, ...call.base, ...p), ccol = (n) => collection(db, ...call.base, n);
+const presence = (patch) => call && updateDoc(cdoc("live", user.uid), Object.assign({ at: serverTimestamp() }, patch)).catch(() => {});
+const sig = (to, kind, data) => call && addDoc(ccol("signals"), { from: user.uid, to: to, kind: kind, data: data, at: serverTimestamp() }).catch(() => {});
+
+function tile(uid, name) {
+  if (call.tiles[uid]) return call.tiles[uid];
+  const el = h("div", "ctile"), vid = document.createElement("video");
+  vid.autoplay = true; vid.playsInline = true; if (uid === user.uid) vid.muted = true; vid.style.display = "none";
+  el.appendChild(h("div", "cav", initials(name))); el.appendChild(vid); el.appendChild(h("span", "cname", uid === user.uid ? "You" : name));
+  $("#callGrid").appendChild(el); return (call.tiles[uid] = { el: el, vid: vid });
+}
+function tileStream(uid, name, stream) {
+  const t = tile(uid, name); t.vid.srcObject = stream;
+  const on = uid === user.uid ? !!call.video : !!(call.roster[uid] || {}).video; t.vid.style.display = on ? "block" : "none";
+  t.vid.play().catch(() => {}); callCount();
+}
+function callCount() {
+  if (!call) return;
+  const n = Object.keys(call.peers).length + 1, rc = Object.keys(call.roster).some((u) => call.roster[u].rec) || !!call.rec;
+  $("#callSub").textContent = n + (n === 1 ? " person" : " people") + " in the call" + (rc ? " \u00B7 \uD83D\uDD34 Recording" : "");
+}
+function dropPeer(uid) {
+  if (!call) return;
+  const p = call.peers[uid]; if (p) { try { p.pc.close(); } catch (e) {} delete call.peers[uid]; }
+  const t = call.tiles[uid]; if (t) { t.el.remove(); delete call.tiles[uid]; }
+  callCount();
+}
+async function makePeer(uid, initiator) {
+  if (call.peers[uid]) return call.peers[uid];
+  const pc = new RTCPeerConnection({ iceServers: ICE }), p = { pc: pc, q: [] }, st = new MediaStream(), name = (call.roster[uid] || {}).name || "Student";
+  call.peers[uid] = p; tile(uid, name);
+  call.local.getTracks().forEach((t) => pc.addTrack(t, call.local));
+  pc.ontrack = (e) => { if (!call) return; st.addTrack(e.track); tileStream(uid, name, st); callMix(st); };
+  pc.onicecandidate = (e) => { if (e.candidate) sig(uid, "ice", JSON.stringify(e.candidate)); };
+  pc.onconnectionstatechange = () => { if (pc.connectionState === "failed") { dropPeer(uid); toast("Lost connection to " + name + "."); } };
+  if (initiator) { try { await pc.setLocalDescription(await pc.createOffer()); sig(uid, "offer", JSON.stringify(pc.localDescription)); } catch (e) {} }
+  callCount(); return p;
+}
+async function callSignal(d) {
+  const s = d.data({ serverTimestamps: "estimate" }); deleteDoc(d.ref).catch(() => {});
+  if (!call || Date.now() - tms(s.at) > 12e4) return;
+  try {
+    if (s.kind === "offer" && call.peers[s.from]) dropPeer(s.from);
+    const p = call.peers[s.from] || await makePeer(s.from, false), pc = p.pc, data = JSON.parse(s.data);
+    const flush = () => p.q.splice(0).forEach((c) => pc.addIceCandidate(c).catch(() => {}));
+    if (s.kind === "offer") { await pc.setRemoteDescription(data); flush(); await pc.setLocalDescription(await pc.createAnswer()); sig(s.from, "answer", JSON.stringify(pc.localDescription)); }
+    else if (s.kind === "answer") { await pc.setRemoteDescription(data); flush(); }
+    else if (pc.remoteDescription) pc.addIceCandidate(data).catch(() => {}); else p.q.push(data);
+  } catch (e) {}
+}
+function callRoster(s) {
+  if (!call) return;
+  const now = Date.now(), r = {};
+  s.docs.forEach((d) => { const x = d.data({ serverTimestamps: "estimate" }); if (x.uid !== user.uid && now - tms(x.at) < 70000) r[x.uid] = x; });
+  call.roster = r;
+  Object.keys(r).forEach((u) => {
+    if (!call.peers[u] && user.uid < u) makePeer(u, true);
+    const t = call.tiles[u];
+    if (t) { t.el.classList.toggle("novid", !r[u].video); t.vid.style.display = r[u].video ? "block" : "none"; t.el.querySelector(".cname").textContent = r[u].name; }
+  });
+  if (!s.metadata.fromCache) Object.keys(call.peers).forEach((u) => { if (!r[u]) dropPeer(u); });
+  callCount();
+}
+async function callEnter(base, title, video) {
+  if (call) { toast("You're already in a call."); return; }
+  if (restricted) { toast(RESTRICTED_MSG); return; }
+  if (!navigator.mediaDevices || !window.RTCPeerConnection) { toast("Calls aren't supported on this device."); return; }
+  let local;
+  try { local = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: video ? { facingMode: "user" } : false }); }
+  catch (e) { toast(video ? "Allow the camera and microphone to join." : "Allow the microphone to join."); return; }
+  call = { base: base, title: title, video: video, local: local, peers: {}, tiles: {}, roster: {}, unsubs: [], hb: null, rec: null, mix: null, screen: null, cam: video ? local.getVideoTracks()[0] : null };
+  $("#callOv").classList.remove("hidden"); $("#callTitle").textContent = title;
+  $("#cCam").classList.toggle("hidden", !video);
+  $("#cShare").classList.toggle("hidden", !(video && navigator.mediaDevices.getDisplayMedia && !/Android|iPhone|iPad/i.test(navigator.userAgent)));
+  ["#cMute", "#cCam", "#cRec", "#cShare"].forEach((s) => $(s).classList.remove("off", "on"));
+  tileStream(user.uid, myName(), local);
+  try { await setDoc(cdoc("live", user.uid), { uid: user.uid, name: myName(), at: serverTimestamp(), video: !!video }); }
+  catch (e) { callLeave(); toast("Couldn't join. Make sure the latest Firestore rules are published."); return; }
+  call.unsubs.push(onSnapshot(ccol("live"), callRoster, () => {}));
+  call.unsubs.push(onSnapshot(query(ccol("signals"), where("to", "==", user.uid)), (s) => s.docChanges().forEach((c) => { if (c.type === "added") callSignal(c.doc); }), () => {}));
+  if (base[0] === "calls") call.unsubs.push(onSnapshot(doc(db, "calls", base[1]), (d) => { if (d.exists() && d.data().status === "ended") callLeave(); }, () => {}));
+  call.hb = setInterval(() => presence({}), 25000);
+}
+function callLeave() {
+  const c = call; if (!c) return;
+  if (c.rec) callSaveRec(c);
+  call = null; clearInterval(c.hb); c.unsubs.forEach((u) => u());
+  Object.keys(c.peers).forEach((u) => { try { c.peers[u].pc.close(); } catch (e) {} });
+  c.local.getTracks().forEach((t) => t.stop()); if (c.screen) c.screen.getTracks().forEach((t) => t.stop());
+  deleteDoc(doc(db, ...c.base, "live", user.uid)).catch(() => {});
+  if (c.base[0] === "calls") updateDoc(doc(db, "calls", c.base[1]), { status: "ended" }).catch(() => {});
+  $("#callOv").classList.add("hidden"); $("#callGrid").replaceChildren();
+}
+function callCleanup() { callLeave(); if (ringUnsub) ringUnsub(); ringUnsub = null; ring = null; const r = $("#ringOv"); if (r) r.classList.add("hidden"); }
+function swapVideo(track) {
+  Object.keys(call.peers).forEach((u) => { const s = call.peers[u].pc.getSenders().find((x) => x.track && x.track.kind === "video"); if (s) s.replaceTrack(track).catch(() => {}); });
+  const t = call.tiles[user.uid]; if (t) t.vid.srcObject = new MediaStream([track].concat(call.local.getAudioTracks()));
+}
+function callShareStop() { if (!call || !call.screen) return; call.screen.getTracks().forEach((t) => t.stop()); call.screen = null; swapVideo(call.cam); $("#cShare").classList.remove("on"); }
+async function callShare() {
+  if (call.screen) { callShareStop(); return; }
+  try { const s = await navigator.mediaDevices.getDisplayMedia({ video: true }), t = s.getVideoTracks()[0]; call.screen = s; swapVideo(t); t.onended = callShareStop; $("#cShare").classList.add("on"); presence({ video: true }); }
+  catch (e) { toast("Couldn't start screen sharing."); }
+}
+function callMix(stream) { if (call && call.mix && stream && stream.getAudioTracks().length) call.mix.ac.createMediaStreamSource(stream).connect(call.mix.dest); }
+function callSaveRec(c) {
+  const r = c.rec; c.rec = null; if (!r) return;
+  r.mr.onstop = () => {
+    if (c.mix) { try { c.mix.ac.close(); } catch (e) {} c.mix = null; }
+    if (!r.chunks.length) return;
+    const url = URL.createObjectURL(new Blob(r.chunks, { type: r.type })), a = document.createElement("a");
+    a.href = url; a.download = "Cohort recording - " + c.title.replace(/[^\w ]+/g, "") + ".webm"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 30000);
+  };
+  try { r.mr.stop(); } catch (e) {}
+}
+function callRecord() {
+  if (call.rec) { callSaveRec(call); presence({ rec: false }); $("#cRec").classList.remove("on"); toast("Recording saved to your device."); return; }
+  if (!window.MediaRecorder) { toast("Recording isn't supported on this device."); return; }
+  const ac = new (window.AudioContext || window.webkitAudioContext)(), dest = ac.createMediaStreamDestination();
+  call.mix = { ac: ac, dest: dest }; callMix(call.local);
+  Object.keys(call.tiles).forEach((u) => { if (u !== user.uid) callMix(call.tiles[u].vid.srcObject); });
+  const mr = new MediaRecorder(dest.stream), chunks = [];
+  mr.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+  mr.start(1000); call.rec = { mr: mr, chunks: chunks, type: mr.mimeType || "audio/webm" };
+  presence({ rec: true }); $("#cRec").classList.add("on"); toast("Recording started. Everyone in the call can see that it's on.");
+}
+function ringStart() {
+  if (ringUnsub) ringUnsub();
+  ringUnsub = onSnapshot(query(collection(db, "calls"), where("to", "==", user.uid), where("status", "==", "ringing")), (s) => {
+    const d = s.docs.map((x) => Object.assign({ id: x.id }, x.data({ serverTimestamps: "estimate" }))).filter((x) => Date.now() - tms(x.createdAt) < 60000).sort((a, b) => tms(b.createdAt) - tms(a.createdAt))[0];
+    ring = d || null; $("#ringOv").classList.toggle("hidden", !d);
+    if (d) { $("#ringName").textContent = d.fromName; $("#ringKind").textContent = d.kind === "video" ? "Incoming video call" : "Incoming voice call"; try { if (navigator.vibrate) navigator.vibrate([300, 150, 300]); } catch (e) {} }
+  }, () => {});
+}
+async function dmCall(video) {
+  if (!dmPeer || call) return;
+  if (restricted) { toast(RESTRICTED_MSG); return; }
+  const nm = (people[dmPeer] || {}).name || "Student";
+  try {
+    const ref = await addDoc(collection(db, "calls"), { from: user.uid, fromName: myName(), to: dmPeer, kind: video ? "video" : "voice", status: "ringing", createdAt: serverTimestamp() });
+    await callEnter(["calls", ref.id], nm, video);
+    setTimeout(async () => { try { const d = await getDoc(doc(db, "calls", ref.id)); if (d.exists() && d.data().status === "ringing") { if (call && call.base[1] === ref.id) callLeave(); toast(nm + " didn't answer."); } } catch (e) {} }, 45000);
+  } catch (e) { toast("Couldn't start the call. Make sure the latest Firestore rules are published."); }
+}
+function gLiveStop() { if (gLiveUnsub) gLiveUnsub(); gLiveUnsub = null; const b = $("#gcLive"); if (b) b.classList.add("hidden"); }
+function gLiveWatch(id) {
+  gLiveStop();
+  gLiveUnsub = onSnapshot(collection(db, "groups", id, "live"), (s) => {
+    const n = s.docs.filter((d) => Date.now() - tms(d.data({ serverTimestamps: "estimate" }).at) < 70000).length, b = $("#gcLive");
+    b.classList.toggle("hidden", !n); b.textContent = n ? "\uD83D\uDD34 " + n + (n === 1 ? " person is" : " people are") + " in the live room \u00B7 tap to join" : "";
+  }, () => {});
+}
+const gCall = (video) => { if (gId && groups[gId]) callEnter(["groups", gId], groups[gId].name, video); };
+$("#gcCallV").addEventListener("click", () => gCall(false));
+$("#gcCallC").addEventListener("click", () => gCall(true));
+$("#gcLive").addEventListener("click", () => gCall(false));
+$("#dmCallV").addEventListener("click", () => dmCall(false));
+$("#dmCallC").addEventListener("click", () => dmCall(true));
+$("#gcMicBtn").addEventListener("click", () => recStart("grp"));
+$("#cEnd").addEventListener("click", callLeave);
+$("#cMute").addEventListener("click", (e) => { if (!call) return; const on = call.local.getAudioTracks().some((t) => t.enabled); call.local.getAudioTracks().forEach((t) => { t.enabled = !on; }); e.currentTarget.classList.toggle("off", on); });
+$("#cCam").addEventListener("click", (e) => {
+  if (!call || !call.cam) return; const t = call.cam; t.enabled = !t.enabled; e.currentTarget.classList.toggle("off", !t.enabled); presence({ video: t.enabled });
+  const lt = call.tiles[user.uid]; if (lt) lt.vid.style.display = t.enabled ? "block" : "none";
+});
+$("#cShare").addEventListener("click", () => { if (call) callShare(); });
+$("#cRec").addEventListener("click", () => { if (call) callRecord(); });
+$("#ringYes").addEventListener("click", async () => {
+  const r = ring; if (!r) return; $("#ringOv").classList.add("hidden");
+  try { await updateDoc(doc(db, "calls", r.id), { status: "live" }); } catch (e) { toast("That call has ended."); return; }
+  callEnter(["calls", r.id], r.fromName, r.kind === "video");
+});
+$("#ringNo").addEventListener("click", () => { if (ring) updateDoc(doc(db, "calls", ring.id), { status: "ended" }).catch(() => {}); $("#ringOv").classList.add("hidden"); });
+window.addEventListener("pagehide", () => { if (call) callLeave(); });
+
+/* ---------- Phase 17: AI study assistant ---------- */
+const AI_URL = "";
+let aiSpace = "main", aiOut = null;
+const aiUrl = () => AI_URL || lsGet("aiUrl") || "";
+async function aiSetup() {
+  const v = await askForm("Connect the AI assistant", [{ k: "url", ph: "https://cohort-ai.yourname.workers.dev", cap: "Paste your AI worker URL", val: aiUrl() }], "Connect");
+  if (!v) return;
+  if (/^https:\/\//.test(v.url)) { lsSet("aiUrl", v.url.replace(/\/+$/, "")); toast("AI assistant connected."); stuRender(); } else toast("That doesn't look like a valid https URL.");
+}
+async function aiAsk(task, payload) {
+  const url = aiUrl(); if (!url) throw new Error("setup");
+  const tok = await auth.currentUser.getIdToken();
+  const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + tok }, body: JSON.stringify(Object.assign({ task: task }, payload)) });
+  if (!r.ok) throw new Error(r.status === 429 ? "You're asking too fast. Try again in a minute." : "The assistant couldn't answer right now.");
+  return (await r.json()).text || "";
+}
+async function aiMsgs(space, since) {
+  const q = space === "main" ? query(collection(db, "chats", MAIN, "messages"), orderBy("createdAt", "desc"), limit(250)) : query(collection(db, "groups", space, "messages"), orderBy("createdAt", "desc"), limit(250));
+  const s = await getDocs(q);
+  return s.docs.map((d) => d.data({ serverTimestamps: "estimate" })).filter((m) => !m.deleted && m.text && (!since || tms(m.createdAt) >= since)).reverse()
+    .map((m) => new Date(tms(m.createdAt)).toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + " " + (m.name || (people[m.uid] || {}).name || "Someone") + ": " + m.text).join("\n").slice(-24000);
+}
+const aiName = () => aiSpace === "main" ? "main class chat" : (groups[aiSpace] || {}).name || "group";
+const aiJson = (t) => JSON.parse(t.slice(t.search(/[\[{]/), Math.max(t.lastIndexOf("]"), t.lastIndexOf("}")) + 1));
+async function aiRun(kind, extra) {
+  aiOut = { kind: "loading" }; stuTab = "ai"; stuRender();
+  try {
+    const sp = aiName();
+    if (kind === "catchup") {
+      const m = await aiMsgs(aiSpace, Number(lsGet("aiseen-" + aiSpace)) || Date.now() - 864e5);
+      aiOut = { kind: "text", text: m ? await aiAsk("catchup", { space: sp, messages: m }) : "You're all caught up. Nothing new since you last checked." };
+      lsSet("aiseen-" + aiSpace, String(Date.now()));
+    }
+    else if (kind === "summary") aiOut = { kind: "text", text: await aiAsk("summary", { space: sp, messages: await aiMsgs(aiSpace) }) };
+    else if (kind === "ask") aiOut = { kind: "text", text: await aiAsk("ask", { space: sp, question: extra, messages: await aiMsgs(aiSpace) }) };
+    else if (kind === "reminders") aiOut = { kind: "reminders", items: aiJson(await aiAsk("reminders", { space: sp, today: new Date().toISOString().slice(0, 10), messages: await aiMsgs(aiSpace) })) };
+    else if (kind === "moderate") aiOut = { kind: "moderate", items: aiJson(await aiAsk("moderate", { space: sp, messages: await aiMsgs(aiSpace, Date.now() - 3 * 864e5) })) };
+    else if (kind === "explain") aiOut = { kind: "text", text: await aiAsk("explain", { text: extra }) };
+    else if (kind === "quiz") aiOut = { kind: "quiz", items: aiJson(await aiAsk("quiz", { text: extra })) };
+  } catch (e) { aiOut = { kind: "text", text: e.message === "setup" ? "Connect the assistant first." : /JSON|Unexpected|token/.test(e.message) ? "The assistant gave an unreadable answer. Try again." : e.message }; }
+  stuRender();
+}
+const aiLib = (kind, x) => aiRun(kind, x.course + " - " + x.title + "\n" + (x.body || "(A file named " + (x.media ? x.media.name : "attachment") + " is attached but can't be read.)"));
+async function aiPrompt(kind) {
+  const c = { ask: ["Ask the chat", "e.g. When is the CSC 201 test?", 300, 0], explain: ["Explain a question", "Paste the past question or topic", 2000, 1], quiz: ["Practice quiz", "Paste notes or name a topic, e.g. Binary trees", 3000, 1] }[kind];
+  const v = await askForm(c[0], [{ k: "t", area: c[3], ph: c[1], max: c[2] }], "Go");
+  if (v && v.t.length > 2) aiRun(kind, v.t);
+}
+function stuQuiz(o) {
+  const w = h("div"), sc = h("div", "stu-sec"), tx = h("span");
+  sc.appendChild(tx); w.appendChild(sc);
+  const upd = () => { const got = o.items.filter((q) => q.picked === q.answer).length, done = o.items.filter((q) => q.picked != null).length; tx.textContent = "Score " + got + " / " + o.items.length + (done === o.items.length ? " \u00B7 done" : ""); };
+  o.items.forEach((q, qi) => {
+    const c = h("div", "stu-card"); c.style.display = "block";
+    c.appendChild(h("b", null, (qi + 1) + ". " + q.q)).style.cssText = "display:block;margin-bottom:6px";
+    const exp = h("div", "txt", "\uD83D\uDCA1 " + (q.why || "")); exp.style.cssText = "display:none;margin-top:8px;color:var(--muted);font-size:13px";
+    const opts = [];
+    const reveal = () => { opts.forEach((x, k) => { const col = k === q.answer ? "var(--teal)" : k === q.picked ? "var(--err)" : ""; if (col) { x.style.borderColor = col; x.style.color = col; } }); exp.style.display = "block"; };
+    (q.options || []).forEach((t, oi) => {
+      const b = h("button", "stu-pill", String.fromCharCode(65 + oi) + ". " + t); b.type = "button"; b.style.cssText = "display:block;width:100%;text-align:left;margin-top:6px;white-space:normal";
+      b.onclick = () => { if (q.picked != null) return; q.picked = oi; reveal(); upd(); }; opts.push(b); c.appendChild(b);
+    });
+    c.appendChild(exp); if (q.picked != null) reveal(); w.appendChild(c);
+  });
+  upd(); return w;
+}
+function aiOutEl() {
+  const o = aiOut, w = h("div");
+  if (o.kind === "loading") return stuEmpty("\u2728", "Thinking...", "This takes a few seconds.");
+  if (o.kind === "text") { const c = h("div", "stu-card"), b = h("div", "body"); b.style.whiteSpace = "pre-wrap"; b.textContent = o.text; c.appendChild(b); return c; }
+  if (o.kind === "quiz") return stuQuiz(o);
+  if (o.kind === "reminders") {
+    w.appendChild(stuSec("Suggested reminders", o.items.length));
+    if (!o.items.length) w.appendChild(stuEmpty("\uD83D\uDD0D", "No deadlines found", "Nothing in this chat looked like a task or exam date."));
+    o.items.forEach((it) => {
+      const add = h("button", "stu-pill pri", it.added ? "Added" : "Add"); add.type = "button";
+      add.onclick = () => { if (it.added || !it.due) return; it.added = true; acSave({ assignments: acad.assignments.concat({ id: rid(), title: String(it.title).slice(0, 100), course: String(it.course || "").slice(0, 40), due: new Date(it.due + "T23:59").getTime(), done: false }) }); toast("Added to your tasks."); };
+      w.appendChild(stuRow("var(--orange)", null, String(it.title), it.due ? "Due " + fmtD(new Date(it.due + "T12:00").getTime()) : "No date found", it.course ? [stuCourse(String(it.course))] : [], add));
+    }); return w;
+  }
+  w.appendChild(stuSec("Flagged messages", o.items.length));
+  if (!o.items.length) w.appendChild(stuEmpty("\u2705", "Nothing flagged", "No messages in the last 3 days looked like rule-breaking."));
+  o.items.forEach((it) => w.appendChild(stuRow("var(--err)", null, String(it.who), String(it.reason), [stuChip("\u201C" + String(it.quote).slice(0, 80) + "\u201D")])));
+  return w;
+}
+function stuAi(f) {
+  const hero = h("div", "stu-hero"); hero.appendChild(h("small", null, "COHORT AI")); hero.appendChild(h("h2", null, "Study assistant")); f.appendChild(hero);
+  if (!aiUrl()) { f.appendChild(stuEmpty("\u2728", "Connect your assistant", "One-time setup with the free worker in your files.")); f.appendChild(stuAdd("Paste worker URL", aiSetup)); return; }
+  const sel = h("select", "stin"); [["main", "Main class chat"]].concat(Object.values(groups).map((g) => [g.id, g.name])).forEach((o) => { const op = h("option", null, o[1]); op.value = o[0]; sel.appendChild(op); });
+  sel.value = (aiSpace === "main" || groups[aiSpace]) ? aiSpace : "main"; sel.onchange = () => { aiSpace = sel.value; }; f.appendChild(sel);
+  const pills = (title, list) => { f.appendChild(stuSec(title)); const g = h("div", "stu-acts"); g.style.padding = "0 14px"; list.forEach((t) => { const b = h("button", "stu-pill", t[0]); b.type = "button"; b.onclick = t[1]; g.appendChild(b); }); f.appendChild(g); };
+  const chat = [["\u2600\uFE0F What did I miss?", () => aiRun("catchup")], ["\uD83D\uDCCB Summarize", () => aiRun("summary")], ["\uD83D\uDD0E Ask the chat", () => aiPrompt("ask")], ["\u23F0 Suggest reminders", () => aiRun("reminders")]];
+  if (isAdmin) chat.push(["\uD83D\uDEE1\uFE0F Moderation scan", () => aiRun("moderate")]);
+  pills("This chat", chat);
+  pills("Study help", [["\uD83D\uDCD6 Explain a question", () => aiPrompt("explain")], ["\uD83E\uDDE0 Practice quiz", () => aiPrompt("quiz")]]);
+  if (aiOut) { f.appendChild(stuSec("Result")); f.appendChild(aiOutEl()); }
+  f.appendChild(stuAdd("Change worker URL", aiSetup));
+}
 
 function listTime(t) {
   if (!t) return "";
