@@ -636,21 +636,46 @@ input[type="file"]::file-selector-button:active{transform:scale(.98)}
 .cover-upload-control input[type="file"]{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;clip-path:inset(50%)}
 .cover-upload-btn:focus-within,.cover-upload-btn:focus-visible{outline:3px solid #38bdf866;outline-offset:2px}
 
-#callOv{position:fixed;inset:0;z-index:95;background:#0b0f14;color:#fff;display:flex;flex-direction:column}
+#callOv,#ringOv{position:fixed;inset:0;display:flex;flex-direction:column;color:#fff;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif}
+#callOv{z-index:95;background:#0b0c14}
+#ringOv{z-index:96;align-items:center;justify-content:space-between;background:#0b0c14;padding:calc(90px + env(safe-area-inset-top,0px)) 24px calc(70px + env(safe-area-inset-bottom,0px))}
 #callOv.hidden,#ringOv.hidden{display:none}
-#callTop{padding:calc(14px + env(safe-area-inset-top,0px)) 16px 6px;text-align:center}#callTop b{display:block;font-size:17px}#callTop span{font-size:13px;opacity:.7}
-#callGrid{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));grid-auto-rows:minmax(170px,1fr);gap:8px;padding:10px;overflow:auto}
-.ctile{position:relative;border-radius:18px;background:#1b2430;overflow:hidden;min-height:170px}
+#callBg,#ringBg{position:absolute;inset:0;z-index:0;background:radial-gradient(120% 70% at 15% 0%,#5b4bd6 0%,transparent 55%),radial-gradient(100% 60% at 100% 35%,#e1558a 0%,transparent 52%),radial-gradient(120% 80% at 50% 110%,#1f7ae0 0%,transparent 55%),#14152b}
+#callBg::after,#ringBg::after{content:"";position:absolute;inset:0;background:rgba(10,10,25,.35);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px)}
+#callTop{position:relative;z-index:4;padding:calc(54px + env(safe-area-inset-top,0px)) 20px 0;text-align:center;text-shadow:0 1px 8px #0006}
+#callTop b{display:block;font-size:30px;font-weight:600;letter-spacing:-.3px}
+#callTop #callSub{display:block;margin-top:4px;font-size:17px;opacity:.8;font-variant-numeric:tabular-nums}
+#callTop #callRec{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:999px;background:#ff3b30;font-size:12px;font-weight:600;text-shadow:none}
+#callTop #callRec.hidden{display:none}
+#callGrid{position:absolute;inset:0;z-index:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));grid-auto-rows:minmax(0,1fr);gap:6px;padding:calc(124px + env(safe-area-inset-top,0px)) 8px calc(210px + env(safe-area-inset-bottom,0px));overflow:auto;align-content:center}
+.ctile{position:relative;border-radius:22px;background:rgba(255,255,255,.08);overflow:hidden;min-height:170px}
 .ctile video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.ctile .cav{position:absolute;inset:0;display:grid;place-items:center;font-size:34px;font-weight:800;color:#8aa0b8}
-.ctile .cname{position:absolute;left:10px;bottom:8px;background:#0008;border-radius:999px;padding:3px 10px;font-size:12px}
-#callBar{display:flex;justify-content:center;gap:14px;padding:12px 12px calc(18px + env(safe-area-inset-bottom,0px))}
-#callBar button{width:56px;height:56px;border-radius:50%;border:0;background:#2a3544;color:#fff;font-size:22px;cursor:pointer}
-#callBar button.hidden{display:none}#callBar button.off{background:#fff;color:#111}#callBar button.on{background:var(--orange)}#callBar #cEnd{background:#e5484d}
-#ringOv{position:fixed;inset:0;z-index:96;background:#000b;display:flex;align-items:center;justify-content:center}
-.ringcard{background:var(--bg);color:var(--text);border-radius:24px;padding:26px 22px;width:min(320px,86vw);text-align:center}
-.ringcard b{display:block;font-size:20px;margin:6px 0 2px}.ringcard span{color:var(--muted);font-size:14px}
-.ringcard .rb{display:flex;gap:12px;margin-top:22px}.ringcard .rb button{flex:1;padding:13px;border:0;border-radius:14px;font:inherit;font-weight:700;color:#fff;cursor:pointer}
+.ctile .cav{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:112px;height:112px;border-radius:50%;display:grid;place-items:center;font-size:44px;font-weight:600;color:#fff;background:linear-gradient(#b3b8c6,#7b8094);box-shadow:0 8px 30px #0005}
+.ctile .cname{position:absolute;left:10px;bottom:8px;background:#0007;border-radius:999px;padding:3px 10px;font-size:12px}
+#callOv[data-n="0"] #callGrid,#callOv[data-n="1"] #callGrid{display:block;padding:0}
+#callOv[data-n="1"] .ctile:not(.me),#callOv[data-n="0"] .ctile.me{position:absolute;inset:0;border-radius:0;background:transparent}
+#callOv[data-n="1"] .ctile:not(.me) .cav,#callOv[data-n="0"] .ctile.me .cav{width:150px;height:150px;font-size:60px;top:40%}
+#callOv[data-n="1"] .cname,#callOv[data-n="0"] .cname{display:none}
+#callOv[data-n="1"] .ctile.me{position:absolute;top:calc(118px + env(safe-area-inset-top,0px));right:14px;left:auto;width:104px;height:148px;min-height:0;border-radius:18px;z-index:3;box-shadow:0 10px 30px #0008;border:1.5px solid #fff3}
+#callOv[data-n="1"] .ctile.me .cav{width:56px;height:56px;font-size:22px;top:50%}
+#callOv[data-n="1"]:not(.vid) .ctile.me{display:none}
+#callBar{position:absolute;left:0;right:0;bottom:0;z-index:4;display:flex;flex-direction:column;align-items:center;gap:22px;padding:18px 16px calc(26px + env(safe-area-inset-bottom,0px))}
+#callBar .cbs{display:flex;justify-content:center;gap:16px;padding:16px 20px;border-radius:32px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);-webkit-backdrop-filter:blur(24px) saturate(1.4);backdrop-filter:blur(24px) saturate(1.4)}
+.cb{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px}.cb.hidden{display:none}
+.cb button{width:62px;height:62px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;display:grid;place-items:center;cursor:pointer}
+.cb button svg{width:28px;height:28px}
+.cb button.off,.cb button.on{background:#fff;color:#111}.cb #cRec.on{background:#ff3b30;color:#fff}
+#cEnd{width:72px;height:72px;border-radius:50%;border:0;background:#ff3b30;color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 24px #ff3b3066}
+#cEnd svg{width:32px;height:32px;transform:rotate(135deg)}
+.rtop{position:relative;z-index:1;text-align:center;text-shadow:0 1px 8px #0006}
+.rtop .rav{width:132px;height:132px;margin:0 auto;border-radius:50%;display:grid;place-items:center;font-size:52px;font-weight:600;background:linear-gradient(#b3b8c6,#7b8094);animation:ringPulse 1.6s ease-out infinite}
+.rtop b{display:block;font-size:34px;font-weight:600;margin-top:24px}.rtop span{display:block;font-size:18px;opacity:.8;margin-top:6px}
+#ringOv .rb{position:relative;z-index:1;display:flex;gap:90px}
+.rc{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:14px}
+.rc button{width:74px;height:74px;border-radius:50%;border:0;color:#fff;display:grid;place-items:center;cursor:pointer}.rc button svg{width:32px;height:32px}
+#ringNo svg{transform:rotate(135deg)}
+@keyframes ringPulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.35)}100%{box-shadow:0 0 0 40px rgba(255,255,255,0)}}
+@media (prefers-reduced-motion:reduce){.rtop .rav{animation:none}}
 #aiBtn,.ai-orb{position:relative;display:grid;place-items:center;border:0;border-radius:50%;background:conic-gradient(from 210deg,#ff7a1a,#ffb35c,#7a5cff,#2dd4bf,#ff7a1a)}
 #aiBtn{width:38px;height:38px;cursor:pointer;padding:0;animation:aiGlow 2.6s ease-in-out infinite}
 .ai-orb{width:34px;height:34px;flex:none;animation:aiGlow 2.6s ease-in-out infinite}
@@ -929,8 +954,8 @@ input[type="file"]::file-selector-button:active{transform:scale(.98)}
     <button class="btn logout" id="gfLeave" type="button">Leave group</button>
   </div>
 </section>
-<div id="callOv" class="hidden" role="dialog" aria-label="Call"><div id="callTop"><b id="callTitle"></b><span id="callSub"></span></div><div id="callGrid"></div><div id="callBar"><button id="cMute" type="button" aria-label="Mute">🎤</button><button id="cCam" type="button" aria-label="Camera">📷</button><button id="cShare" type="button" aria-label="Share screen">🖥️</button><button id="cRec" type="button" aria-label="Record">⏺</button><button id="cEnd" type="button" aria-label="Leave">📞</button></div></div>
-<div id="ringOv" class="hidden" role="alertdialog" aria-label="Incoming call"><div class="ringcard"><b id="ringName"></b><span id="ringKind"></span><div class="rb"><button id="ringNo" type="button" style="background:#e5484d">Decline</button><button id="ringYes" type="button" style="background:#2eaa6a">Answer</button></div></div></div>
+<div id="callOv" class="hidden" role="dialog" aria-label="Call" data-n="0"><div id="callBg"></div><div id="callTop"><b id="callTitle"></b><span id="callSub"></span><span id="callRec" class="hidden">&#9679; Recording</span></div><div id="callGrid"></div><div id="callBar"><div class="cbs"><div class="cb"><button id="cMute" type="button" aria-label="Mute"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><span>mute</span></div><div class="cb"><button id="cCam" type="button" aria-label="Camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2.5"/><path d="M22 8l-6 4 6 4z"/></svg></button><span>camera</span></div><div class="cb"><button id="cShare" type="button" aria-label="Share screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4M9.5 10.5L12 8l2.5 2.5M12 8v5"/></svg></button><span>share</span></div><div class="cb"><button id="cRec" type="button" aria-label="Record"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5" fill="currentColor"/></svg></button><span>record</span></div></div><button id="cEnd" type="button" aria-label="Leave call"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></button></div></div>
+<div id="ringOv" class="hidden" role="alertdialog" aria-label="Incoming call"><div id="ringBg"></div><div class="rtop"><div id="ringAv" class="rav"></div><b id="ringName"></b><span id="ringKind"></span></div><div class="rb"><div class="rc"><button id="ringNo" type="button" aria-label="Decline" style="background:#ff3b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></button><span>Decline</span></div><div class="rc"><button id="ringYes" type="button" aria-label="Accept" style="background:#34c759"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></button><span>Accept</span></div></div></div>
 <div id="pick" class="sheet hidden"><div class="sheet-card" id="pickCard"></div></div>
 <div id="reactionPicker" class="hidden" role="menu" aria-label="Choose a reaction"></div>
 <div id="toast" class="hidden" role="status"></div>
@@ -3924,7 +3949,11 @@ $("#stuSeg").addEventListener("click", (e) => { const b = e.target.closest("butt
 $('.tab[data-view="study"]').addEventListener("click", stuRender);
 
 /* ---------- Phase 16: voice, video & live rooms ---------- */
-const ICE = [{ urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"] }];
+// Optional relay servers so calls also connect across mobile networks. Example:
+// const TURN_SERVERS = [{ urls: "turn:your-turn-host:443?transport=tcp", username: "user", credential: "pass" }];
+const TURN_SERVERS = [];
+const ICE = [{ urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"] }].concat(TURN_SERVERS);
+const clock = (t0) => { const s = Math.max(0, Math.floor((Date.now() - (t0 || Date.now())) / 1000)); return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); };
 let call = null, ringUnsub = null, ring = null, gLiveUnsub = null;
 const cdoc = (...p) => doc(db, ...call.base, ...p), ccol = (n) => collection(db, ...call.base, n);
 const presence = (patch) => call && updateDoc(cdoc("live", user.uid), Object.assign({ at: serverTimestamp() }, patch)).catch(() => {});
@@ -3932,10 +3961,11 @@ const sig = (to, kind, data) => call && addDoc(ccol("signals"), { from: user.uid
 
 function tile(uid, name) {
   if (call.tiles[uid]) return call.tiles[uid];
-  const el = h("div", "ctile"), vid = document.createElement("video");
+  const el = h("div", "ctile" + (uid === user.uid ? " me" : "")), vid = document.createElement("video");
   vid.autoplay = true; vid.playsInline = true; if (uid === user.uid) vid.muted = true; vid.style.display = "none";
   el.appendChild(h("div", "cav", initials(name))); el.appendChild(vid); el.appendChild(h("span", "cname", uid === user.uid ? "You" : name));
-  $("#callGrid").appendChild(el); return (call.tiles[uid] = { el: el, vid: vid });
+  $("#callGrid").appendChild(el);
+  const t = (call.tiles[uid] = { el: el, vid: vid }); callCount(); return t;
 }
 function tileStream(uid, name, stream) {
   const t = tile(uid, name); t.vid.srcObject = stream;
@@ -3944,8 +3974,11 @@ function tileStream(uid, name, stream) {
 }
 function callCount() {
   if (!call) return;
-  const n = Object.keys(call.peers).length + 1, rc = Object.keys(call.roster).some((u) => call.roster[u].rec) || !!call.rec;
-  $("#callSub").textContent = n + (n === 1 ? " person" : " people") + " in the call" + (rc ? " \u00B7 \uD83D\uDD34 Recording" : "");
+  const others = Object.keys(call.tiles).filter((u) => u !== user.uid).length, live = Object.keys(call.peers).length, ov = $("#callOv");
+  ov.dataset.n = String(others); ov.classList.toggle("vid", !!call.video);
+  const rc = Object.keys(call.roster).some((u) => call.roster[u].rec) || !!call.rec;
+  $("#callSub").textContent = call.base[0] === "calls" ? (live ? clock(call.t0) : "Calling\u2026") : (live ? (live + 1) + " in the room \u00B7 " + clock(call.t0) : "Waiting for others\u2026");
+  $("#callRec").classList.toggle("hidden", !rc);
 }
 function dropPeer(uid) {
   if (!call) return;
@@ -3956,7 +3989,7 @@ function dropPeer(uid) {
 async function makePeer(uid, initiator) {
   if (call.peers[uid]) return call.peers[uid];
   const pc = new RTCPeerConnection({ iceServers: ICE }), p = { pc: pc, q: [] }, st = new MediaStream(), name = (call.roster[uid] || {}).name || "Student";
-  call.peers[uid] = p; tile(uid, name);
+  call.peers[uid] = p; if (!call.t0) call.t0 = Date.now(); tile(uid, name);
   call.local.getTracks().forEach((t) => pc.addTrack(t, call.local));
   pc.ontrack = (e) => { if (!call) return; st.addTrack(e.track); tileStream(uid, name, st); callMix(st); };
   pc.onicecandidate = (e) => { if (e.candidate) sig(uid, "ice", JSON.stringify(e.candidate)); };
@@ -3989,19 +4022,21 @@ function callRoster(s) {
   if (!s.metadata.fromCache) Object.keys(call.peers).forEach((u) => { if (!r[u]) dropPeer(u); });
   callCount();
 }
-async function callEnter(base, title, video) {
+async function callEnter(base, title, video, peer) {
   if (call) { toast("You're already in a call."); return; }
   if (restricted) { toast(RESTRICTED_MSG); return; }
   if (!navigator.mediaDevices || !window.RTCPeerConnection) { toast("Calls aren't supported on this device."); return; }
   let local;
   try { local = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: video ? { facingMode: "user" } : false }); }
   catch (e) { toast(video ? "Allow the camera and microphone to join." : "Allow the microphone to join."); return; }
-  call = { base: base, title: title, video: video, local: local, peers: {}, tiles: {}, roster: {}, unsubs: [], hb: null, rec: null, mix: null, screen: null, cam: video ? local.getVideoTracks()[0] : null };
+  call = { base: base, title: title, video: video, local: local, peers: {}, tiles: {}, roster: {}, unsubs: [], hb: null, rec: null, mix: null, screen: null, t0: 0, tick: null, cam: video ? local.getVideoTracks()[0] : null };
   $("#callOv").classList.remove("hidden"); $("#callTitle").textContent = title;
-  $("#cCam").classList.toggle("hidden", !video);
-  $("#cShare").classList.toggle("hidden", !(video && navigator.mediaDevices.getDisplayMedia && !/Android|iPhone|iPad/i.test(navigator.userAgent)));
+  $("#cCam").parentElement.classList.toggle("hidden", !video);
+  $("#cShare").parentElement.classList.toggle("hidden", !(video && navigator.mediaDevices.getDisplayMedia && !/Android|iPhone|iPad/i.test(navigator.userAgent)));
   ["#cMute", "#cCam", "#cRec", "#cShare"].forEach((s) => $(s).classList.remove("off", "on"));
+  if (peer) tile(peer.uid, peer.name);
   tileStream(user.uid, myName(), local);
+  call.tick = setInterval(callCount, 1000);
   try { await setDoc(cdoc("live", user.uid), { uid: user.uid, name: myName(), at: serverTimestamp(), video: !!video }); }
   catch (e) { callLeave(); toast("Couldn't join. Make sure the latest Firestore rules are published."); return; }
   call.unsubs.push(onSnapshot(ccol("live"), callRoster, () => {}));
@@ -4012,7 +4047,7 @@ async function callEnter(base, title, video) {
 function callLeave() {
   const c = call; if (!c) return;
   if (c.rec) callSaveRec(c);
-  call = null; clearInterval(c.hb); c.unsubs.forEach((u) => u());
+  call = null; clearInterval(c.hb); clearInterval(c.tick); c.unsubs.forEach((u) => u());
   Object.keys(c.peers).forEach((u) => { try { c.peers[u].pc.close(); } catch (e) {} });
   c.local.getTracks().forEach((t) => t.stop()); if (c.screen) c.screen.getTracks().forEach((t) => t.stop());
   deleteDoc(doc(db, ...c.base, "live", user.uid)).catch(() => {});
@@ -4057,7 +4092,7 @@ function ringStart() {
   ringUnsub = onSnapshot(query(collection(db, "calls"), where("to", "==", user.uid), where("status", "==", "ringing")), (s) => {
     const d = s.docs.map((x) => Object.assign({ id: x.id }, x.data({ serverTimestamps: "estimate" }))).filter((x) => Date.now() - tms(x.createdAt) < 60000).sort((a, b) => tms(b.createdAt) - tms(a.createdAt))[0];
     ring = d || null; $("#ringOv").classList.toggle("hidden", !d);
-    if (d) { $("#ringName").textContent = d.fromName; $("#ringKind").textContent = d.kind === "video" ? "Incoming video call" : "Incoming voice call"; try { if (navigator.vibrate) navigator.vibrate([300, 150, 300]); } catch (e) {} }
+    if (d) { $("#ringName").textContent = d.fromName; $("#ringAv").textContent = initials(d.fromName); $("#ringKind").textContent = d.kind === "video" ? "Cohort video\u2026" : "Cohort audio\u2026"; try { if (navigator.vibrate) navigator.vibrate([300, 150, 300]); } catch (e) {} }
   }, () => {});
 }
 async function dmCall(video) {
@@ -4066,7 +4101,7 @@ async function dmCall(video) {
   const nm = (people[dmPeer] || {}).name || "Student";
   try {
     const ref = await addDoc(collection(db, "calls"), { from: user.uid, fromName: myName(), to: dmPeer, kind: video ? "video" : "voice", status: "ringing", createdAt: serverTimestamp() });
-    await callEnter(["calls", ref.id], nm, video);
+    await callEnter(["calls", ref.id], nm, video, { uid: dmPeer, name: nm });
     setTimeout(async () => { try { const d = await getDoc(doc(db, "calls", ref.id)); if (d.exists() && d.data().status === "ringing") { if (call && call.base[1] === ref.id) callLeave(); toast(nm + " didn't answer."); } } catch (e) {} }, 45000);
   } catch (e) { toast("Couldn't start the call. Make sure the latest Firestore rules are published."); }
 }
@@ -4101,7 +4136,7 @@ $("#cRec").addEventListener("click", () => { if (call) callRecord(); });
 $("#ringYes").addEventListener("click", async () => {
   const r = ring; if (!r) return; $("#ringOv").classList.add("hidden");
   try { await updateDoc(doc(db, "calls", r.id), { status: "live" }); } catch (e) { toast("That call has ended."); return; }
-  callEnter(["calls", r.id], r.fromName, r.kind === "video");
+  callEnter(["calls", r.id], r.fromName, r.kind === "video", { uid: r.from, name: r.fromName });
 });
 $("#ringNo").addEventListener("click", () => { if (ring) updateDoc(doc(db, "calls", ring.id), { status: "ended" }).catch(() => {}); $("#ringOv").classList.add("hidden"); });
 window.addEventListener("pagehide", () => { if (call) callLeave(); });
