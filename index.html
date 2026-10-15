@@ -651,6 +651,16 @@ input[type="file"]::file-selector-button:active{transform:scale(.98)}
 .ringcard{background:var(--bg);color:var(--text);border-radius:24px;padding:26px 22px;width:min(320px,86vw);text-align:center}
 .ringcard b{display:block;font-size:20px;margin:6px 0 2px}.ringcard span{color:var(--muted);font-size:14px}
 .ringcard .rb{display:flex;gap:12px;margin-top:22px}.ringcard .rb button{flex:1;padding:13px;border:0;border-radius:14px;font:inherit;font-weight:700;color:#fff;cursor:pointer}
+#aiBtn,.ai-orb{position:relative;display:grid;place-items:center;border:0;border-radius:50%;background:conic-gradient(from 210deg,#ff7a1a,#ffb35c,#7a5cff,#2dd4bf,#ff7a1a)}
+#aiBtn{width:38px;height:38px;cursor:pointer;padding:0;animation:aiGlow 2.6s ease-in-out infinite}
+.ai-orb{width:34px;height:34px;flex:none;animation:aiGlow 2.6s ease-in-out infinite}
+#aiBtn::before,.ai-orb::before{content:"";position:absolute;inset:2px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#3b2a6b,#14102b 70%)}
+#aiBtn svg,.ai-orb svg{position:relative;width:20px;height:20px;filter:drop-shadow(0 0 5px #ffd9a8)}
+#aiBtn svg path,.ai-orb svg path{fill:#ffe2b8}
+#aiBtn .tw,.ai-orb .tw{transform-origin:19px 6px;animation:aiTw 1.8s ease-in-out infinite}
+@keyframes aiGlow{0%,100%{box-shadow:0 0 8px 1px rgba(255,140,40,.55),0 0 18px 2px rgba(122,92,255,.35)}50%{box-shadow:0 0 16px 4px rgba(255,160,70,.85),0 0 28px 6px rgba(122,92,255,.55)}}
+@keyframes aiTw{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+@media (prefers-reduced-motion:reduce){#aiBtn,.ai-orb,#aiBtn .tw,.ai-orb .tw{animation:none}}
 </style>
 </head>
 <body>
@@ -694,7 +704,7 @@ input[type="file"]::file-selector-button:active{transform:scale(.98)}
 <section id="app" class="screen">
   <header class="topbar">
     <h2 id="viewTitle">Cohort</h2>
-    <div style="display:flex;gap:2px"><button class="icon-btn" id="bellBtn" type="button" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge hidden" id="bellBadge">0</span></button><button class="icon-btn" id="themeQuick" aria-label="Switch theme">
+    <div style="display:flex;gap:6px;align-items:center"><button id="aiBtn" type="button" aria-label="Open Cohort AI" title="Cohort AI"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3l2 5.6L18.6 10.6 13 12.6 11 18.2 9 12.6 3.4 10.6 9 8.6z"/><path class="tw" d="M19 3l.8 2.2L22 6l-2.2.8L19 9l-.8-2.2L16 6l2.2-.8z"/></svg></button><button class="icon-btn" id="bellBtn" type="button" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="badge hidden" id="bellBadge">0</span></button><button class="icon-btn" id="themeQuick" aria-label="Switch theme">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
     </button></div>
   </header>
@@ -719,8 +729,9 @@ input[type="file"]::file-selector-button:active{transform:scale(.98)}
       <div class="empty hidden" id="stEmpty"><b>No updates yet</b>Statuses from your classmates will appear here for 24 hours.</div>
     </div>
     <div class="view" id="v-people"><div class="search"><input id="peopleSearch" type="search" placeholder="Search students" aria-label="Search students" autocomplete="off"></div><div id="peopleList"></div></div>
-    <div class="view" id="v-study"><div class="seg" id="stuSeg"><button type="button" data-t="today" aria-selected="true">Today</button><button type="button" data-t="tasks" aria-selected="false">Tasks</button><button type="button" data-t="table" aria-selected="false">Timetable</button><button type="button" data-t="gpa" aria-selected="false">GPA</button><button type="button" data-t="lib" aria-selected="false">Library</button><button type="button" data-t="rooms" aria-selected="false">Live Study</button><button type="button" data-t="ai" aria-selected="false">✨ AI</button></div><div id="stuBody"></div></div>
+    <div class="view" id="v-study"><div class="seg" id="stuSeg"><button type="button" data-t="today" aria-selected="true">Today</button><button type="button" data-t="tasks" aria-selected="false">Tasks</button><button type="button" data-t="table" aria-selected="false">Timetable</button><button type="button" data-t="gpa" aria-selected="false">GPA</button><button type="button" data-t="lib" aria-selected="false">Library</button><button type="button" data-t="rooms" aria-selected="false">Live Study</button></div><div id="stuBody"></div></div>
     <div class="view" id="v-profile">
+      <div id="pCover" class="cover-surface theme-pulse" role="button" tabindex="0" aria-label="Your profile cover. Tap to play or pause."><span class="cover-caption">Your Cohort cover</span></div>
       <div class="row"><div class="avatar lg" id="pAvatar">?</div><div><b id="pName">Your profile</b><span id="pEmail"></span></div></div>
       <div class="setting hidden" id="adminIdCard" style="flex-direction:column;align-items:flex-start;gap:4px"><span style="font-size:13px;color:var(--muted)">Admin account ID</span><span id="pUid" style="font-size:12.5px;word-break:break-all;user-select:all"></span><span id="pAdmin" style="font-size:13px"></span><button class="btn hidden" id="pMakeAdmin" type="button" style="margin:8px 0 0;width:auto;padding:9px 18px">Set me up as admin</button><button class="btn" id="pCopy" type="button" style="margin:8px 0 0;width:auto;padding:9px 18px;background:var(--surface);color:var(--text);border:1px solid var(--line)">Copy account ID</button></div>
       <div class="edit"><button class="btn" id="myCoverSettingsBtn" type="button" style="margin-top:0;background:var(--surface);color:var(--text);border:1px solid var(--line)">Customize animated cover</button></div>
@@ -860,6 +871,10 @@ input[type="file"]::file-selector-button:active{transform:scale(.98)}
   <div id="fwList" style="overflow-y:auto;flex:1"></div>
 </section>
 <div id="recBar" class="recbar hidden"><span class="recdot"></span><b id="recTime">0:00</b><span style="flex:1;color:var(--muted)">Recording...</span><button class="icon-btn" id="recCancel" type="button" aria-label="Cancel recording">&#10005;</button><button class="send" id="recSend" type="button" aria-label="Send voice note"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a1 1 0 0 0-1.4 1.2L4 11l9 1-9 1-2 6.2a1 1 0 0 0 1.4 1.2z"/></svg></button></div>
+<section id="aiScr" class="screen" aria-label="Cohort AI">
+  <header class="chathead"><button class="icon-btn" id="aiBack" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><span class="ai-orb"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3l2 5.6L18.6 10.6 13 12.6 11 18.2 9 12.6 3.4 10.6 9 8.6z"/><path class="tw" d="M19 3l.8 2.2L22 6l-2.2.8L19 9l-.8-2.2L16 6l2.2-.8z"/></svg></span><div class="ct" style="flex:1"><b>Cohort AI</b><span>Your study assistant</span></div></header>
+  <div id="aiBody" style="flex:1;overflow-y:auto;padding-bottom:28px"></div>
+</section>
 <section id="notifScreen" class="screen" aria-label="Notifications">
   <header class="chathead"><button class="icon-btn" id="notifBack" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><div class="ct" style="flex:1"><b>Notifications</b></div><button id="notifClear" type="button" style="background:none;border:0;color:var(--teal);font-weight:600;cursor:pointer;padding:8px 12px">Clear all</button></header>
   <div style="overflow-y:auto;flex:1"><div id="notifList"></div><div class="empty hidden" id="notifEmpty"><b>Nothing new</b>Messages, mentions and announcements will show up here.</div></div>
@@ -1119,6 +1134,7 @@ function fillProfile() {
   av.textContent = initials(name);
   if (ph && /^https:\/\//.test(ph)) { const i = document.createElement("img"); i.src = ph; i.alt = ""; av.textContent = ""; av.appendChild(i); }
   $("#pName").textContent = name;
+  renderMyCover();
   $("#pEmail").textContent = user.email;
   $("#pn").value = name;
 }
@@ -3881,7 +3897,7 @@ function stuRender() {
   if (!user) return;
   document.querySelectorAll("#stuSeg button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.t === stuTab)));
   const f = document.createDocumentFragment();
-  ({ today: stuToday, tasks: stuTasks, table: stuTable, gpa: stuGpa, lib: stuLib, rooms: stuRooms, ai: stuAi })[stuTab](f);
+  ({ today: stuToday, tasks: stuTasks, table: stuTable, gpa: stuGpa, lib: stuLib, rooms: stuRooms })[stuTab](f);
   $("#stuBody").replaceChildren(f);
 }
 function stuRemind() {
@@ -4062,6 +4078,11 @@ $("#gcLive").addEventListener("click", () => gCall(false));
 $("#dmCallV").addEventListener("click", () => dmCall(false));
 $("#dmCallC").addEventListener("click", () => dmCall(true));
 $("#gcMicBtn").addEventListener("click", () => recStart("grp"));
+$("#aiBtn").addEventListener("click", aiOpen);
+$('.tab[data-view="profile"]').addEventListener("click", () => setTimeout(renderMyCover, 50));
+$("#pCover").addEventListener("click", () => { const v = $("#pCover video"); if (v) { if (v.paused) v.play().catch(() => {}); else v.pause(); } });
+document.addEventListener("visibilitychange", () => { if (!document.hidden) { const v = $("#pCover video"); if (v) v.play().catch(() => {}); } });
+$("#aiBack").addEventListener("click", () => window.Cohort.show("app"));
 $("#cEnd").addEventListener("click", callLeave);
 $("#cMute").addEventListener("click", (e) => { if (!call) return; const on = call.local.getAudioTracks().some((t) => t.enabled); call.local.getAudioTracks().forEach((t) => { t.enabled = !on; }); e.currentTarget.classList.toggle("off", on); });
 $("#cCam").addEventListener("click", (e) => {
@@ -4082,10 +4103,12 @@ window.addEventListener("pagehide", () => { if (call) callLeave(); });
 const AI_URL = "";
 let aiSpace = "main", aiOut = null;
 const aiUrl = () => AI_URL || lsGet("aiUrl") || "";
+function aiRender() { const f = document.createDocumentFragment(); stuAi(f); $("#aiBody").replaceChildren(f); }
+function aiOpen() { if (!$("#aiScr").classList.contains("active")) window.Cohort.show("aiScr"); aiRender(); }
 async function aiSetup() {
   const v = await askForm("Connect the AI assistant", [{ k: "url", ph: "https://cohort-ai.yourname.workers.dev", cap: "Paste your AI worker URL", val: aiUrl() }], "Connect");
   if (!v) return;
-  if (/^https:\/\//.test(v.url)) { lsSet("aiUrl", v.url.replace(/\/+$/, "")); toast("AI assistant connected."); stuRender(); } else toast("That doesn't look like a valid https URL.");
+  if (/^https:\/\//.test(v.url)) { lsSet("aiUrl", v.url.replace(/\/+$/, "")); toast("AI assistant connected."); aiRender(); } else toast("That doesn't look like a valid https URL.");
 }
 async function aiAsk(task, payload) {
   const url = aiUrl(); if (!url) throw new Error("setup");
@@ -4103,7 +4126,7 @@ async function aiMsgs(space, since) {
 const aiName = () => aiSpace === "main" ? "main class chat" : (groups[aiSpace] || {}).name || "group";
 const aiJson = (t) => JSON.parse(t.slice(t.search(/[\[{]/), Math.max(t.lastIndexOf("]"), t.lastIndexOf("}")) + 1));
 async function aiRun(kind, extra) {
-  aiOut = { kind: "loading" }; stuTab = "ai"; stuRender();
+  aiOut = { kind: "loading" }; aiOpen();
   try {
     const sp = aiName();
     if (kind === "catchup") {
@@ -4118,7 +4141,7 @@ async function aiRun(kind, extra) {
     else if (kind === "explain") aiOut = { kind: "text", text: await aiAsk("explain", { text: extra }) };
     else if (kind === "quiz") aiOut = { kind: "quiz", items: aiJson(await aiAsk("quiz", { text: extra })) };
   } catch (e) { aiOut = { kind: "text", text: e.message === "setup" ? "Connect the assistant first." : /JSON|Unexpected|token/.test(e.message) ? "The assistant gave an unreadable answer. Try again." : e.message }; }
-  stuRender();
+  aiRender();
 }
 const aiLib = (kind, x) => aiRun(kind, x.course + " - " + x.title + "\n" + (x.body || "(A file named " + (x.media ? x.media.name : "attachment") + " is attached but can't be read.)"));
 async function aiPrompt(kind) {
@@ -4284,12 +4307,19 @@ function paintCover(el, cover, label){
   const cap=document.createElement('span'); cap.className='cover-caption'; cap.textContent=label||'Cohort cover'; el.appendChild(cap);
   if(cover && (cover.type==='image'||cover.type==='video') && typeof cover.url==='string' && cover.url.startsWith('https://res.cloudinary.com/bnnygtsp/')){
     const media=document.createElement(cover.type==='video'?'video':'img'); media.src=cover.url;
-    if(cover.type==='video'){media.muted=true;media.loop=true;media.autoplay=true;media.playsInline=true;media.setAttribute('playsinline','');media.preload='metadata';}
+    if(cover.type==='video'){media.muted=true;media.loop=true;media.autoplay=true;media.playsInline=true;media.setAttribute('playsinline','');media.setAttribute('muted','');media.preload='auto';media.addEventListener('loadeddata',()=>{media.play().catch(()=>{});});}
     else {media.alt='';media.loading='lazy';}
     el.prepend(media); const shade=document.createElement('span');shade.className='cover-shade';el.appendChild(shade);
   }
   if(el.id==='giCoverEdit'){};
 }
+function renderMyCover(){
+  if(!user)return;
+  const p=Object.assign({},profile||{},people[user.uid]||{});
+  paintCover($('#pCover'),coverDataFromProfile(p),'Your Cohort cover');
+  const v=$('#pCover video'); if(v){const go=()=>v.play().catch(()=>{}); go(); setTimeout(go,400);}
+}
+document.addEventListener('DOMContentLoaded',()=>{});
 function coverDataFromProfile(p){ return p && p.cover && typeof p.cover==='object' ? p.cover : {type:'theme',value:'pulse'}; }
 function renderProfileCover(){
   const p=Object.assign({},profile||{},people[viewingId]||{}); paintCover($('#uCover'),coverDataFromProfile(p), viewingId===user.uid?'Your Cohort cover':'Cohort profile');
@@ -4337,7 +4367,7 @@ $('#coverSave').addEventListener('click',async()=>{
     if(coverTarget==='profile'){
       await updateDoc(doc(db,'publicProfiles',user.uid),{cover:data});
       profile=Object.assign({},profile||{}, {cover:data}); if(people[user.uid])people[user.uid].cover=data;
-      paintCover($('#uCover'),data,'Your Cohort cover');
+      paintCover($('#uCover'),data,'Your Cohort cover'); renderMyCover();
     }else{
       const activeGroup = gId && groups[gId] ? groups[gId] : null;
       if(!activeGroup) throw new Error('Open the group you want to customize first.');
