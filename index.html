@@ -4155,7 +4155,8 @@ async function aiSetup() {
 async function aiAsk(task, payload) {
   const url = aiUrl(); if (!url) throw new Error("setup");
   const tok = await auth.currentUser.getIdToken();
-  const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + tok }, body: JSON.stringify(Object.assign({ task: task }, payload)) });
+  const endpoint = url.replace(/\/+$/, "") + "/api/cohort-ai";
+  const r = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + tok }, body: JSON.stringify(Object.assign({ task: task }, payload)) });
   if (!r.ok) throw new Error(r.status === 429 ? "You're asking too fast. Try again in a minute." : "The assistant couldn't answer right now.");
   return (await r.json()).text || "";
 }
