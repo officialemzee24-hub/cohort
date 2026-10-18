@@ -4143,7 +4143,7 @@ window.addEventListener("pagehide", () => { if (call) callLeave(); });
 
 /* ---------- Phase 17: AI study assistant ---------- */
 const AI_URL = "";
-let aiSpace = "main", aiOut = null;
+let aiSpace = "main", aiOut = null, aiConversation = [], aiSending = false;
 const aiUrl = () => AI_URL || lsGet("aiUrl") || "";
 function aiRender() { const f = document.createDocumentFragment(); stuAi(f); $("#aiBody").replaceChildren(f); }
 function aiOpen() { if (!$("#aiScr").classList.contains("active")) window.Cohort.show("aiScr"); aiRender(); }
@@ -4239,8 +4239,27 @@ function stuAi(f) {
   if (isAdmin) chat.push(["\uD83D\uDEE1\uFE0F Moderation scan", () => aiRun("moderate")]);
   pills("This chat", chat);
   pills("Study help", [["\uD83D\uDCD6 Explain a question", () => aiPrompt("explain")], ["\uD83E\uDDE0 Practice quiz", () => aiPrompt("quiz")]]);
-  if (aiOut) { f.appendChild(stuSec("Result")); f.appendChild(aiOutEl()); }
-  f.appendChild(stuAdd("Change worker URL", aiSetup));
+  if (aiOut && !aiConversation.length) { f.appendChild(stuSec("Result")); f.appendChild(aiOutEl()); }
+  const chatTitle = stuSec("Ask Cohort AI anything");
+  f.appendChild(chatTitle);
+  const chatWrap = h("div"); chatWrap.style.cssText = "margin:10px 14px 0;padding:12px;border:1px solid var(--line);border-radius:20px;background:color-mix(in srgb,var(--text) 3%,var(--bg))";
+  if (!aiConversation.length && !aiSending) {
+    const welcome = h("div"); welcome.style.cssText = "padding:8px 5px 14px;line-height:1.5";
+    const title = h("b", null, "What are you studying today?"); title.style.cssText = "display:block;font-size:16px;margin-bottom:4px";
+    welcome.appendChild(title); welcome.appendChild(h("span", null, "Ask your own question, request an explanation, or ask a follow-up. I'll help you work through it."));
+    welcome.lastChild.style.cssText = "font-size:13px;color:var(--muted)"; chatWrap.appendChild(welcome);
+    const suggestions = h("div", "stu-acts");
+    ["Explain binary numbers", "Help me understand a difficult topic", "Give me a study plan"].forEach((q) => { const b=h("button","stu-pill",q); b.type="button"; b.onclick=()=>{ const inp=chatWrap.querySelector("textarea"); if(inp){inp.value=q;inp.focus();} }; suggestions.appendChild(b); });
+    chatWrap.appendChild(suggestions);
+  }
+  aiConversation.forEach((m) => { const bubble=h("div"); bubble.textContent=m.text; bubble.style.cssText="white-space:pre-wrap;overflow-wrap:anywhere;max-width:92%;padding:11px 13px;margin:9px 0;border-radius:16px;line-height:1.5;font-size:14px;"+(m.role==="user"?"margin-left:auto;background:var(--teal);color:#fff;border-bottom-right-radius:5px;":"margin-right:auto;background:color-mix(in srgb,var(--text) 7%,var(--bg));border:1px solid var(--line);border-bottom-left-radius:5px;"); chatWrap.appendChild(bubble); });
+  if (aiSending) { const wait=h("div",null,"✨ Cohort AI is thinking…"); wait.style.cssText="padding:10px;color:var(--muted);font-size:13px"; chatWrap.appendChild(wait); }
+  const composer=h("div"); composer.style.cssText="display:flex;align-items:flex-end;gap:8px;margin-top:12px";
+  const input=h("textarea","stin"); input.rows=1; input.maxLength=3000; input.placeholder="Message Cohort AI…"; input.setAttribute("aria-label","Ask Cohort AI a question"); input.style.cssText="flex:1;min-width:0;min-height:44px;max-height:120px;resize:vertical;padding:12px;border-radius:15px;line-height:1.4";
+  const send=h("button","stu-pill pri","Send ➤"); send.type="button"; send.style.cssText="min-height:44px;border-radius:15px;padding:0 16px";
+  const submit=async()=>{ const question=input.value.trim(); if(!question||aiSending)return; aiConversation.push({role:"user",text:question}); aiSending=true; aiRender(); try { const prior=aiConversation.slice(0,-1).map(m=>(m.role==="user"?"Student: ":"Cohort AI: ")+m.text).join("\n").slice(-10000); const answer=await aiAsk("ask",{space:aiName(),question:question,messages:prior}); aiConversation.push({role:"assistant",text:answer||"I couldn't generate an answer. Please try again."}); } catch(e) { aiConversation.push({role:"assistant",text:e.message==="setup"?"Connect the assistant first.":e.message||"I couldn't answer just now. Please try again."}); } finally { aiSending=false; aiRender(); const body=$("#aiBody"); body.scrollTop=body.scrollHeight; } };
+  send.onclick=submit; input.addEventListener("keydown",(e)=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}); composer.append(input,send); chatWrap.appendChild(composer); f.appendChild(chatWrap);
+  const settings=stuAdd("⚙ Change worker URL", aiSetup); settings.style.marginBottom="18px"; f.appendChild(settings);
 }
 
 function listTime(t) {
