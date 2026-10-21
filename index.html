@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Cohort</title>
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -32,7 +32,7 @@
 }
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
 input,textarea,[contenteditable="true"],#pUid{ -webkit-user-select:text;user-select:text }
-html,body{height:100%}
+html,body{height:100%;touch-action:manipulation}
 body{font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
 button,input{font:inherit;color:inherit}
 .screen{position:fixed;inset:0;display:none;flex-direction:column;background:var(--bg);
@@ -4122,7 +4122,7 @@ $("#dmCallC").addEventListener("click", () => dmCall(true));
 $("#gcMicBtn").addEventListener("click", () => recStart("grp"));
 $("#aiBtn").addEventListener("click", aiOpen);
 $('.tab[data-view="profile"]').addEventListener("click", () => setTimeout(renderMyCover, 50));
-$("#pCover").addEventListener("click", () => { const v = $("#pCover video"); if (v) { if (v.paused) v.play().catch(() => {}); else v.pause(); } });
+// Video covers play continuously; tapping the profile cover must not toggle playback.
 document.addEventListener("visibilitychange", () => { if (!document.hidden) { const v = $("#pCover video"); if (v) v.play().catch(() => {}); } });
 $("#aiBack").addEventListener("click", () => window.Cohort.show("app"));
 $("#cEnd").addEventListener("click", callLeave);
@@ -4152,30 +4152,14 @@ async function aiSetup() {
   if (!v) return;
   if (/^https:\/\//.test(v.url)) { lsSet("aiUrl", v.url.replace(/\/+$/, "")); toast("AI assistant connected."); aiRender(); } else toast("That doesn't look like a valid https URL.");
 }
-async function aiRequest(task, payload, stream = false, onChunk = null) {
+async function aiAsk(task, payload) {
   const url = aiUrl(); if (!url) throw new Error("setup");
   const tok = await auth.currentUser.getIdToken();
   const endpoint = url.replace(/\/+$/, "") + "/api/cohort-ai";
-  const r = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + tok }, body: JSON.stringify(Object.assign({ task: task, stream: !!stream }, payload)) });
+  const r = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + tok }, body: JSON.stringify(Object.assign({ task: task }, payload)) });
   if (!r.ok) throw new Error(r.status === 429 ? "You're asking too fast. Try again in a minute." : "The assistant couldn't answer right now.");
-  if (!stream) return (await r.json()).text || "";
-  if (!r.body) throw new Error("Streaming is not supported by this browser. Please try again.");
-  const reader = r.body.getReader(), decoder = new TextDecoder(); let buffer = "", answer = "";
-  const consume = (line) => {
-    line = line.trim(); if (!line || line.startsWith(":" ) || line === "data: [DONE]") return;
-    const raw = line.startsWith("data:") ? line.slice(5).trim() : line;
-    try { const obj = JSON.parse(raw); if (obj.response) answer += obj.response; else if (obj.error) throw new Error(obj.error); }
-    catch (e) { if (e instanceof SyntaxError) return; throw e; }
-    if (onChunk) onChunk(answer);
-  };
-  try {
-    while (true) { const { value, done } = await reader.read(); if (done) break; buffer += decoder.decode(value, { stream: true }); const lines = buffer.split(/\r?\n/); buffer = lines.pop() || ""; for (const line of lines) consume(line); }
-    buffer += decoder.decode(); if (buffer.trim()) consume(buffer);
-  } finally { reader.releaseLock(); }
-  return answer;
+  return (await r.json()).text || "";
 }
-async function aiAsk(task, payload) { return aiRequest(task, payload, false); }
-async function aiAskStream(task, payload, onChunk) { return aiRequest(task, payload, true, onChunk); }
 async function aiMsgs(space, since) {
   const q = space === "main" ? query(collection(db, "chats", MAIN, "messages"), orderBy("createdAt", "desc"), limit(250)) : query(collection(db, "groups", space, "messages"), orderBy("createdAt", "desc"), limit(250));
   const s = await getDocs(q);
@@ -4273,7 +4257,7 @@ function stuAi(f) {
   const composer=h("div"); composer.style.cssText="display:flex;align-items:flex-end;gap:8px;margin-top:12px";
   const input=h("textarea","stin"); input.rows=1; input.maxLength=3000; input.placeholder="Message Cohort AI…"; input.setAttribute("aria-label","Ask Cohort AI a question"); input.style.cssText="flex:1;min-width:0;min-height:44px;max-height:120px;resize:vertical;padding:12px;border-radius:15px;line-height:1.4";
   const send=h("button","stu-pill pri","Send ➤"); send.type="button"; send.style.cssText="min-height:44px;border-radius:15px;padding:0 16px";
-  const submit=async()=>{ const question=input.value.trim(); if(!question||aiSending)return; aiConversation.push({role:"user",text:question}); aiConversation.push({role:"assistant",text:""}); const answerIndex=aiConversation.length-1; aiSending=true; aiRender(); try { const prior=aiConversation.slice(0,-2).map(m=>(m.role==="user"?"Student: ":"Cohort AI: ")+m.text).join("\n").slice(-10000); const answer=await aiAskStream("ask",{space:aiName(),question:question,messages:prior},(text)=>{ aiConversation[answerIndex].text=text; const body=$("#aiBody"); const wasNearBottom=body.scrollHeight-body.scrollTop-body.clientHeight<120; aiRender(); const updated=$("#aiBody"); if(wasNearBottom) updated.scrollTop=updated.scrollHeight; }); aiConversation[answerIndex].text=answer||"I couldn't generate an answer. Please try again."; } catch(e) { aiConversation[answerIndex].text=e.message==="setup"?"Connect the assistant first.":e.message||"I couldn't answer just now. Please try again."; } finally { aiSending=false; aiRender(); const body=$("#aiBody"); body.scrollTop=body.scrollHeight; } };
+  const submit=async()=>{ const question=input.value.trim(); if(!question||aiSending)return; aiConversation.push({role:"user",text:question}); aiSending=true; aiRender(); try { const prior=aiConversation.slice(0,-1).map(m=>(m.role==="user"?"Student: ":"Cohort AI: ")+m.text).join("\n").slice(-10000); const answer=await aiAsk("ask",{space:aiName(),question:question,messages:prior}); aiConversation.push({role:"assistant",text:answer||"I couldn't generate an answer. Please try again."}); } catch(e) { aiConversation.push({role:"assistant",text:e.message==="setup"?"Connect the assistant first.":e.message||"I couldn't answer just now. Please try again."}); } finally { aiSending=false; aiRender(); const body=$("#aiBody"); body.scrollTop=body.scrollHeight; } };
   send.onclick=submit; input.addEventListener("keydown",(e)=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();submit();}}); composer.append(input,send); chatWrap.appendChild(composer); f.appendChild(chatWrap);
   const settings=stuAdd("⚙ Change worker URL", aiSetup); settings.style.marginBottom="18px"; f.appendChild(settings);
 }
@@ -4464,5 +4448,16 @@ $('#coverSave').addEventListener('click',async()=>{
 
 
 
+<script>
+/* Cohort mobile app: prevent accidental browser zoom gestures while keeping normal scrolling. */
+(function(){
+  document.addEventListener('gesturestart', function(e){ e.preventDefault(); }, {passive:false});
+  document.addEventListener('gesturechange', function(e){ e.preventDefault(); }, {passive:false});
+  document.addEventListener('gestureend', function(e){ e.preventDefault(); }, {passive:false});
+  document.addEventListener('touchmove', function(e){
+    if (e.touches && e.touches.length > 1) e.preventDefault();
+  }, {passive:false});
+})();
+</script>
 </body>
 </html>
